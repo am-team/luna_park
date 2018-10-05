@@ -1,6 +1,6 @@
 # Содержание
 - [Тезаурус](./tesaurus.md) [-]
-- [Введение](./intro.md) [+]
+- [Введение](./intro.md) [-/+]
 - [Область применения](./intro.md) [-]
 - [Доменный подход](./ddd.md) [-]
 - [Микросервисная архетиктура](./microservices.md) [-]
@@ -14,7 +14,7 @@
     - [Валидатор (Validator)](./patterns/validator.md) [-]
         - [Схема валидатора (Validator::Schema)](./patterns/validator_schema.md) [-]
     - [Поледовательность исполнения (Sequence)](./patterns/sequence.md) [-]
-    - [Сервис (Service)](./patterns/service.md) [-]
+    - [Сервис (Service)](./patterns/service.md) [+]
     - [Сущность (Entity)](./patterns/entity.md) [-]
     - [Значение (ValueObject)](./patterns/value_object.md) [-]
     - [Репозиторий (Repository)](./patterns/repository.md) [-]
