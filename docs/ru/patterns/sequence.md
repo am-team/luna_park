@@ -1,13 +1,13 @@
 # Последовательность действий (Sequence)
 
-Каждый бизнес процесс можно орписать при момощи последовательности действий.
+Каждый бизнес процесс можно описать при момощи последовательности действий.
 
 Паттерн _Последовательность_ отвечает за:
 - Последовательность выполнения _Действий_.
 - Координацию передаваемых данных между _Действиями_.
 - Обработку ошибок совершаемых _Дейсвтиями_ во время их выполнения.
 - Возвращение результа совокупности совершенных _Действий_.
-- __ВАЖНО__ Самое главная олтветственность этого паттерна это реализация доменного уровня. 
+- __ВАЖНО__ Самое главная ответственность этого паттерна это реализация доменного уровня. 
  
 На последней ответственности хотелось бы остановиться подробнее, если у нас имеется какой-то сложный 
 процесс - мы должны описать его так, чтобы было понтяно, что происходит не вдаваясь в технические детали.
@@ -40,9 +40,7 @@ module Kitchen
   module Sequences
     class CookingPieWithСabbage < LunaPark::Sequence
       TEMPERATURE = Values::Temperature(180, unit: :cel)
-    
-      attr_accessor :beat_ingredients, :filler_ingredients
-      
+         
       def call!
         Services::CheckProductsAvailability.call        list: ingredients
         dough   = Services::BeatDough.call              from: Repository::Products.get(beat_ingredients)
@@ -52,13 +50,13 @@ module Kitchen
         sleep 5.min until bake.call
       end
       
+      private
+      attr_accessor :beat_ingredients, :filler_ingredients
+      attr_accessor :pie
+      
       def returned_data
         pie
       end
-      
-      private
-      
-      attr_accessor :pie
       
       def ingredients_list
         beat_ingredients_list + filler_ingredients_list
@@ -68,7 +66,7 @@ module Kitchen
 end
 ```
 
-Как мы видем метод `call!` описывает всю БЛ, процесса выпечки пирога. И его удобно использовать для понимания
+Как мы видем метод `call!` описывает всю бизнесс логику (БЛ) процесса выпечки пирога. И его удобно использовать для понимания
 и описания доменного уровня.
 
 Так же мы лего можем описать процесс выпечки рыбного пирога, заменив `MakeСabbageFiller` на `MakeFishFiller`.
@@ -77,9 +75,19 @@ end
 
 ### Договорености
 
-- Метод `call!` является обязательным публичным методом, он описывает порядок действий. 
-- Метод `returned_data` является обязательным публичным методом, он описывает возвращаемый результат.
-- Каждый параметр инициализации должен описываться чере сеттер  или `attr_acessor`.
+- Метод `call!` является едиственным обязательным публичным методом, он описывает порядок действий. 
+- Остальные методы наследуемого от класса `LunaPark::Sequence` долнжы быть приватными
+- Метод `returned_data` является обязательным приватным методом, он описывает возвращаемый результат.
+- Каждый параметр инициализации должен описываться чере сеттер  или `attr_acessor`:
+```ruby
+module Foo
+  # ...
+  private
+  attr_accessor :bar 
+end
+
+Service::Foo.call(bar: 42)
+```
 - Остальные методы должны быть приватными
 - Метод `call!` может возвращать объект.
 
@@ -156,11 +164,11 @@ end
 ## Практика использования
 
 ### 1. Старайтесь описывать все вызовы в call! 
-
-Это делает код более компактным. Не нужно метаться по всему классу чтобы понять как он работает. 
-
-__BAD__
 ```ruby
+# bad - не пишите вызов каждого сервайса в отдельном методе
+#       Это делает код более раздутым. Приходится просматривать весь 
+#       класс несколько раз, чтобы понять как он работает.
+  
 module Service
   class CookingPieWithСabbage < LunaPark::Sequence
     def call!
@@ -170,6 +178,8 @@ module Service
       bake
     end
     
+    # ...
+    
     def check_products_availability
       Services::CheckProductsAvailability.call list: ingredients  
     end
@@ -178,26 +188,62 @@ module Service
   end
 end
 
-```
-
-__GOOD__
-
-Класс описанный в основном примере.
-
-### 2. Используйте в название действия глагол действия в форме Present Continuous и объект воздействия.
-                                                                       .
-
-__BAD__
-```ruby
-module Services
-  class Making; end 
-  class UserBuilding; end
-  class PasswordGenerating; end
-  class BuildСonstruction; end
+# good - используйте вызов действий прямо в класе
+class DrivingStart < LunaPark::Sequence
+  def call!
+    Service::CheckEngine.call
+    Service::StartUpTheIgnition.call car, with: key
+    Service::ChangeGear.call         car.gear_box, to: :drive
+    Service::StepOnTheGas.call       car.pedals[:right]
+  end
 end
 ```
-__GOOD__
+
+### 2. Если нужно используйте циклы
+
 ```ruby
+# bad - опичывать каждое действие отдельной строкой
+module JesusLife
+  module Sequences
+    class FeedingTheApostles
+      def call!
+        Service::GiveFood.call :fish, to: Repositories::Apostles.get(:pavel)    
+        Service::GiveFood.call :wine, to: Repositories::Apostles.get(:pavel)
+        # ...    
+      end
+    end
+  end
+end
+
+# good - действия повторяются, используйте циклы
+ module JesusLife 
+    module Sequences
+      class FeedingTheApostles
+        def call!
+          # Iuda dont drink alcohol & he is vegan
+          APOSTLES.dup.delete(:iuda).each do |apostle|
+            Service::GiveFood.call :fish, to: Repositories::Apostles.get(apostle)
+            Service::GiveFood.call :fish, to: Repositories::Apostles.get(apostle)
+          end
+        end
+      end 
+    end
+end
+```
+
+### 3. Используйте в название действия глагол действия в форме Present Continuous и объект воздействия.                                                                     .
+
+```ruby
+# bad
+
+module Services
+  class Making; end               # Используется только глагол 
+  class UserBuilding; end         # Существиельное Глагол
+  class PasswordGenerating; end   # Существиельное Глагол
+  class BuildСonstruction; end    # Present Simple
+end
+
+# good
 module Services
   class MakingNewOrder; end 
   class BuildingUser; end 
@@ -206,60 +252,31 @@ module Services
 end
 ```
 
-### 3. По возможности используйте метод класса call
+### 4. По возможности используйте метод класса call
 
-Обычно экземпляр класса _Действия_, редко используется кроме того, чтобы писать сделать вызов.
-
-Логично использовать сокращенную запись.
-
-__GOOD__
-```ruby 
+```ruby
+# good - Обычно экземпляр класса _Действия_, редко используется кроме 
+#        того, чтобы писать сделать вызов. Логично использовать сокращенную запись.
+ 
 Sequence::RingingToPerson.call(params)
-```   
 
-Тем не менее, есть возможность создавать экземпляр объекта _Действия_, 
-что может быть полезно, когда нам нужно переиспользовать его, с учетом внутреннего состояния.
+# good - Тем не менее, есть возможность создавать экземпляр объекта _Действия_, 
+#         что может быть полезно, когда нам нужно переиспользовать его, с учетом внутреннего состояния.
 
-```ruby 
 ring = Sequence::RingingToPerson.new(person)
 
 unless ring.success?
   ring.call
   sleep 5.min
 end
-```   
-
-### 4. Испольузуйте именнованную переменную в initializer'e когда это уместно
-
-__GOOD__
-```ruby
-class ProcessingFoo 
-  def initialize(foo)
-  end
-end
-```
-
-__BAD__
-```ruby
-class ProcessingFoo 
-  def initialize(param1:, param2:)
-  end
-end
-
-```
-__GOOD__
-```ruby
-class ProcessingFoo 
-  def initialize(foo, param1:, param:)
-  end
-end
 ```
 
 ### 5. Не создавайте _Действия_ ради типизации кода, смотрите по ситуации
 
-__BAD__
-
 ```ruby
+# bad - мы решили делать всю логику в сервайсах, а чтобы 
+#       сделать более легкий sequence
+
 module Services
   class BuildUser< LunaPark::Service
     def initialize(first_name:, last_name:, phone:)
@@ -290,11 +307,10 @@ module Sequences
     end
   end
 end
-```
 
-__GOOD__
 
-```ruby
+# good - Создание entity,просто в реализации и больше нигде не переиспользуется
+
 module Sequences
   class RegisteringUser < LunaPark::Sequence
     attr_accessor :first_name, :last_name, :phone
