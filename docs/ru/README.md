@@ -1,5 +1,5 @@
 # Содержание
-- [Тезаурус](./tesaurus.md) [-]
+- [Тезаурус](./intro.md#Тезаурус) []
 - [Введение](./intro.md) [-/+]
 - [Область применения](./intro.md) [-]
 - [Доменный подход](./ddd.md) [-]
@@ -13,7 +13,7 @@
     - [Форма (Form)](./patterns/form.md) [-]
     - [Валидатор (Validator)](./patterns/validator.md) [-]
         - [Схема валидатора (Validator::Schema)](./patterns/validator_schema.md) [-]
-    - [Поледовательность исполнения (Sequence)](./patterns/sequence.md) [-]
+    - [Поледовательность исполнения (Sequence)](./patterns/sequence.md) [+]
     - [Сервис (Service)](./patterns/service.md) [+]
     - [Сущность (Entity)](./patterns/entity.md) [-]
     - [Значение (ValueObject)](./patterns/value_object.md) [-]
