@@ -2,6 +2,8 @@
 
 I'm Going To Build My Own Luna Park With Forms and Services
 
+![Luna Park](https://u.kanobu.ru/comments/images/7a905e43-1374-4492-b6fc-fcb72e6ce08b.jpg)
+
 # Documentation
 
 [Russian](docs/ru/README.md)
