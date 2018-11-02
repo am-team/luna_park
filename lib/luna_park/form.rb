@@ -51,7 +51,7 @@ module LunaPark
     end
 
     def persist!
-      raise NoMethodError
+      raise NotImplementedError
     end
 
     class << self

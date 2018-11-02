@@ -3,7 +3,7 @@
 module LunaPark
   class Handler
     def self.catch
-      raise NoMethodError
+      raise NotImplementedError
     end
   end
 end
