@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe LunaPark::Forms::SingleItem do
   class Form < described_class; end
 
