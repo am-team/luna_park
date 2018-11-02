@@ -2,7 +2,6 @@ PATH
   remote: .
   specs:
     luna_park (0.1.0)
-      dry-validation
 
 GEM
   remote: https://rubygems.org/
@@ -83,12 +82,13 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.16)
   byebug
+  dry-validation (~> 0.12.2)
   luna_park!
   pry
   pry-byebug
   rake (~> 10.0)
   rspec (~> 3.0)
-  rubocop (~> 0.60.0)
+  rubocop
 
 BUNDLED WITH
    1.17.1
