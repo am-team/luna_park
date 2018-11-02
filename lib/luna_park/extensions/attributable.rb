@@ -30,12 +30,15 @@ module LunaPark
       def __rename_no_method_exception
         yield
         rescue NameError => e
-          method = e.message[/\Aundefined local variable or method `(.+)=' for/]
-
-          raise if method.nil?
-
-          raise NameError, "Unknown attribute #{method} given. \n" \
-                           "Maybe you forgot to add `attr_accessor :#{method}`?"
+          case e.message
+          when /\Aundefined local variable or method `(.+)=' for/
+            raise NameError, "Unknown attribute #{$1} given. \n" \
+                             "Maybe you forgot to add `attr_accessor :#{$1}`?"
+          when /\Aprivate method `(.+)=' called for/
+            raise NameError, "Trying to set private attribute #{$1}. \n"
+          else
+            raise
+          end
       end
     end
   end
