@@ -34,7 +34,7 @@ module LunaPark
 
     class << self
       def call(*attrs)
-        self.new(*attrs).call
+        new(*attrs).call
       end
     end
 

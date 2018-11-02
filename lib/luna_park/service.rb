@@ -11,7 +11,7 @@ module LunaPark
     end
 
     def self.call(*args)
-      self.new(*args).call
+      new(*args).call
     end
   end
 end
