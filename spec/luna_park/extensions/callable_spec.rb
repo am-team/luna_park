@@ -1,8 +1,8 @@
 RSpec.describe LunaPark::Extensions::Callable do
-
   class Cthulhu
     # TODO: Should be singleton ;)
-    include LunaPark::Extensions::Callable
+    include LunaPark::Extensions::Callable::InstanceMethods
+    extend  LunaPark::Extensions::Callable::ClassMethods
 
     FHTAGN = "Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn"
 
@@ -49,7 +49,8 @@ RSpec.describe LunaPark::Extensions::Callable do
 
   context 'when `object.call` method return `Processing` error ' do
     class CthulhuAtHoliday
-      include LunaPark::Extensions::Callable
+      include LunaPark::Extensions::Callable::InstanceMethods
+      extend  LunaPark::Extensions::Callable::ClassMethods
 
       def call!
         raise LunaPark::Errors::Processing, 'I have a day off'
@@ -90,7 +91,8 @@ RSpec.describe LunaPark::Extensions::Callable do
 
   context 'when `object.call` method return `StandardError` error ' do
     class CthulhuSick
-      include LunaPark::Extensions::Callable
+      include LunaPark::Extensions::Callable::InstanceMethods
+      extend  LunaPark::Extensions::Callable::ClassMethods
 
       def call!
         raise StandardError, 'I am on sick leave'
@@ -135,7 +137,8 @@ RSpec.describe LunaPark::Extensions::Callable do
 
   context 'when .call! method is undefined' do
     class LegasyCthulhu
-      include LunaPark::Extensions::Callable
+      include LunaPark::Extensions::Callable::InstanceMethods
+      extend  LunaPark::Extensions::Callable::ClassMethods
     end
 
     let(:callable_class) { LegasyCthulhu }
