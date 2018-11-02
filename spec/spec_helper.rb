@@ -1,5 +1,9 @@
+# frozen_string_literal: true
+
 require 'bundler/setup'
 require 'luna_park'
+
+require 'pry'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

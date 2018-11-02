@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 module LunaPark
   module Forms
     class SingleItem
@@ -19,7 +18,7 @@ module LunaPark
       end
 
       def errors
-        validation_result.try(:errors) || {}
+        validation_result&.errors || {}
       end
 
       private
