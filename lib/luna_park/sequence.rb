@@ -2,10 +2,12 @@
 
 module LunaPark
   class Sequence
+    include Extensions::Attributable
+
     attr_reader :fail_message
 
     def initialize(attrs = {})
-      self.attributes = attrs
+      set_attributes(attrs)
       @fail = false
       @fail_message = ''
     end

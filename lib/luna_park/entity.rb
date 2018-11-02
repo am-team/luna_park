@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
+require_relative 'extensions/attributable'
 require_relative 'extensions/comparable'
 require_relative 'extensions/comparable_debug'
 
 module LunaPark
   class Entity
+    include Extensions::Attributable
     include Extensions::Comparable
     include Extensions::ComparableDebug
 
@@ -55,7 +57,7 @@ module LunaPark
     end
 
     def initialize(hash)
-      hash.each { |k, v| public_send(:"#{k}=", v) }
+      set_attributes(hash)
     end
 
     HASHEABLE = ->(o) { o.respond_to?(:to_h) }.freeze
