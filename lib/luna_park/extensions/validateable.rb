@@ -9,6 +9,11 @@ module LunaPark
       end
 
       module ClassMethods
+        # validator must respond to
+        #   .validate(Hash) => instance
+        #   #output         => Hash
+        #   #success?       => Bool
+        #   #errors         => Hash
         def validator(klass)
           @validator = klass
         end
