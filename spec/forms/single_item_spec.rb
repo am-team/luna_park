@@ -16,7 +16,7 @@ RSpec.describe LunaPark::Forms::SingleItem do
     describe '.errors' do
       subject(:errors) { form.errors }
 
-      it { is_expected.to be eq({}) }
+      it { is_expected.to eq({}) }
     end
   end
 end

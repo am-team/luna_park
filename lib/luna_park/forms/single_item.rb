@@ -19,7 +19,7 @@ module LunaPark
       end
 
       def errors
-        validation_result.try(:errors) || {}
+        validation_result&.errors || {}
       end
 
       private

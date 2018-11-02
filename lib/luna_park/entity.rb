@@ -57,7 +57,7 @@ module LunaPark
     end
 
     def initialize(hash)
-      public_set_attributes(hash)
+      set_attributes(hash)
     end
 
     HASHEABLE = ->(o) { o.respond_to?(:to_h) }.freeze
