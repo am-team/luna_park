@@ -2,7 +2,7 @@
 
 module LunaPark
   module Extensions
-    module Comparsionable
+    module Comparable
       def ==(other)
         return false unless other.is_a?(self.class)
         comparsion_attributes.all? { |attr| send(attr) == other.send(attr) }

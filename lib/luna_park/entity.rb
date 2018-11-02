@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require_relative 'extensions/comparsionable'
-require_relative 'extensions/comparsionable_debug'
+require_relative 'extensions/comparable'
+require_relative 'extensions/comparable_debug'
 
 module LunaPark
   class Entity
-    include Extensions::Comparsionable
-    include Extensions::ComparsionableDebug
+    include Extensions::Comparable
+    include Extensions::ComparableDebug
 
     class << self
       def namespace(name, &block)
@@ -23,9 +23,9 @@ module LunaPark
         end
       end
 
-      def attr(name, klass = nil, method = nil, comparsion: true)
+      def attr(name, klass = nil, method = nil, comparable: true)
         fields_to_h       << name
-        fields_comparsion << name if comparsion
+        fields_comparsion << name if comparable
         attr_reader(name)
 
         if klass.nil? && method.nil?
