@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
+require_relative 'extensions/comparsionable'
+require_relative 'extensions/comparsionable_debug'
+
 module LunaPark
   class Entity
-    include Comparsionable
+    include Extensions::Comparsionable
+    include Extensions::ComparsionableDebug
 
     class << self
       def namespace(name, &block)
