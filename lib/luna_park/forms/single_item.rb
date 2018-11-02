@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
+require_relative '../extensions/attributable'
+
 module LunaPark
   module Forms
     class SingleItem
+      include Extensions::Attributable
+
       attr_reader :result
 
       def initialize(params = {})
@@ -43,9 +47,7 @@ module LunaPark
       end
 
       def fill!
-        valid_params.dig(:data, :attributes).each do |attr, value|
-          send("#{attr}=", value)
-        end
+        set_attributes(valid_params.dig(:data, :attributes))
       end
 
       def perform!
