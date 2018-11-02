@@ -6,9 +6,6 @@ require_relative 'extensions/comparsionable_debug'
 module LunaPark
   class Entity
     include Extensions::Comparsionable
-    include Extensions::ComparsionableDebug # TODO: решить как сделать это опциональным а не по дефолту
-                                            # Трабла в том что namespace тоже должны быть с ComparsionableDebug
-                                            # иначе он не будет работать
 
     class << self
       def namespace(name, &block)

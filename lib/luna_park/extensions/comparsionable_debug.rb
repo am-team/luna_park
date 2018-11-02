@@ -37,37 +37,6 @@ module LunaPark
 
         { (self == other) => diff }
       end
-
-      def comparsion_attributes
-        raise NotImplementedError, 'You must implement this method ' \
-          'to return list of attributes (methods) for full comparsion with #== '\
-          'and #differences_structure'
-      end
     end
   end
 end
-
-# {false=>     # сравнение объекта провалено
-#   {:from=>   # результат сравнения по объекту в аттрибуте `#from`
-#     {false=> # сравнение по объекту в аттрибуте `#from` провалено
-#       {:account=>{true=>[nil, nil]}, # сравнение объекта `#from` по его аттрибуду `#account` успешно: nil == nil
-#        :charge=> # результат сравнения по объекту в аттрибуте `#from#charge`
-#         {false=> # сравнение объекта `#from` по его аттрибуту #charge провалено
-#           {:currency=>{true=>["USD", "USD"]}, # сравнение `#from#charge` по аттрибуту `#currency` успешно: 'USD' == 'USD'
-#            :amount=>{false=>[42, 43]},        # сравнение `#from#charge` по аттрибуту `#amount` провалено: 42 != 43
-#        :usd=>    # результат сравнения по объекту в аттрибуте `#from#usd`
-#         {false=> # сравнение по объекту в аттрибуте `#from` провалено
-#           {:currency=>{true=>["USD", "USD"]},
-#            :amount=>{false=>[41, 44]},
-#    :to=>{true=>[nil, nil]},
-#    :commission=>
-#     {false=>
-#       {:charge=>
-#         {true=>
-#           {:currency=>{true=>["USD", "USD"]},
-#            :amount=>{true=>[42, 42]},
-#            :fractional=>{true=>[0, 0]}}},
-#        :usd=>
-#         {false=>
-#           {:currency=>{true=>["USD", "USD"]},
-#            :amount=>{false=>[41, 42]}}}}}}}}
