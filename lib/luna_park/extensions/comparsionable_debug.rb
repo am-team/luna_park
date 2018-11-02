@@ -37,6 +37,13 @@ module LunaPark
 
         { (self == other) => diff }
       end
+
+      def comparsion_attributes
+        raise NotImplementedError,
+          "You must implement #{self.class}#comparsion_attributes method " \
+          'to return list of attributes (methods) for full comparsion with #== '\
+          'and #differences_structure'
+      end
     end
   end
 end

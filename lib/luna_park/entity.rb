@@ -6,6 +6,7 @@ require_relative 'extensions/comparsionable_debug'
 module LunaPark
   class Entity
     include Extensions::Comparsionable
+    include Extensions::ComparsionableDebug
 
     class << self
       def namespace(name, &block)
@@ -15,10 +16,6 @@ module LunaPark
         namespace_class = Class.new(Entity)
         namespace_class.define_singleton_method(:name) { "Namespace:#{name}" }
         namespace_class.class_eval(&block)
-
-        if included_modules.include?(Extensions::ComparsionableDebug)
-          namespace_class.include Extensions::ComparsionableDebug
-        end
 
         attr_reader(name)
         define_method(:"#{name}=") do |input|
