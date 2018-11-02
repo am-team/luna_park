@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 module LunaPark
   module Forms
     class SingleItem

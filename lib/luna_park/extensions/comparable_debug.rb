@@ -26,23 +26,24 @@ module LunaPark
       #               :amount => { false => [41, 44] } } } } } # obj.from.usd.amount != other.from.usd.amount # 41 != 44
       def differences_structure(other)
         diff = comparsion_attributes.each_with_object({}) do |field, output|
-            left, right = self.send(field), other&.send(field)
+          left = send(field)
+          right = other&.send(field)
 
-            if left.respond_to?(:differences_structure)
-              output[field] = left.differences_structure(right)
-            else
-              output[field] = { (left == right) => [left, right] }
-            end
-          end
+          output[field] = if left.respond_to?(:differences_structure)
+                            left.differences_structure(right)
+                          else
+                            { (left == right) => [left, right] }
+                          end
+        end
 
         { (self == other) => diff }
       end
 
       def comparsion_attributes
         raise NotImplementedError,
-          "You must implement #{self.class}#comparsion_attributes method " \
-          'to return list of attributes (methods) for full comparsion with #== '\
-          'and #differences_structure'
+              "You must implement #{self.class}#comparsion_attributes method " \
+              'to return list of attributes (methods) for full comparsion with #== '\
+              'and #differences_structure'
       end
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'luna_park/entity'
 require 'luna_park/forms'
 require 'luna_park/handler'
