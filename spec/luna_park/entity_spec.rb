@@ -23,11 +23,11 @@ RSpec.describe LunaPark::Entity do
       end
 
       namespace :other_namespace do
-        attr :not_comparable, comparsion: false
+        attr :not_comparable, comparable: false
       end
 
       attr :simple
-      attr :not_comparable, comparsion: false
+      attr :not_comparable, comparable: false
     end
   end
 
@@ -130,7 +130,7 @@ RSpec.describe LunaPark::Entity do
     end
   end
 
-  describe '#== (controlled by `attr .., comparsion: ..` option),' do
+  describe '#== (controlled by `attr .., comparable: ..` option),' do
     subject(:equality) { entity == other }
 
     let(:other) { my_entity_klass.new(other_params) }

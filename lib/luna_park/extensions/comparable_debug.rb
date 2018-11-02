@@ -2,7 +2,7 @@
 
 module LunaPark
   module Extensions
-    module ComparsionableDebug
+    module ComparableDebug
       # Debug for #== method
       #
       # returns { `bool` => [left, right] } }
