@@ -16,6 +16,10 @@ module LunaPark
         namespace_class.define_singleton_method(:name) { "Namespace:#{name}" }
         namespace_class.class_eval(&block)
 
+        if included_modules.include?(Extensions::ComparsionableDebug)
+          namespace_class.include Extensions::ComparsionableDebug
+        end
+
         attr_reader(name)
         define_method(:"#{name}=") do |input|
           instance_variable_set(:"@#{name}", namespace_class.wrap(input))
