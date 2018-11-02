@@ -3,6 +3,7 @@
 require 'dry-validation'
 
 module LunaPark
+  # add description
   class Validator
     def validate(params)
       self.class.validate(params)

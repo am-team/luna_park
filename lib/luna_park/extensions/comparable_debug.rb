@@ -2,9 +2,8 @@
 
 module LunaPark
   module Extensions
+    # Debug for #== method
     module ComparableDebug
-      # Debug for #== method
-      #
       # returns { `bool` => [left, right] } }
       #   that describes result of left and right objects compasrion
       # or { :field_name => { `bool` => ... } }

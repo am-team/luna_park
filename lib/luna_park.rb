@@ -10,4 +10,5 @@ require 'luna_park/service'
 require 'luna_park/validator'
 require 'luna_park/version'
 
+# add description
 module LunaPark; end

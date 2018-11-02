@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module LunaPark
+  # add description
   class Serializer
     def initialize(object)
       @object = object

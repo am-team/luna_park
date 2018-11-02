@@ -5,6 +5,7 @@ require_relative 'extensions/comparable'
 require_relative 'extensions/comparable_debug'
 
 module LunaPark
+  # add description
   class Entity
     include Extensions::Attributable
     include Extensions::Comparable
@@ -62,7 +63,7 @@ module LunaPark
 
     HASHEABLE = ->(o) { o.respond_to?(:to_h) }.freeze
 
-    def to_h
+    def to_h # rubocop:disable Metrics/MethodLength:
       self.class
           .fields_to_h
           .each_with_object({}) do |field, output|

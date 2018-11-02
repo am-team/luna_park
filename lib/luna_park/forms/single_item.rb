@@ -4,6 +4,7 @@ require_relative '../extensions/attributable'
 
 module LunaPark
   module Forms
+    # add description
     class SingleItem
       include Extensions::Attributable
 
