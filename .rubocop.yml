@@ -1,0 +1,33 @@
+AllCops:
+  Exclude:
+    - '**/tmp/**/*'
+    - '**/script/**/*'
+    - Rakefile
+    - 'bin/*'
+  UseCache: true
+
+Metrics/LineLength:
+  Max: 120
+  IgnoredPatterns: ['\s*\#\s.*$']
+  Exclude:
+    - 'spec/**/*'
+
+# Configuration parameters: CountComments.
+Metrics/MethodLength:
+  Exclude:
+    - 'spec/**/*'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - 'luna_park.gemspec'
+
+Style/AsciiComments:
+  Enabled: false
+
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - 'spec/**/*'
+
+Style/Attr:
+  Enabled: false

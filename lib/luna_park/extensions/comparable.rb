@@ -2,6 +2,7 @@
 
 module LunaPark
   module Extensions
+    # add description
     module Comparable
       def ==(other)
         return false unless other.is_a?(self.class)

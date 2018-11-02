@@ -2,10 +2,11 @@
 
 module LunaPark
   module Extensions
+    # add description
     module Attributable
       private
 
-      def set_attributes(hash)
+      def set_attributes(hash) # rubocop:disable Naming/AccessorMethodName
         hash.each { |k, v| send(:"#{k}=", v) }
       end
     end
