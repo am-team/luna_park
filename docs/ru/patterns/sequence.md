@@ -329,7 +329,4 @@ module Sequences
     end
   end
 end
-
 ```
-
-

@@ -1,5 +1,5 @@
 require 'luna_park/entity'
-require 'luna_park/form'
+require 'luna_park/forms'
 require 'luna_park/handler'
 require 'luna_park/repository'
 require 'luna_park/sequence'
