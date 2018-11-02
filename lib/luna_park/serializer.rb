@@ -7,7 +7,7 @@ module LunaPark
     end
 
     def to_h
-      raise NoMethodError
+      raise NotImplementedError
     end
 
     def to_json

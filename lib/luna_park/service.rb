@@ -7,7 +7,7 @@ module LunaPark
     end
 
     def call
-      raise NoMethodError
+      raise NotImplementedError
     end
 
     def self.call(*args)

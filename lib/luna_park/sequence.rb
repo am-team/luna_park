@@ -11,11 +11,11 @@ module LunaPark
     end
 
     def call
-      raise NoMethodError
+      raise NotImplementedError
     end
 
     def data
-      raise NoMethodError
+      raise NotImplementedError
     end
 
     def attributes=(attrs)
