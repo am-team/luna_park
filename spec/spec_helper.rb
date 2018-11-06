@@ -5,10 +5,13 @@ require 'luna_park'
 
 require 'pry'
 require 'simplecov'
-require 'codecov'
+
+if ENV['CODECOV_TOKEN']
+  require 'codecov'
+  SimpleCov.formatter = SimpleCov::Formatter::Codecov
+end
 
 SimpleCov.start
-SimpleCov.formatter = SimpleCov::Formatter::Codecov
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

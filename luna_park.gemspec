@@ -34,6 +34,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'bundler', '~> 1.16'
   spec.add_development_dependency 'byebug'
+  spec.add_development_dependency 'codecov'
   spec.add_development_dependency 'dry-validation', '~> 0.12.2'
   spec.add_development_dependency 'overcommit'
   spec.add_development_dependency 'pry'
