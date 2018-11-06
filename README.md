@@ -1,5 +1,6 @@
 # LunaPark
-[![Build Status](https://travis-ci.org/CaptainPhilipp/entity_schema.svg?branch=master)](https://travis-ci.org/CaptainPhilipp/entity_schema)
+[![Build Status](https://travis-ci.org/am-team/luna_park.svg?branch=master)](https://travis-ci.org/am-team/luna_park)
+[![codecov](https://codecov.io/gh/am-team/luna_park/branch/master/graph/badge.svg)](https://codecov.io/gh/am-team/luna_park)
 
 I'm Going To Build My Own Luna Park With Forms and Services
 
