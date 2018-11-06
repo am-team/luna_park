@@ -4,6 +4,9 @@ require 'bundler/setup'
 require 'luna_park'
 
 require 'pry'
+require 'simplecov'
+
+SimpleCov.start
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
