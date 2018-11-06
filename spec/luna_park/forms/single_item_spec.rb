@@ -26,6 +26,7 @@ module Reception
     end
 
     private
+
     attr_reader :records
   end
 
@@ -33,6 +34,7 @@ module Reception
     validator VisitorValidator
 
     private
+
     attr_accessor :name
 
     def perform
@@ -43,7 +45,6 @@ end
 
 module LunaPark
   RSpec.describe Forms::SingleItem do
-
     shared_examples 'performed' do
       it 'performed object is change' do
         expect { subject }.to change { Reception::JournalRepo.instance.count }.by 1
@@ -103,7 +104,7 @@ module LunaPark
       context 'before form completed' do
         let(:params) { correct_record }
 
-        it { is_expected.to be_nil}
+        it { is_expected.to be_nil }
       end
 
       context 'after form completed' do
@@ -121,7 +122,7 @@ module LunaPark
         context 'when fill form with incorrect record' do
           let(:params) { incorrect_record }
 
-          it { is_expected.to be_nil}
+          it { is_expected.to be_nil }
         end
       end
     end

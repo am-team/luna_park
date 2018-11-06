@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe LunaPark::Extensions::Callable do
   class Cthulhu
     # TODO: Should be singleton ;)
@@ -68,7 +70,7 @@ RSpec.describe LunaPark::Extensions::Callable do
     end
 
     describe '.call!' do
-      subject { object.call! }
+      subject(:call!) { object.call! }
 
       it 'should raise `LunaPark::Errors::Processing`' do
         expect { call! }.to raise_error(processing_error)

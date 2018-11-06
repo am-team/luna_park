@@ -13,11 +13,11 @@ end
 RSpec.shared_context 'shared_extensions', shared_context: :metadata do
   shared_examples 'callable' do
     it 'has callable instance methods' do
-      expect(described_class).to be_a LunaPark::Extensions::Callable::InstanceMethods
+      expect(described_class.new).to be_a LunaPark::Extensions::Callable
     end
 
     it 'has callable class methods' do
-      expect(described_class).to be_a LunaPark::Extensions::Callable::ClassMethods
+      expect(described_class.new).to be_a LunaPark::Extensions::Callable
     end
   end
 

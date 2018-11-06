@@ -41,9 +41,7 @@ module LunaPark
         end
 
         def validate(params)
-          new(params).tap do |validation|
-            validation.validate!
-          end
+          new(params).tap(&:validate!)
         end
 
         private

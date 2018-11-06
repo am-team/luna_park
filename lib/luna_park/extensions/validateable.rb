@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'forwardable'
 
 module LunaPark
@@ -25,7 +27,7 @@ module LunaPark
           @validation ||= self.class.validate(params)
         end
 
-        delegate [:validate!, :valid?, :validation_errors, :valid_params] => :validation
+        delegate %i[validate! valid? validation_errors valid_params] => :validation
       end
 
       module ClassMethods

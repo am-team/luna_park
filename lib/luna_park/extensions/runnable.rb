@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LunaPark
   module Extensions
     # The Runnable interface is a generic interface
@@ -11,7 +13,6 @@ module LunaPark
       end
 
       module InstanceMethods
-
         # Unsafety runner, should raise `Errors::Processing`
         # of fail
         #

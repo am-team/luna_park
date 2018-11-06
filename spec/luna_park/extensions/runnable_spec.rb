@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LunaPark
   RSpec.describe Extensions::Runnable do
     class ForestGump
@@ -23,13 +25,13 @@ module LunaPark
       attr_reader :forest, :distance
 
       def call!
-        raise LunaPark::Errors::Processing, 'I have a day off'
+        forest.distance_he_ran += 1
       end
     end
 
     let(:processed_object) { ForestGump.new }
     let(:process_class)    { RunForest }
-    let(:process_instance)         { process_class.new(processed_object) }
+    let(:process_instance) { process_class.new(processed_object) }
 
     shared_examples 'processor change object' do
       it 'was changed object' do

@@ -22,7 +22,7 @@ module LunaPark
         end
       end
 
-      alias_method :errors, :validation_errors
+      alias errors validation_errors
 
       private
 
