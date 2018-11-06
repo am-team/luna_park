@@ -1,4 +1,5 @@
 # LunaPark
+[![Build Status](https://travis-ci.org/CaptainPhilipp/entity_schema.svg?branch=master)](https://travis-ci.org/CaptainPhilipp/entity_schema)
 
 I'm Going To Build My Own Luna Park With Forms and Services
 
