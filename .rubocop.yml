@@ -1,3 +1,5 @@
+inherit_from: .rubocop_todo.yml
+
 AllCops:
   Exclude:
     - '**/tmp/**/*'
@@ -17,6 +19,10 @@ Metrics/MethodLength:
   Exclude:
     - 'spec/**/*'
 
+Metrics/ModuleLength:
+  Exclude:
+    - 'spec/**/*'
+
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
@@ -30,4 +36,8 @@ Lint/AmbiguousBlockAssociation:
     - 'spec/**/*'
 
 Style/Attr:
+  Enabled: false
+
+# TODO: убрать/изменить правило
+Style/Documentation:
   Enabled: false
