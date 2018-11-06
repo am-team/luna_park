@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require_relative '../extensions/attributable'
-
 module LunaPark
   module Forms
     class SingleItem
       include Extensions::Attributable
+      include Extensions::Validateable::InstanceMethods
+      extend  Extensions::Validateable::ClassMethods
 
       attr_reader :result
 
@@ -14,58 +14,31 @@ module LunaPark
       end
 
       def complete!
-        if validate! && valid?
+        if validate!
           fill!
-          @result = perform!
+          perform!
+          true
         else false
         end
       end
 
-      def errors
-        validation_result&.errors || {}
-      end
+      alias_method :errors, :validation_errors
 
       private
 
       attr_reader :params
 
-      def validation_result
-        @validation_result ||= self.class.validate(params)
-      end
-
-      def valid?
-        validation_result.success?
-      end
-
-      def validate!
-        @validation_result = nil
-        validation_result
-      end
-
-      def valid_params
-        (valid? && validation_result.output) || {}
-      end
-
       def fill!
-        set_attributes(valid_params.dig(:data, :attributes))
+        # For JSONApi rewrite .dig(:data, :attributes)
+        set_attributes valid_params
       end
 
       def perform!
-        raise NotImplementedError
+        @result = perform
       end
 
-      class << self
-        def validator(klass)
-          @_validator = klass
-        end
-
-        def validate(params)
-          @_validator.validate(params) if validator?
-        end
-
-        def validator?
-          @_validator
-        end
+      def perform
+        raise NotImplementedError
       end
     end
   end
