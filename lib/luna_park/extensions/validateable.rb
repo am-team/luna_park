@@ -6,6 +6,12 @@ module LunaPark
     # containing a single `run()` method - which returns
     # a true
     module Validateable
+      def self.included(klass)
+        klass.include InstanceMethods
+        klass.extend  ClassMethods
+        super
+      end
+
       module InstanceMethods
         extend Forwardable
 
