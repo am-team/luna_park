@@ -7,37 +7,40 @@ module LunaPark
 
     attr_reader :fail_message
 
+    INIT    = :initialized
+    SUCCESS = :success
+    FAILURE = :failure
+
     def initialize(attrs = {})
-      set_attributes(attrs)
-      @fail = false
-      @fail_message = ''
+      set_attributes attrs
+      @state          = INIT
+      @fail_message   = nil
+    end
+
+    def call!
+      raise NotImplementedError
     end
 
     def call
-      raise NotImplementedError
+      catch { call! }
+      success?
     end
 
     def data
-      raise NotImplementedError
-    end
-
-    def attributes=(attrs)
-      attrs.each do |k, v|
-        send "#{k}=", v
-      end
+      returned_data if success?
     end
 
     def fail?
-      @fail
+      @state == FAILURE
     end
 
     def success?
-      !fail?
+      @state == SUCCESS
     end
 
     class << self
       def call(*attrs)
-        new(*attrs).call
+        new(*attrs).tap(&:call)
       end
     end
 
@@ -45,9 +48,14 @@ module LunaPark
 
     def catch
       yield
-    rescue Service::Errors::Processing => e
-      @fail = true
+      @state = SUCCESS
+    rescue Abstract::Errors::Processing => e
       @fail_message = e.message
+      @state        = FAILURE
+    end
+
+    def returned_data
+      raise NotImplementedError
     end
   end
 end

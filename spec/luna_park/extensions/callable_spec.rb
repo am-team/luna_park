@@ -14,22 +14,22 @@ RSpec.describe LunaPark::Extensions::Callable do
   let(:call_result)    { Cthulhu::FHTAGN }
   let(:object)         { callable_class.new }
 
-  it { expect(object).to be_a callable_class }
-
-  describe '.call' do
-    subject { object.call }
-
+  shared_examples 'success call' do
     it 'should return `object.call` result' do
       is_expected.to eq call_result
     end
   end
 
+  describe '.call' do
+    subject { object.call }
+
+    it_behaves_like 'success call'
+  end
+
   describe '.call!' do
     subject { object.call! }
 
-    it 'should return `object.call` result' do
-      is_expected.to eq call_result
-    end
+    it_behaves_like 'success call'
   end
 
   describe '#call' do
@@ -68,7 +68,7 @@ RSpec.describe LunaPark::Extensions::Callable do
     end
 
     describe '.call!' do
-      subject(:call!) { object.call! }
+      subject { object.call! }
 
       it 'should raise `LunaPark::Errors::Processing`' do
         expect { call! }.to raise_error(processing_error)
