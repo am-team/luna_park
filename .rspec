@@ -1,3 +1,5 @@
 --format documentation
 --color
 --require spec_helper
+--order rand
+--warnings

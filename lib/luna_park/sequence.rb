@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Abstract
+module LunaPark
   class Sequence
     include Extensions::Attributable
 
