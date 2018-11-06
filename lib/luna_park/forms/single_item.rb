@@ -4,8 +4,7 @@ module LunaPark
   module Forms
     class SingleItem
       include Extensions::Attributable
-      include Extensions::Validateable::InstanceMethods
-      extend  Extensions::Validateable::ClassMethods
+      include Extensions::Validateable
 
       attr_reader :result
 
