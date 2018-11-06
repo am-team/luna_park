@@ -4,6 +4,9 @@ module LunaPark
   module Extensions
     # Debug for #== method
     module ComparableDebug
+      ##
+      # Debug for #== method
+      #
       # returns { `bool` => [left, right] } }
       #   that describes result of left and right objects compasrion
       # or { :field_name => { `bool` => ... } }
@@ -25,7 +28,7 @@ module LunaPark
       #               :amount => { false => [41, 44] } } } } } # obj.from.usd.amount != other.from.usd.amount # 41 != 44
       def differences_structure(other)
         diff = comparsion_attributes.each_with_object({}) do |field, output|
-          left = send(field)
+          left  = send(field)
           right = other&.send(field)
 
           output[field] = if left.respond_to?(:differences_structure)
@@ -36,13 +39,6 @@ module LunaPark
         end
 
         { (self == other) => diff }
-      end
-
-      def comparsion_attributes
-        raise NotImplementedError,
-              "You must implement #{self.class}#comparsion_attributes method " \
-              'to return list of attributes (methods) for full comparsion with #== '\
-              'and #differences_structure'
       end
     end
   end
