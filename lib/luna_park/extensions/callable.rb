@@ -4,6 +4,12 @@ module LunaPark
     # containing a single `call()` method - which returns
     # a generic value
     module Callable
+      def self.included(klass)
+        klass.include InstanceMethods
+        klass.extend  ClassMethods
+        super
+      end
+
       module InstanceMethods
         # Abstract method should be defined at `callable class`.
         # Should be describe business logic of service.

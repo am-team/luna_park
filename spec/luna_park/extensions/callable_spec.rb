@@ -1,8 +1,7 @@
 RSpec.describe LunaPark::Extensions::Callable do
   class Cthulhu
     # TODO: Should be singleton ;)
-    include LunaPark::Extensions::Callable::InstanceMethods
-    extend  LunaPark::Extensions::Callable::ClassMethods
+    include LunaPark::Extensions::Callable
 
     FHTAGN = "Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn"
 
@@ -15,6 +14,8 @@ RSpec.describe LunaPark::Extensions::Callable do
   let(:call_result)    { Cthulhu::FHTAGN }
   let(:object)         { callable_class.new }
 
+  it { expect(object).to be_a callable_class }
+
   describe '.call' do
     subject { object.call }
 
@@ -24,7 +25,7 @@ RSpec.describe LunaPark::Extensions::Callable do
   end
 
   describe '.call!' do
-    subject{ object.call! }
+    subject { object.call! }
 
     it 'should return `object.call` result' do
       is_expected.to eq call_result
@@ -49,8 +50,7 @@ RSpec.describe LunaPark::Extensions::Callable do
 
   context 'when `object.call` method return `Processing` error ' do
     class CthulhuAtHoliday
-      include LunaPark::Extensions::Callable::InstanceMethods
-      extend  LunaPark::Extensions::Callable::ClassMethods
+      include LunaPark::Extensions::Callable
 
       def call!
         raise LunaPark::Errors::Processing, 'I have a day off'
@@ -61,38 +61,39 @@ RSpec.describe LunaPark::Extensions::Callable do
     let(:callable_class)   { CthulhuAtHoliday }
 
     describe '.call' do
-      subject { callable_class.new.call }
+      subject(:call) { callable_class.new.call }
 
+      it { expect { call }.not_to raise_error }
       it { is_expected.to be_nil }
     end
 
     describe '.call!' do
-      subject(:unsafe_call) { object.call! }
+      subject(:call!) { object.call! }
 
       it 'should raise `LunaPark::Errors::Processing`' do
-        expect { subject }.to raise_error(processing_error)
+        expect { call! }.to raise_error(processing_error)
       end
     end
 
     describe '#call' do
-      subject { callable_class.call }
+      subject(:call) { callable_class.call }
 
+      it { expect { call }.not_to raise_error }
       it { is_expected.to be_nil }
     end
 
     describe '#call!' do
-      subject { callable_class.call! }
+      subject(:call!) { callable_class.call! }
 
       it 'should raise `LunaPark::Errors::Processing`' do
-        expect { subject }.to raise_error(processing_error)
+        expect { call! }.to raise_error(processing_error)
       end
     end
   end
 
   context 'when `object.call` method return `StandardError` error ' do
     class CthulhuSick
-      include LunaPark::Extensions::Callable::InstanceMethods
-      extend  LunaPark::Extensions::Callable::ClassMethods
+      include LunaPark::Extensions::Callable
 
       def call!
         raise StandardError, 'I am on sick leave'
@@ -137,8 +138,7 @@ RSpec.describe LunaPark::Extensions::Callable do
 
   context 'when .call! method is undefined' do
     class LegasyCthulhu
-      include LunaPark::Extensions::Callable::InstanceMethods
-      extend  LunaPark::Extensions::Callable::ClassMethods
+      include LunaPark::Extensions::Callable
     end
 
     let(:callable_class) { LegasyCthulhu }
