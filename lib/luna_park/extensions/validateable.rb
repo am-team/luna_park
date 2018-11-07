@@ -36,11 +36,7 @@ module LunaPark
         end
 
         def validate(params)
-          @_validator.validate(params) if validator?
-        end
-
-        def validator?
-          @_validator
+          @_validator&.validate(params)
         end
       end
     end
