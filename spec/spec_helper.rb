@@ -26,7 +26,7 @@ SimpleCov.start do
       line.src =~ line(/class/) ||
         line.src =~ line(/module/) ||
         line.src =~ line(/[A-Z]+ *=/) || # constant definition
-        line.src =~ line(/def/) ||
+        line.src =~ line(/def /) ||
         line.src =~ line(/private($| *#)/) ||
         line.src =~ method(/require/) ||
         line.src =~ method(/require_relative/) ||

@@ -4,77 +4,81 @@ require 'ostruct'
 require 'securerandom'
 
 RSpec.describe LunaPark::Entity do
-  MyStruct = Struct.new(:foo) do
-    def self.wrap(input)
+  module Wrappable
+    def wrap(input)
       case input
       when self then input
-      when Hash then new(input[:foo])
+      when Hash then new(input)
       else raise ArgumentError
       end
     end
   end
 
-  let(:my_entity_klass) do
+  Eyes = Struct.new(:left, :right, keyword_init: true) { extend Wrappable }
+  Gun  = Struct.new(:title,        keyword_init: true) { extend Wrappable }
+
+  let(:elephant) do
     Class.new(described_class) do
-      namespace :my_namespace do
-        attr :struct_a, MyStruct, :wrap
-        attr :struct_b, OpenStruct, :new
-        attr :simple
+      namespace :head do
+        attr :eyes, Eyes, :wrap
+        attr :ears, OpenStruct, :new
+        attr :trunk_length
       end
 
-      namespace :other_namespace do
-        attr :not_comparable, comparable: false
-      end
+      attr :weapon, Gun, :wrap
+      attr :height
 
-      attr :simple
-      attr :not_comparable, comparable: false
+      attr :number_of_crushed_enemies, comparable: false
+      attr :last_battle_time,          comparable: false
     end
   end
 
-  let(:entity) { my_entity_klass.new(params) }
+  let(:entity) { elephant.new(params) }
 
   let(:params) do
     {
-      my_namespace: {
-        struct_a: { foo: 'Foo' },
-        struct_b: { bar: 'Bar' },
-        simple: 123
+      head: {
+        eyes: { left: 'Red', right: nil },
+        ears: { left: 'Normal', right: 'Damaged' },
+        trunk_length: 2.1
       },
-      other_namespace: {
-        not_comparable: '234'
-      },
-      simple: 21,
-      not_comparable: 12
+      weapon: { title: 'BFG' },
+      height: 4.2,
+      number_of_crushed_enemies: 2328,
+      last_battle_time: Date.parse('2018-12-07 06:40:09 UTC')
     }
   end
 
   describe '.new' do
-    subject(:new) { my_entity_klass.new(params) }
+    subject(:new) { elephant.new(params) }
 
     it 'creates Entity' do
       expect(new).to be_a described_class
     end
 
     it 'creates with expected types' do
-      expect(new.my_namespace.struct_a).to          be_a MyStruct
-      expect(new.my_namespace.struct_b).to          be_a OpenStruct
-      expect(new.other_namespace.not_comparable).to be_a String
-      expect(new.simple).to                         be_a Integer
-      expect(new.not_comparable).to                 be_a Integer
+      expect(new.head.eyes).to                 be_a Eyes
+      expect(new.head.ears).to                 be_a OpenStruct
+      expect(new.head.trunk_length).to         be_a Float
+      expect(new.weapon).to                    be_a Gun
+      expect(new.number_of_crushed_enemies).to be_a Integer
+      expect(new.last_battle_time).to          be_a Date
     end
 
     it 'creates with expected values structure' do
-      expect(new.my_namespace.struct_a.foo).to      eq 'Foo'
-      expect(new.my_namespace.struct_b.bar).to      eq 'Bar'
-      expect(new.my_namespace.simple).to            eq 123
-      expect(new.other_namespace.not_comparable).to eq '234'
-      expect(new.simple).to                         eq 21
-      expect(new.not_comparable).to                 eq 12
+      expect(new.head.eyes.left).to            eq 'Red'
+      expect(new.head.eyes.right).to           be nil
+      expect(new.head.ears.left).to            eq 'Normal'
+      expect(new.head.ears.right).to           eq 'Damaged'
+      expect(new.head.trunk_length).to         eq 2.1
+      expect(new.weapon.title).to              eq 'BFG'
+      expect(new.number_of_crushed_enemies).to eq 2328
+      expect(new.last_battle_time).to          eq Date.parse('2018-12-07 06:40:09 UTC')
     end
   end
 
   describe '.wrap' do
-    subject(:wrap) { my_entity_klass.wrap(input) }
+    subject(:wrap) { elephant.wrap(input) }
 
     context 'when given Entity' do
       let(:input) { entity }
@@ -96,7 +100,7 @@ RSpec.describe LunaPark::Entity do
       end
 
       it 'returns Entity same as .new' do
-        is_expected.to eq my_entity_klass.new(params)
+        is_expected.to eq elephant.new(params)
       end
     end
   end
@@ -110,17 +114,17 @@ RSpec.describe LunaPark::Entity do
 
     context 'when entity was changed,' do
       before do
-        entity.other_namespace.not_comparable = changed_a
-        entity.simple = changed_b
+        entity.last_battle_time  = changed_time
+        entity.head.trunk_length = changed_trunk
       end
 
-      let(:changed_a) { SecureRandom.hex }
-      let(:changed_b) { rand(0..999_999) }
+      let(:changed_time)  { Date.parse('2018-12-07 00:00:00 UTC') }
+      let(:changed_trunk) { 0.1 }
 
       let(:expected_hash) do
         hash = params.dup
-        hash[:other_namespace][:not_comparable] = changed_a
-        hash[:simple] = changed_b
+        hash[:last_battle_time]    = changed_time
+        hash[:head][:trunk_length] = changed_trunk
         hash
       end
 
@@ -133,29 +137,27 @@ RSpec.describe LunaPark::Entity do
   describe '#== (controlled by `attr .., comparable: ..` option),' do
     subject(:equality) { entity == other }
 
-    let(:other) { my_entity_klass.new(other_params) }
+    let(:other) { elephant.new(other_params) }
 
-    context 'when other creates from same params' do
+    context 'when other created with the same params' do
       let(:other_params) { params }
 
       it { is_expected.to be true }
     end
 
-    context 'when other creates from different uncomparable params' do
+    context 'when other created with different but uncomparable params' do
       let(:other_params) do
-        o_params = params.dup
-        o_params[:other_namespace][:not_comparable] = '999'
-        o_params[:not_comparable] = 999
-        o_params
+        params.merge(last_battle_time: Date.parse('2018-12-07 00:00:00 UTC'),
+                     number_of_crushed_enemies: 2330)
       end
 
       it { is_expected.to be true }
     end
 
-    context 'when other creates from different params' do
+    context 'when other created with the different params' do
       let(:other_params) do
         o_params = params.dup
-        o_params[:my_namespace][:simple] = 999
+        o_params[:head][:ears][:left] = nil
         o_params
       end
 

@@ -29,14 +29,12 @@ module LunaPark
       def attr(name, klass = nil, method = nil, comparable: true)
         fields_to_h       << name
         fields_comparsion << name if comparable
-        attr_reader(name)
 
-        if klass.nil? && method.nil?
-          attr_writer(name)
-        else
-          define_method(:"#{name}=") do |input|
-            instance_variable_set(:"@#{name}", klass.public_send(method, input))
-          end
+        attr_reader(name)
+        return attr_writer(name) if klass.nil? && method.nil?
+
+        define_method(:"#{name}=") do |input|
+          instance_variable_set(:"@#{name}", klass.public_send(method, input))
         end
       end
 
@@ -61,22 +59,14 @@ module LunaPark
       set_attributes(hash)
     end
 
-    HASHEABLE = ->(o) { o.respond_to?(:to_h) }.freeze
-
-    def to_h # rubocop:disable Metrics/MethodLength:
+    def to_h
       self.class
           .fields_to_h
           .each_with_object({}) do |field, output|
             value = public_send(field)
             next if value.nil?
 
-            output[field] =
-              case value
-              when HASHEABLE then value.to_h
-              when Array     then value.map(&:to_h)
-              when Hash      then value.transform_values(&:to_h)
-              else value
-              end
+            output[field] = value_to_h(value)
           end
     end
 
@@ -89,6 +79,17 @@ module LunaPark
     end
 
     private
+
+    HASHEABLE = ->(o) { o.respond_to?(:to_h) }.freeze
+
+    def value_to_h(value)
+      case value
+      when Array then value.map              { |v| value_to_h(v) } # TODO: work with Array (wrap values)
+      when Hash  then value.transform_values { |v| value_to_h(v) }
+      when HASHEABLE then value.to_h
+      else value
+      end
+    end
 
     def comparsion_attributes
       self.class.fields_comparsion
