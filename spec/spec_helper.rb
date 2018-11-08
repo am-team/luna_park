@@ -22,23 +22,23 @@ SimpleCov.start do
       /^\A\s*#{pattern}(\(| )/
     end
 
-    source_file.lines.each do |line|
-      next unless line.src =~ line(/class/) ||
-                  line.src =~ line(/module/) ||
-                  line.src =~ line(/[A-Z]+ *=/) || # constant definition
-                  line.src =~ line(/def/) ||
-                  line.src =~ line(/private($| *#)/) ||
-                  line.src =~ method(/require/) ||
-                  line.src =~ method(/require_relative/) ||
-                  line.src =~ method(/include/) ||
-                  line.src =~ method(/extend/) ||
-                  line.src =~ method(/attr_reader/) ||
-                  line.src =~ method(/attr_writer/) ||
-                  line.src =~ method(/attr_accessor/)
-
-      line.skipped!
+    requiretime_lines, runtime_lines = source_file.lines.partition do |line|
+      line.src =~ line(/class/) ||
+        line.src =~ line(/module/) ||
+        line.src =~ line(/[A-Z]+ *=/) || # constant definition
+        line.src =~ line(/def /) ||
+        line.src =~ line(/private($| *#)/) ||
+        line.src =~ method(/require/) ||
+        line.src =~ method(/require_relative/) ||
+        line.src =~ method(/include/) ||
+        line.src =~ method(/extend/) ||
+        line.src =~ method(/attr_reader/) ||
+        line.src =~ method(/attr_writer/) ||
+        line.src =~ method(/attr_accessor/)
     end
-    false # do not skip file
+
+    requiretime_lines.each(&:skipped!) # skip lines that will be executed when file will be required
+    runtime_lines.empty? # skip file if no runtime codelines finded
   end
 end
 
