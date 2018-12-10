@@ -38,7 +38,7 @@ module LunaPark
       end
 
       def perform
-        raise NotImplementedError
+        raise Errors::AbstractMethod
       end
     end
   end
