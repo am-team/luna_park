@@ -20,7 +20,7 @@ module LunaPark
         private
 
         def params
-          raise NotImplementedError
+          raise Errors::AbstractMethod
         end
 
         def validation

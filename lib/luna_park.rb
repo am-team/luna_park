@@ -1,16 +1,34 @@
 # frozen_string_literal: true
 
-require 'luna_park/entity'
-require 'luna_park/errors'
-require 'luna_park/extensions'
-require 'luna_park/forms'
-require 'luna_park/handler'
-require 'luna_park/repository'
-require 'luna_park/sequence'
-require 'luna_park/serializer'
-require 'luna_park/services'
-require 'luna_park/validators'
-require 'luna_park/version'
-
 # add description
-module LunaPark; end
+module LunaPark
+  module Entities;   end
+  module Errors;     end
+  module Extensions; end
+  module Forms; end
+  module Handlers; end
+  module Interactors; end
+  module Serializers; end
+  module UseCases; end
+  module Validators; end
+  module Values; end
+end
+
+require_relative 'luna_park/extensions/attributable'
+require_relative 'luna_park/extensions/callable'
+require_relative 'luna_park/extensions/comparable'
+require_relative 'luna_park/extensions/comparable_debug'
+require_relative 'luna_park/extensions/validateable'
+require_relative 'luna_park/entities/nested'
+require_relative 'luna_park/entities/simple'
+require_relative 'luna_park/errors'
+require_relative 'luna_park/forms/single_item'
+require_relative 'luna_park/handlers/simple'
+require_relative 'luna_park/interactors/sequence'
+require_relative 'luna_park/serializers/simple'
+require_relative 'luna_park/use_cases/command'
+require_relative 'luna_park/use_cases/guard'
+require_relative 'luna_park/use_cases/service'
+require_relative 'luna_park/validators/dry'
+require_relative 'luna_park/values/compound'
+require_relative 'luna_park/values/simple'

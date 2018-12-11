@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module LunaPark
-  RSpec.describe Extensions::Runnable do
+  RSpec.describe UseCases::Command do
     class ForestGump
       # in ft
       attr_accessor :distance_he_ran
@@ -11,10 +11,7 @@ module LunaPark
       end
     end
 
-    class RunForest
-      # TODO: Should be singleton ;)
-      include Extensions::Runnable
-
+    class RunForest < UseCases::Command
       def initialize(forest, distance: 1)
         @forest   = forest
         @distance = distance
@@ -24,7 +21,7 @@ module LunaPark
 
       attr_reader :forest, :distance
 
-      def call!
+      def execute
         forest.distance_he_ran += 1
       end
     end
@@ -57,69 +54,67 @@ module LunaPark
       end
     end
 
-    describe '.run' do
-      subject { process_instance.run }
+    describe '.call' do
+      subject { process_instance.call }
 
       it { is_expected.to be true }
       it_behaves_like 'processor change object'
     end
 
-    describe '.run!' do
-      subject { process_instance.run! }
+    describe '.call!' do
+      subject { process_instance.call! }
 
       it { is_expected.to be true }
       it_behaves_like 'processor change object'
     end
 
-    describe '#run' do
-      subject { process_class.run processed_object }
+    describe '#call' do
+      subject { process_class.call processed_object }
 
       it { is_expected.to be true }
       it_behaves_like 'processor change object'
     end
 
-    describe '#run!' do
-      subject { process_class.run! processed_object }
+    describe '#call!' do
+      subject { process_class.call! processed_object }
 
       it { is_expected.to be true }
       it_behaves_like 'processor change object'
     end
-
-    it { expect(process_instance).to be_a Extensions::Runnable }
 
     context 'when process has fail' do
       class RunHolidayForest < RunForest
         private
 
-        def call!
+        def execute
           raise Errors::Processing, 'I have a day off'
         end
       end
 
       let(:process_class) { RunHolidayForest }
 
-      describe '.run' do
-        subject(:run) { process_instance.run }
+      describe '.call' do
+        subject(:call) { process_instance.call }
 
         it { is_expected.to be false }
-        it { expect { run }.not_to raise_error }
+        it { expect { call }.not_to raise_error }
         it_behaves_like 'processor does not change object'
       end
 
-      describe '.run!' do
-        subject { process_instance.run! }
+      describe '.call!' do
+        subject { process_instance.call! }
         it_behaves_like 'processor fail'
       end
 
-      describe '#run' do
-        subject { process_class.run processed_object }
+      describe '#call' do
+        subject { process_class.call processed_object }
 
         it { is_expected.to be false }
         it_behaves_like 'processor does not change object'
       end
 
-      describe '#run!' do
-        subject { process_class.run! processed_object }
+      describe '#call!' do
+        subject { process_class.call! processed_object }
         it_behaves_like 'processor fail'
       end
     end
@@ -135,31 +130,29 @@ module LunaPark
 
       let(:process_class) { RunSickForest }
 
-      describe '.run' do
-        subject { process_instance.run }
+      describe '.call' do
+        subject { process_instance.call }
         it_behaves_like 'processor error'
       end
 
-      describe '.run!' do
-        subject { process_instance.run! }
+      describe '.call!' do
+        subject { process_instance.call! }
         it_behaves_like 'processor error'
       end
 
-      describe '#run' do
-        subject { process_class.run processed_object }
+      describe '#call' do
+        subject { process_class.call processed_object }
         it_behaves_like 'processor error'
       end
 
-      describe '#run!' do
-        subject { process_class.run! processed_object }
+      describe '#call!' do
+        subject { process_class.call! processed_object }
         it_behaves_like 'processor error'
       end
     end
 
     context 'when .call! method is undefined' do
-      class LegasyForest
-        include Extensions::Runnable
-
+      class LegasyForest < UseCases::Command
         def initialize(forest, distance: 1)
           @forest   = forest
           @distance = distance
@@ -168,11 +161,11 @@ module LunaPark
 
       let(:process_class) { LegasyForest }
 
-      describe '.run!' do
-        subject(:run!) { process_instance.run! }
+      describe '.call!' do
+        subject(:call!) { process_instance.call! }
 
         it 'should raise `NotImplementedError`' do
-          expect { run! }.to raise_error(NotImplementedError)
+          expect { call! }.to raise_error(Errors::AbstractMethod)
         end
       end
     end

@@ -2,6 +2,8 @@
 
 module LunaPark
   module Errors
-    class Processing < StandardError; end
+    class Processing     < StandardError; end
+    class AbstractMethod < RuntimeError; end
+    class Unwrapable     < ArgumentError; end
   end
 end
