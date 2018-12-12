@@ -1,13 +1,16 @@
+# frozen_string_literal: true
+
 class Pie < LunaPark::Entities::Simple
   attr_accessor :filler
 
   def ==(other)
-    self.filler == other.filler
+    filler == other.filler
   end
 end
 
 class MakingApplePie < LunaPark::Interactors::Sequence
   private
+
   def execute
     @pie = Pie.new(filler: :apple)
   end
@@ -29,7 +32,7 @@ module LunaPark
     let(:sequence)       { klass.new }
 
     context 'without process errors' do
-      let(:klass)          { MakingApplePie }
+      let(:klass) { MakingApplePie }
 
       describe '.call!' do
         subject { sequence.call! }
