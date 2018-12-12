@@ -86,7 +86,7 @@ module LunaPark
         before { defected_klass.remove_method :perform }
 
         it 'should raise AbstractMethod error' do
-          expect{ subject }.to raise_error Errors::AbstractMethod
+          expect { subject }.to raise_error Errors::AbstractMethod
         end
       end
     end
