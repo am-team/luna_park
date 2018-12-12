@@ -51,7 +51,7 @@ module LunaPark
       def catch
         yield
         @state = SUCCESS
-      rescue Abstract::Errors::Processing => e
+      rescue Errors::Processing => e
         @fail_message = e.message
         @state        = FAILURE
       end

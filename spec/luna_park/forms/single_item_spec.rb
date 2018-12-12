@@ -59,8 +59,9 @@ module LunaPark
 
     let(:correct_record)   { { name: 'John Doe' } }
     let(:incorrect_record) { { name: 42 } }
+    let(:klass) { Reception::RegisterVisitor }
 
-    let(:form) { Reception::RegisterVisitor.new(params) }
+    let(:form) { klass.new(params) }
 
     describe '.complete!' do
       subject { form.complete! }
@@ -77,6 +78,16 @@ module LunaPark
 
         it { is_expected.to be false }
         it_behaves_like 'not performed'
+      end
+
+      context 'when perform method undefined' do
+        let(:defected_klass) { klass.dup }
+        let(:form) { defected_klass.new correct_record }
+        before { defected_klass.remove_method :perform }
+
+        it 'should raise AbstractMethod error' do
+          expect{ subject }.to raise_error Errors::AbstractMethod
+        end
       end
     end
 
