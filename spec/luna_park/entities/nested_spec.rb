@@ -32,8 +32,8 @@ end
 
 module LunaPark
   RSpec.describe Entities::Nested do
-    let(:klass)  { Elephant }
-    let(:entity) { klass.new(params) }
+    let(:sample_klass) { Elephant }
+    let(:entity)       { sample_klass.new(params) }
 
     let(:params) do
       {
@@ -50,7 +50,7 @@ module LunaPark
     end
 
     describe '.new' do
-      subject(:new) { klass.new(params) }
+      subject(:new) { sample_klass.new(params) }
 
       it 'creates Entity' do
         expect(new).to be_a described_class
@@ -78,43 +78,12 @@ module LunaPark
     end
 
     describe '.wrap' do
-      subject(:wrap) { klass.wrap(input) }
+      subject(:wrap) { sample_klass.wrap(input) }
 
-      context 'when given Entity' do
-        let(:input) { entity }
+      let(:object)    { entity }
+      let(:arguments) { params }
 
-        it 'returns Entity' do
-          is_expected.to be_a described_class
-        end
-
-        it 'returns given entity' do
-          is_expected.to be input
-        end
-      end
-
-      context 'when given Hash' do
-        let(:input) { params }
-
-        it 'returns Entity' do
-          is_expected.to be_a described_class
-        end
-
-        it 'returns Entity same as .new' do
-          is_expected.to eq klass.new(params)
-        end
-      end
-
-      context 'when given Not a mouse, not a frog, but an unknown creature' do
-        let(:input) { params.to_a }
-
-        it 'raises error with expected type' do
-          expect { wrap }.to raise_error Errors::Unwrapable
-        end
-
-        it 'raises error with expected message' do
-          expect { wrap }.to raise_error "Can`t wrap #{input.class}"
-        end
-      end
+      include_examples 'wrap method'
     end
 
     describe '#to_h' do
@@ -163,7 +132,7 @@ module LunaPark
     describe '#== (controlled by `attr .., comparable: ..` option),' do
       subject(:equality) { entity == other }
 
-      let(:other) { klass.new(other_params) }
+      let(:other) { sample_klass.new(other_params) }
 
       context 'when other created with the same params' do
         let(:other_params) { params }

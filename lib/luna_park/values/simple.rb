@@ -12,14 +12,14 @@ module LunaPark
       end
 
       def ==(other)
-        self.value = other.value
+        value == other.value
       end
 
       class << self
         def wrap(obj)
           case obj
           when self then obj
-          else raise Errors::Unwrapable "Can`t wrap #{obj.class}"
+          else raise Errors::Unwrapable, "Can`t wrap #{obj.class}"
           end
         end
       end

@@ -3,10 +3,6 @@
 class Rank < LunaPark::Values::Simple
   LIST = %w[6 7 8 9 10 J Q K A].freeze
 
-  # def <=>(another)
-  #
-  # end
-
   def to_s
     value
   end
@@ -23,10 +19,20 @@ end
 
 module LunaPark
   RSpec.describe Values::Simple do
-    let(:value) { 'Q' }
-    let(:rank)  { Rank.new(value) }
+    let(:value)        { 'Q' }
+    let(:sample_klass) { Rank }
+    let(:rank)         { sample_klass.new(value) }
 
-    describe '.value' do
+    describe '.wrap' do
+      subject(:wrap) { sample_klass.wrap(input) }
+
+      let(:object)    { rank }
+      let(:arguments) { value }
+
+      include_examples 'wrap method'
+    end
+
+    describe '#value' do
       subject { rank.value }
 
       it 'is equal value from initializer' do
@@ -35,11 +41,18 @@ module LunaPark
     end
 
     describe '==' do
-      context 'when same value' do
-        let(:another) { Rank.new(value) }
+      subject(:eq) { rank == other }
 
-        it 'is same' do
-        end
+      context 'when same value' do
+        let(:other) { Rank.new(value) }
+
+        it { is_expected.to be true }
+      end
+
+      context 'when not same value' do
+        let(:other) { Rank.new(value * 2) }
+
+        it { is_expected.to be false }
       end
     end
   end
