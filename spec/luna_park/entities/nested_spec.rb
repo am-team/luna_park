@@ -108,6 +108,20 @@ module LunaPark
     describe '#to_h' do
       subject(:to_h) { entity.to_h }
 
+      # let(:params) do
+      #   {
+      #     head: {
+      #       eyes: { left: 'Red', right: nil },
+      #       ears: { left: 'Normal', right: 'Damaged' },
+      #       trunk_length: 2.1
+      #     },
+      #     weapon: { title: 'BFG' },
+      #     height: [4.2, 3.5, 12],
+      #     number_of_crushed_enemies: { swordmans: 1318, cavalery: 1010 },
+      #     last_battle_time: Date.parse('2018-12-07 06:40:09 UTC')
+      #   }
+      # end
+
       it 'returns same hash as given params' do
         is_expected.to eq params
       end
