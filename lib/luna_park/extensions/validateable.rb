@@ -19,9 +19,11 @@ module LunaPark
 
         private
 
+        # :nocov:
         def params
           raise Errors::AbstractMethod
         end
+        # :nocov:
 
         def validation
           @validation ||= self.class.validate(params)

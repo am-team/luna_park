@@ -56,13 +56,17 @@ module LunaPark
         @state        = FAILURE
       end
 
+      # :nocov:
       def execute
         raise Errors::AbstractMethod
       end
+      # :nocov:
 
+      # :nocov:
       def returned_data
         raise Errors::AbstractMethod
       end
+      # :nocov:
     end
   end
 end

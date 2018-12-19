@@ -9,9 +9,11 @@ module LunaPark
         set_attributes attrs
       end
 
+      # :nocov:
       def ==(_other)
         raise Errors::AbstractMethod
       end
+      # :nocov:
 
       class << self
         def wrap(obj)
