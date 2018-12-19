@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../lib/luna_park/errors'
-
 module LunaPark
   shared_examples 'wrap method' do
     context 'when given self type' do
