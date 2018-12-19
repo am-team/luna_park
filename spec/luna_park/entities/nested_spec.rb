@@ -103,24 +103,36 @@ module LunaPark
           is_expected.to eq klass.new(params)
         end
       end
+
+      context 'when given Not a mouse, not a frog, but an unknown creature' do
+        let(:input) { params.to_a }
+
+        it 'raises error with expected type' do
+          expect { wrap }.to raise_error Errors::Unwrapable
+        end
+
+        it 'raises error with expected message' do
+          expect { wrap }.to raise_error "Can`t wrap #{input.class}"
+        end
+      end
     end
 
     describe '#to_h' do
       subject(:to_h) { entity.to_h }
 
-      # let(:params) do
-      #   {
-      #     head: {
-      #       eyes: { left: 'Red', right: nil },
-      #       ears: { left: 'Normal', right: 'Damaged' },
-      #       trunk_length: 2.1
-      #     },
-      #     weapon: { title: 'BFG' },
-      #     height: [4.2, 3.5, 12],
-      #     number_of_crushed_enemies: { swordmans: 1318, cavalery: 1010 },
-      #     last_battle_time: Date.parse('2018-12-07 06:40:09 UTC')
-      #   }
-      # end
+      let(:params) do
+        {
+          head: {
+            eyes: { left: 'Red', right: nil },
+            ears: { left: 'Normal', right: 'Damaged' },
+            trunk_length: 2.1
+          },
+          weapon: { title: 'BFG' },
+          height: [4.2, 3.5, 12],
+          number_of_crushed_enemies: { swordmans: 1318, cavalery: 1010 },
+          last_battle_time: Date.parse('2018-12-07 06:40:09 UTC')
+        }
+      end
 
       it 'returns same hash as given params' do
         is_expected.to eq params
@@ -176,6 +188,21 @@ module LunaPark
         end
 
         it { is_expected.to be false }
+      end
+    end
+
+    describe '#inspect' do
+      subject(:inspect) { entity.inspect }
+
+      it 'returns expected string' do
+        is_expected.to eq '#<Elephant ' \
+          '@head=#<Namespace:head ' \
+          '@eyes=#<struct Eyes left="Red", right=nil> ' \
+          '@ears=#<OpenStruct left="Normal", right="Damaged"> ' \
+          '@trunk_length=2.1> @weapon=#<struct Gun title="BFG"> ' \
+          '@height=4.2 ' \
+          '@number_of_crushed_enemies=2328 ' \
+          '@last_battle_time=#<Date: 2018-12-07 ((2458460j,0s,0n),+0s,2299161j)>>'
       end
     end
   end
