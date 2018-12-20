@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-class Rank < LunaPark::Values::Simple
+class CardRank < LunaPark::Values::Simple
   LIST = %w[6 7 8 9 10 J Q K A].freeze
 
-  def to_s
-    value
+  def initialize(arg)
+    arg = arg.to_s
+    raise "Unknown rank #{arg}" unless LIST.include?(arg)
+
+    super(arg)
   end
 
   class << self
-    def wrap(obj)
-      case obj
-      when String then new(obj)
-      else super
-      end
+    def wrap(input)
+      input.is_a?(String) ? new(input) : super
     end
   end
 end
@@ -20,7 +20,7 @@ end
 module LunaPark
   RSpec.describe Values::Simple do
     let(:value)        { 'Q' }
-    let(:sample_class) { Rank }
+    let(:sample_class) { CardRank }
     let(:rank)         { sample_class.new(value) }
 
     describe '.wrap' do
@@ -33,10 +33,27 @@ module LunaPark
     end
 
     describe '#value' do
-      subject { rank.value }
+      subject(:value_) { rank.value }
 
       it 'is equal value from initializer' do
-        is_expected.to eq(value)
+        is_expected.to eq value_
+      end
+    end
+
+    describe '#to_s' do
+      let(:value)    { 6 }
+      subject(:to_s) { rank.to_s }
+
+      it 'is equal value.to_s' do
+        is_expected.to eq value.to_s
+      end
+    end
+
+    describe '#inspect' do
+      subject(:inspect) { rank.inspect }
+
+      it 'returns expected string' do
+        is_expected.to eq "#<#{sample_class.name} #{rank.value.inspect}>"
       end
     end
 
@@ -44,13 +61,13 @@ module LunaPark
       subject(:eq) { rank == other }
 
       context 'when same value' do
-        let(:other) { Rank.new(value) }
+        let(:other) { sample_class.new(value) }
 
         it { is_expected.to be true }
       end
 
       context 'when not same value' do
-        let(:other) { Rank.new(value * 2) }
+        let(:other) { sample_class.new('J') }
 
         it { is_expected.to be false }
       end

@@ -14,16 +14,8 @@ module LunaPark
       end
     end
 
-    context 'when given Hash' do
-      let(:input) { arguments }
-
-      it 'returns self type' do
-        is_expected.to be_a described_class
-      end
-    end
-
     context 'when given Not a mouse, not a frog, but an unknown creature' do
-      let(:input) { [] }
+      let(:input) { Class.new }
 
       it 'raises error with expected type' do
         expect { wrap }.to raise_error Errors::Unwrapable

@@ -84,6 +84,14 @@ module LunaPark
       let(:arguments) { params }
 
       include_examples 'wrap method'
+
+      context 'when given Hash' do
+        let(:input) { arguments }
+
+        it 'returns self type' do
+          is_expected.to be_a described_class
+        end
+      end
     end
 
     describe '#to_h' do
