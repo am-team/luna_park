@@ -20,11 +20,11 @@ end
 module LunaPark
   RSpec.describe Values::Simple do
     let(:value)        { 'Q' }
-    let(:sample_klass) { Rank }
-    let(:rank)         { sample_klass.new(value) }
+    let(:sample_class) { Rank }
+    let(:rank)         { sample_class.new(value) }
 
     describe '.wrap' do
-      subject(:wrap) { sample_klass.wrap(input) }
+      subject(:wrap) { sample_class.wrap(input) }
 
       let(:object)    { rank }
       let(:arguments) { value }

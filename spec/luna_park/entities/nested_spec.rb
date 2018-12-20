@@ -32,8 +32,8 @@ end
 
 module LunaPark
   RSpec.describe Entities::Nested do
-    let(:sample_klass) { Elephant }
-    let(:entity)       { sample_klass.new(params) }
+    let(:sample_class) { Elephant }
+    let(:entity)       { sample_class.new(params) }
 
     let(:params) do
       {
@@ -50,7 +50,7 @@ module LunaPark
     end
 
     describe '.new' do
-      subject(:new) { sample_klass.new(params) }
+      subject(:new) { sample_class.new(params) }
 
       it 'creates Entity' do
         expect(new).to be_a described_class
@@ -78,7 +78,7 @@ module LunaPark
     end
 
     describe '.wrap' do
-      subject(:wrap) { sample_klass.wrap(input) }
+      subject(:wrap) { sample_class.wrap(input) }
 
       let(:object)    { entity }
       let(:arguments) { params }
@@ -132,7 +132,7 @@ module LunaPark
     describe '#== (controlled by `attr .., comparable: ..` option),' do
       subject(:equality) { entity == other }
 
-      let(:other) { sample_klass.new(other_params) }
+      let(:other) { sample_class.new(other_params) }
 
       context 'when other created with the same params' do
         let(:other_params) { params }
