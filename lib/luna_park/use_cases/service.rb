@@ -17,9 +17,11 @@ module LunaPark
 
       private
 
+      # :nocov:
       def execute
         raise Errors::AbstractMethod
       end
+      # :nocov:
     end
   end
 end

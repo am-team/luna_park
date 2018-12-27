@@ -5,6 +5,8 @@ require 'pry'
 
 require 'simplecov'
 
+require_relative 'support/shared'
+
 if ENV['CODECOV_TOKEN']
   require 'codecov'
   SimpleCov.formatter = SimpleCov::Formatter::Codecov

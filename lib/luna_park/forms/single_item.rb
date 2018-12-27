@@ -37,9 +37,11 @@ module LunaPark
         @result = perform
       end
 
+      # :nocov:
       def perform
         raise Errors::AbstractMethod
       end
+      # :nocov:
     end
   end
 end

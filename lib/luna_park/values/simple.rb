@@ -12,15 +12,22 @@ module LunaPark
       end
 
       def ==(other)
-        self.value = other.value
+        value == other.value
+      end
+
+      def to_s
+        value.to_s
+      end
+
+      def inspect
+        "#<#{self.class} #{value.inspect}>"
       end
 
       class << self
-        def wrap(obj)
-          case obj
-          when self then obj
-          else raise Errors::Unwrapable "Can`t wrap #{obj.class}"
-          end
+        def wrap(input)
+          return input if input.is_a?(self)
+
+          raise Errors::Unwrapable, "Can`t wrap #{input.class}"
         end
       end
     end

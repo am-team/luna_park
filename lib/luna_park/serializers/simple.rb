@@ -8,9 +8,11 @@ module LunaPark
         @object = object
       end
 
+      # :nocov:
       def to_h
         raise Errors::AbstractMethod
       end
+      # :nocov:
 
       def to_json
         JSON.dump(to_h)

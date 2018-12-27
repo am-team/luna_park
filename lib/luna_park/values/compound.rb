@@ -9,15 +9,18 @@ module LunaPark
         set_attributes attrs
       end
 
+      # :nocov:
       def ==(_other)
         raise Errors::AbstractMethod
       end
+      # :nocov:
 
       class << self
-        def wrap(obj)
-          case obj
-          when self then obj
-          else raise Errors::Unwrapable "Can`t wrap #{obj.class}"
+        def wrap(input)
+          case input
+          when self then input
+          when Hash then new(input)
+          else raise Errors::Unwrapable, "Can`t wrap #{input.class}"
           end
         end
       end

@@ -10,12 +10,14 @@ module LunaPark
         comparsion_attributes.all? { |attr| send(attr) == other.send(attr) }
       end
 
+      # :nocov:
       def comparsion_attributes
         raise Errors::AbstractMethod,
               "You must implement #{self.class}#comparsion_attributes method " \
               'to return list of attributes (methods) for full comparsion with #== '\
               'and #differences_structure'
       end
+      # :nocov:
     end
   end
 end

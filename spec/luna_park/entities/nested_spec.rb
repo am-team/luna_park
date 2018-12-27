@@ -32,8 +32,8 @@ end
 
 module LunaPark
   RSpec.describe Entities::Nested do
-    let(:klass)  { Elephant }
-    let(:entity) { klass.new(params) }
+    let(:sample_class) { Elephant }
+    let(:entity)       { sample_class.new(params) }
 
     let(:params) do
       {
@@ -50,7 +50,7 @@ module LunaPark
     end
 
     describe '.new' do
-      subject(:new) { klass.new(params) }
+      subject(:new) { sample_class.new(params) }
 
       it 'creates Entity' do
         expect(new).to be_a described_class
@@ -78,35 +78,38 @@ module LunaPark
     end
 
     describe '.wrap' do
-      subject(:wrap) { klass.wrap(input) }
+      subject(:wrap) { sample_class.wrap(input) }
 
-      context 'when given Entity' do
-        let(:input) { entity }
+      let(:object)    { entity }
+      let(:arguments) { params }
 
-        it 'returns Entity' do
-          is_expected.to be_a described_class
-        end
-
-        it 'returns given entity' do
-          is_expected.to be input
-        end
-      end
+      include_examples 'wrap method'
 
       context 'when given Hash' do
-        let(:input) { params }
+        let(:input) { arguments }
 
-        it 'returns Entity' do
+        it 'returns self type' do
           is_expected.to be_a described_class
-        end
-
-        it 'returns Entity same as .new' do
-          is_expected.to eq klass.new(params)
         end
       end
     end
 
     describe '#to_h' do
       subject(:to_h) { entity.to_h }
+
+      let(:params) do
+        {
+          head: {
+            eyes: { left: 'Red', right: nil },
+            ears: { left: 'Normal', right: 'Damaged' },
+            trunk_length: 2.1
+          },
+          weapon: { title: 'BFG' },
+          height: [4.2, 3.5, 12],
+          number_of_crushed_enemies: { swordmans: 1318, cavalery: 1010 },
+          last_battle_time: Date.parse('2018-12-07 06:40:09 UTC')
+        }
+      end
 
       it 'returns same hash as given params' do
         is_expected.to eq params
@@ -137,7 +140,7 @@ module LunaPark
     describe '#== (controlled by `attr .., comparable: ..` option),' do
       subject(:equality) { entity == other }
 
-      let(:other) { klass.new(other_params) }
+      let(:other) { sample_class.new(other_params) }
 
       context 'when other created with the same params' do
         let(:other_params) { params }
@@ -162,6 +165,21 @@ module LunaPark
         end
 
         it { is_expected.to be false }
+      end
+    end
+
+    describe '#inspect' do
+      subject(:inspect) { entity.inspect }
+
+      it 'returns expected string' do
+        is_expected.to eq '#<Elephant ' \
+          '@head=#<Namespace:head ' \
+          '@eyes=#<struct Eyes left="Red", right=nil> ' \
+          '@ears=#<OpenStruct left="Normal", right="Damaged"> ' \
+          '@trunk_length=2.1> @weapon=#<struct Gun title="BFG"> ' \
+          '@height=4.2 ' \
+          '@number_of_crushed_enemies=2328 ' \
+          '@last_battle_time=#<Date: 2018-12-07 ((2458460j,0s,0n),+0s,2299161j)>>'
       end
     end
   end
