@@ -4,11 +4,8 @@
 
 I'm Going To Build My Own Luna Park With Forms and Services
 
-![Luna Park](https://u.kanobu.ru/comments/images/7a905e43-1374-4492-b6fc-fcb72e6ce08b.jpg)
+![Luna Park](docs/_imgs/bender.jpeg)
 
-# Documentation
-
-[Russian](docs/ru/README.md)
 
 ## Installation
 
@@ -28,7 +25,9 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+See [GUIDELINE](https://am-team.github.io/luna_park/) it is on russian.
+
+English documetation is comming soon.
 
 ## Development
 
