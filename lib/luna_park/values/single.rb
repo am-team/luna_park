@@ -2,7 +2,7 @@
 
 module LunaPark
   module Values
-    class Simple
+    class Single
       include Extensions::Attributable
 
       attr_reader :value

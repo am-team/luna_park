@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CardRank < LunaPark::Values::Simple
+class CardRank < LunaPark::Values::Single
   LIST = %w[6 7 8 9 10 J Q K A].freeze
 
   def initialize(arg)
@@ -18,7 +18,7 @@ class CardRank < LunaPark::Values::Simple
 end
 
 module LunaPark
-  RSpec.describe Values::Simple do
+  RSpec.describe Values::Single do
     let(:value)        { 'Q' }
     let(:sample_class) { CardRank }
     let(:rank)         { sample_class.new(value) }

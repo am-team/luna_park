@@ -7,12 +7,20 @@ I'm Going To Build My Own Luna Park With Forms and Services
 ![Luna Park](docs/_imgs/bender.jpeg)
 
 
+## Is under development 
+
+This project is under development. At first we are planing to complete Russian guideline. At the same time we will also finish realization of all basics classes. After that we are planing to complete guideline in English. Until that we don't recommend to use this gem in production. For the moment we publish it to share our ideas. More to come. 	
+
+See [GUIDELINE](https://am-team.github.io/luna_park/) it is on russian.
+
+English documentation is coming soon.
+
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'luna_park'
+gem 'luna_park', git: 'git@github.com:am-team/luna_park.git'
 ```
 
 And then execute:
@@ -23,17 +31,19 @@ Or install it yourself as:
 
     $ gem install luna_park
 
-## Usage
+Until it's not ready for production , we do not plan to publish it on rubygems.org.
 
-See [GUIDELINE](https://am-team.github.io/luna_park/) it is on russian.
 
-English documetation is comming soon.
+## Plans
 
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+- Finish RUS guideline
+- Finish basics classes
+- ENG guideline
+- Project Example
+- Publish rubygems
+- ENG API docs
+- Generators
+- All what you want
 
 ## Contributing
 

@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Alexander Kudrin', 'Philip Sorokin']
   spec.email         = ['kudrin.alexander@gmail.com']
 
-  spec.summary       = 'Domain driven oriented miroservice framework.'
-  spec.homepage      = 'https://github.com/am_team/luna_park'
+  spec.summary       = 'Domain driven oriented microservice framework.'
+  spec.homepage      = 'https://am-team.github.io/luna_park/#/'
   spec.license       = 'MIT'
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
