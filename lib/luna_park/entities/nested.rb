@@ -53,8 +53,8 @@ module LunaPark
         end
       end
 
-      def initialize(hash)
-        set_attributes(hash)
+      def initialize(params = {})
+        set_attributes(params)
       end
 
       def to_h
