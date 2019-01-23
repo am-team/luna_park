@@ -23,6 +23,7 @@ class Elephant < LunaPark::Entities::Nested
     attr :trunk_length
   end
 
+  attr :alive, bool: true
   attr :weapon, Gun, :wrap
   attr :height
 
@@ -42,6 +43,7 @@ module LunaPark
           ears: { left: 'Normal', right: 'Damaged' },
           trunk_length: 2.1
         },
+        alive: true,
         weapon: { title: 'BFG' },
         height: 4.2,
         number_of_crushed_enemies: 2328,
@@ -61,6 +63,8 @@ module LunaPark
         expect(new.head.ears).to                 be_a OpenStruct
         expect(new.head.trunk_length).to         be_a Float
         expect(new.weapon).to                    be_a Gun
+        expect(new.alive).to                     be_a TrueClass
+        expect(new.alive?).to                    be_a TrueClass
         expect(new.number_of_crushed_enemies).to be_a Integer
         expect(new.last_battle_time).to          be_a Date
       end
@@ -72,6 +76,8 @@ module LunaPark
         expect(new.head.ears.right).to           eq 'Damaged'
         expect(new.head.trunk_length).to         eq 2.1
         expect(new.weapon.title).to              eq 'BFG'
+        expect(new.alive).to                     be true
+        expect(new.alive?).to                    be true
         expect(new.number_of_crushed_enemies).to eq 2328
         expect(new.last_battle_time).to          eq Date.parse('2018-12-07 06:40:09 UTC')
       end
@@ -176,8 +182,8 @@ module LunaPark
           '@head=#<Namespace:head ' \
           '@eyes=#<struct Eyes left="Red", right=nil> ' \
           '@ears=#<OpenStruct left="Normal", right="Damaged"> ' \
-          '@trunk_length=2.1> @weapon=#<struct Gun title="BFG"> ' \
-          '@height=4.2 ' \
+          '@trunk_length=2.1> @alive=true ' \
+          '@weapon=#<struct Gun title="BFG"> @height=4.2 ' \
           '@number_of_crushed_enemies=2328 ' \
           '@last_battle_time=#<Date: 2018-12-07 ((2458460j,0s,0n),+0s,2299161j)>>'
       end

@@ -23,11 +23,12 @@ module LunaPark
           end
         end
 
-        def attr(name, klass = nil, method = nil, comparable: true)
+        def attr(name, klass = nil, method = nil, comparable: true, bool: false)
           fields_to_h       << name
           fields_comparsion << name if comparable
 
           attr_reader(name)
+          define_method(:"#{name}?") { send(name) } if bool
           return attr_writer(name) if klass.nil? && method.nil?
 
           define_method(:"#{name}=") do |input|
