@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    luna_park (0.5.1)
+    luna_park (0.5.3)
 
 GEM
   remote: https://rubygems.org/
@@ -113,4 +113,4 @@ DEPENDENCIES
   simplecov (~> 0.16)
 
 BUNDLED WITH
-   1.17.1
+   1.17.3

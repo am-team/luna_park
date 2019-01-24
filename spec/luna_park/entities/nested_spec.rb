@@ -18,17 +18,16 @@ Gun  = Struct.new(:title,        keyword_init: true) { extend Wrappable }
 
 class Elephant < LunaPark::Entities::Nested
   namespace :head do
-    attr :eyes, Eyes, :wrap
-    attr :ears, OpenStruct, :new
-    attr :trunk_length
+    attr  :eyes, Eyes, :wrap
+    attrs :ears, :legs, OpenStruct, :new
+    attr  :trunk_length
   end
 
-  attr :alive, bool: true
-  attr :weapon, Gun, :wrap
-  attr :height
+  attr? :alive
+  attr  :weapon, Gun, :wrap
+  attr  :height
 
-  attr :number_of_crushed_enemies, comparable: false
-  attr :last_battle_time,          comparable: false
+  attrs :number_of_crushed_enemies, :last_battle_time, comparable: false
 end
 
 module LunaPark
@@ -41,6 +40,7 @@ module LunaPark
         head: {
           eyes: { left: 'Red', right: nil },
           ears: { left: 'Normal', right: 'Damaged' },
+          legs: { lb: true, rb: true, lf: true, rf: true },
           trunk_length: 2.1
         },
         alive: true,
@@ -182,6 +182,7 @@ module LunaPark
           '@head=#<Namespace:head ' \
           '@eyes=#<struct Eyes left="Red", right=nil> ' \
           '@ears=#<OpenStruct left="Normal", right="Damaged"> ' \
+          '@legs=#<OpenStruct lb=true, rb=true, lf=true, rf=true> ' \
           '@trunk_length=2.1> @alive=true ' \
           '@weapon=#<struct Gun title="BFG"> @height=4.2 ' \
           '@number_of_crushed_enemies=2328 ' \

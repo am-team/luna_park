@@ -23,12 +23,27 @@ module LunaPark
           end
         end
 
-        def attr(name, klass = nil, method = nil, comparable: true, bool: false)
+        def attrs?(*args, **options)
+          attrs(*args, **options.merge(predicate: true))
+        end
+
+        def attrs(*args, **options)
+          names, klass, method = args.chunk { |arg| arg.is_a?(Class) }.map(&:last)
+          raise 'Expected only one `Class` AND `:method`' if klass&.count != method&.count || klass && klass.count > 1
+
+          names.each { |name| attr name, klass&.first, method&.first, **options }
+        end
+
+        def attr?(*args, **options)
+          attr(*args, **options.merge(predicate: true))
+        end
+
+        def attr(name, klass = nil, method = nil, comparable: true, predicate: false)
           fields_to_h       << name
           fields_comparsion << name if comparable
 
           attr_reader(name)
-          define_method(:"#{name}?") { send(name) } if bool
+          define_method(:"#{name}?") { send(name) ? true : false } if predicate
           return attr_writer(name) if klass.nil? && method.nil?
 
           define_method(:"#{name}=") do |input|
