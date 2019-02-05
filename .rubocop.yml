@@ -1,4 +1,13 @@
+##
+# Bug with Travis rubocop and rainbow gem
+# resolve:
+# https://github.com/rubocop-hq/rubocop/issues/6398#issuecomment-431898694
+inherit_mode:
+  merge:
+    - Exclude
+
 AllCops:
+  TargetRubyVersion: 2.5
   Exclude:
     - '**/tmp/**/*'
     - '**/script/**/*'
@@ -39,3 +48,6 @@ Style/Attr:
 # TODO: убрать/изменить правило
 Style/Documentation:
   Enabled: false
+
+Naming/UncommunicativeMethodParamName:
+  AllowedNames: io, id, to, by, on, in, at, ip, db, pk, fk

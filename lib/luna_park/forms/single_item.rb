@@ -59,6 +59,8 @@ module LunaPark
       end
 
       # :nocov:
+
+      # @abstract
       def perform
         raise Errors::AbstractMethod
       end

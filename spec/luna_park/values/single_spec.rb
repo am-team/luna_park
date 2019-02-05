@@ -33,10 +33,10 @@ module LunaPark
     end
 
     describe '#value' do
-      subject(:value_) { rank.value }
+      subject(:serialize) { rank.serialize }
 
       it 'is equal value from initializer' do
-        is_expected.to eq value_
+        is_expected.to eq value
       end
     end
 
@@ -53,7 +53,7 @@ module LunaPark
       subject(:inspect) { rank.inspect }
 
       it 'returns expected string' do
-        is_expected.to eq "#<#{sample_class.name} #{rank.value.inspect}>"
+        is_expected.to eq "#<#{sample_class.name} #{rank.serialize.inspect}>"
       end
     end
 

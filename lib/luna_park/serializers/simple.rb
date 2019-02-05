@@ -9,13 +9,15 @@ module LunaPark
       end
 
       # :nocov:
+
+      # @abstract
       def to_h
         raise Errors::AbstractMethod
       end
       # :nocov:
 
-      def to_json
-        JSON.dump(to_h)
+      def to_json(opts = nil)
+        JSON.generate(to_h, opts)
       end
 
       private

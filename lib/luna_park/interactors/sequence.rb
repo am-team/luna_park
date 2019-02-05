@@ -57,12 +57,13 @@ module LunaPark
       end
 
       # :nocov:
+
+      # @abstract
       def execute
         raise Errors::AbstractMethod
       end
-      # :nocov:
 
-      # :nocov:
+      # @abstract
       def returned_data
         raise Errors::AbstractMethod
       end
