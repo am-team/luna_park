@@ -27,7 +27,7 @@ module LunaPark
         def wrap(input)
           return input if input.is_a?(self)
 
-          raise Errors::Unwrapable, "Can`t wrap #{input.class}"
+          raise Errors::Unwrapable, "#{self} can`t wrap #{input.class}"
         end
       end
     end

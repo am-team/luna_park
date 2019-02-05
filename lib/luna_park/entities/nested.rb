@@ -55,7 +55,7 @@ module LunaPark
           case input
           when self then input
           when Hash then new(input)
-          else raise Errors::Unwrapable, "Can`t wrap #{input.class}"
+          else raise Errors::Unwrapable, "#{self} can`t wrap #{input.class}"
           end
         end
 
