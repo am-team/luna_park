@@ -4,17 +4,7 @@ module LunaPark
   module Mappers
     # Abstract mapper for transform data from Entity attributes schema to Database row schema
     # @example
-    #   class Entities::Transaction < LunaPark::Entities::Nested
-    #     attr :uid
-    #     attr :charge, Money, :wrap
-    #     attr :comment
-    #   end
-    #
-    #   class Money < LunaPark::Values::Compound
-    #     attr_accessor :amount, :currency
-    #   end
-    #
-    #   class Mappers::Transaction < LunaPark::Mappers::Simple
+    #   class TransactionMapper < LunaPark::Mappers::Simple
     #     def self.from_row(row)
     #       {
     #         uid: row[:id],
@@ -36,41 +26,63 @@ module LunaPark
     #     end
     #   end
     #
-    #   # Entity has concrete attributes schema
-    #   attributes  = { charge: { amount: 10, currency: 'USD' }, comment: 'FooBar' }
-    #   transaction = Entities::Transaction.new(attributes)
-    #   transaction      # => #<Entities::Transaction charge=#<Money amount=10 currency="USD"> comment="FooBar">
-    #   transaction.to_h # => # { charge: { amount: 10, currency: 'USD' }, comment: 'FooBar' }
-    #   transaction.to_h == attributes # => true
+    # @example
+    #   # attribute scheme repeats entity schema
+    #   attributes = { charge: { amount: 10, currency: 'USD' }, comment: 'FooBar' }
     #
     #   # Mapper transforms entity attributes to database row
-    #   row = Mappers::Transaction.to_row(transaction.to_h)
-    #   sequel_database_table.insert(row)
+    #   row = TransactionMapper.to_row(attributes)
     #
     #   # Mapper also transforms database row to entity attributes
-    #   row = sequel_database_table.where(id: 42)
-    #   attributes  = Mappers::Transaction.from_row(row)
+    #   attributes = TransactionMapper.from_row(row)
+    #
+    # @example
+    #   # find
+    #   row = sequel_database_table.where(id: 42).first
+    #   attributes = TransactionMapper.from_row(row)
+    #   Entities::Transaction.new(attributes)
+    #
+    # @example
+    #   # update
+    #   new_attributes = { charge: { amount: 10, currency: 'USD' }, comment: 'FooBar' }
+    #   new_row = TransactionMapper.to_row(new_attributes)
+    #   sequel_database_table.update(42, new_row)
+    #
+    # @example
+    #   # create
+    #   attributes = { charge: { amount: 10, currency: 'USD' }, comment: 'FooBar' }
     #   transaction = Entities::Transaction.new(attributes)
+    #
+    #   row            = TransactionMapper.to_row(transaction.to_h)  # => { charge_amount: 10, ... }
+    #   new_row        = sequel_database_table.returning.insert(row) # => { id: 123, charge_amount: 10, ... }
+    #   new_attributes = TransactionMapper.from_row(new_row)         # => { uid: 123, charge: { amount: 10, ... }
+    #   transaction.set_attributes(new_attributes)
     class Simple
       class << self
-        def from_rows(hashes)
-          return [] if hashes.nil?
+        ##
+        # Transforms array of rows to array of attribute hashes
+        def from_rows(rows)
+          return [] if rows.nil?
 
-          hashes.to_a.map { |hash| from_row(hash) }
+          rows.to_a.map { |hash| from_row(hash) }
         end
 
-        def to_rows(entities)
-          return [] if entities.nil?
+        ##
+        # Transforms array of attribute hashes to array of rows
+        def to_rows(attr_hashes)
+          return [] if attr_hashes.nil?
 
-          entities.to_a.map { |entity| to_row(entity) }
+          attr_hashes.to_a.map { |entity| to_row(entity) }
         end
 
-        def from_row(_hash)
-          raise NotImplementedError
+        # @abstract
+        def from_row(_row)
+          raise Errors::AbstractMethod
         end
 
-        def to_row(_entity)
-          raise NotImplementedError
+        # @abstract
+        def to_row(_attrs)
+          raise Errors::AbstractMethod
         end
       end
     end

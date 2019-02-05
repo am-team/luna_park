@@ -2,7 +2,18 @@
 
 module LunaPark
   module Extensions
-    # add description
+    # @example
+    #   class Account
+    #     include LunaPark::Extensions::Attributable
+    #
+    #     attr_accessor :type, :id
+    #
+    #     def initialize(hash)
+    #       set_attributes(hash) # method included by mixin (private)
+    #     end
+    #   end
+    #
+    #   Account.new(type: 'user', id: 42) # => #<Account type="user" id=42>
     module Attributable
       private
 

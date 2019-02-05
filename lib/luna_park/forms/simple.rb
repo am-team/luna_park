@@ -49,6 +49,8 @@ module LunaPark
       end
 
       # :nocov:
+
+      # @abstract
       def perform(_valid_params)
         raise Errors::AbstractMethod
       end

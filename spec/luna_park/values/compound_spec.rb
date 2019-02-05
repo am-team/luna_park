@@ -30,10 +30,11 @@ module LunaPark
       end
     end
 
-    describe '==' do
+    describe '#==' do
       subject(:eq) { money == other }
+      let(:other) { sample_class.new(arguments) }
 
-      pending 'Comparable или скопировать из Simple'
+      it { expect { eq }.to raise_error Errors::AbstractMethod }
     end
   end
 end

@@ -2,62 +2,66 @@
 
 require 'singleton'
 
-module Reception2
-  class VisitorValidator < LunaPark::Validators::Dry
-    validation_schema do
-      required(:name).value(type?: String)
-    end
-  end
-
-  class JournalRepo
-    include Singleton
-
-    def initialize
-      @records = []
+module FormsSimpleSpec
+  module Reception
+    class VisitorValidator < LunaPark::Validators::Dry
+      validation_schema do
+        required(:name).value(type?: String)
+      end
     end
 
-    def save(record)
-      records << record
-      self
+    class JournalRepo
+      include Singleton
+
+      def initialize
+        @records = []
+      end
+
+      def save(record)
+        records << record
+        self
+      end
+
+      def count
+        records.size
+      end
+
+      private
+
+      attr_reader :records
     end
 
-    def count
-      records.size
-    end
+    class RegisterVisitor < LunaPark::Forms::Simple
+      validator VisitorValidator
 
-    private
+      private
 
-    attr_reader :records
-  end
-
-  class RegisterVisitor < LunaPark::Forms::Simple
-    validator VisitorValidator
-
-    private
-
-    def perform(valid_params)
-      JournalRepo.instance.save valid_params[:name]
+      def perform(valid_params)
+        JournalRepo.instance.save valid_params[:name]
+      end
     end
   end
 end
 
 module LunaPark
   RSpec.describe Forms::Simple do
+    let(:repo) { FormsSimpleSpec::Reception::JournalRepo.instance }
+
     shared_examples 'performed' do
       it 'performed object changes' do
-        expect { subject }.to change { Reception2::JournalRepo.instance.count }.by 1
+        expect { subject }.to change { repo.count }.by 1
       end
     end
 
     shared_examples 'not performed' do
       it 'performed object not changed' do
-        expect { subject }.not_to change { Reception2::JournalRepo.instance.count }
+        expect { subject }.not_to change { repo.count }
       end
     end
 
     let(:correct_record)   { { name: 'John Doe' } }
     let(:incorrect_record) { { name: 42 } }
-    let(:klass) { Reception2::RegisterVisitor }
+    let(:klass) { FormsSimpleSpec::Reception::RegisterVisitor }
 
     let(:form) { klass.new(params) }
 
@@ -123,7 +127,7 @@ module LunaPark
           let(:params) { correct_record }
 
           it 'returns performed object' do
-            is_expected.to eq Reception2::JournalRepo.instance
+            is_expected.to eq repo
           end
         end
 

@@ -22,7 +22,7 @@ module LunaPark
       end
 
       it 'raises error with expected message' do
-        expect { wrap }.to raise_error "#{object.class} can`t wrap #{input.class}"
+        expect { wrap }.to raise_error LunaPark::Errors::Unwrapable, "#{object.class} can not wrap #{input.class}"
       end
     end
   end

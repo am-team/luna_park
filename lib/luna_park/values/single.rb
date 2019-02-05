@@ -5,7 +5,11 @@ module LunaPark
     class Single
       include Extensions::Attributable
 
-      attr_reader :value
+      def self.wrap(input)
+        return input if input.is_a?(self)
+
+        raise Errors::Unwrapable, "#{self} can not wrap #{input.class}"
+      end
 
       def initialize(value)
         @value = value
@@ -19,17 +23,17 @@ module LunaPark
         value.to_s
       end
 
+      def serialize
+        value
+      end
+
       def inspect
         "#<#{self.class} #{value.inspect}>"
       end
 
-      class << self
-        def wrap(input)
-          return input if input.is_a?(self)
+      protected
 
-          raise Errors::Unwrapable, "#{self} can`t wrap #{input.class}"
-        end
-      end
+      attr_reader :value
     end
   end
 end
