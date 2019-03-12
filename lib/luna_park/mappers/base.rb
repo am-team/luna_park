@@ -24,22 +24,6 @@ module LunaPark
         def to_row(_entity)
           raise NotImplementedError
         end
-
-        def to_record(arg)
-          to_row(arg)
-        end
-
-        def to_records(*args)
-          to_rows(*args)
-        end
-
-        def from_record(arg)
-          from_row(arg)
-        end
-
-        def from_records(*args)
-          from_rows(*args)
-        end
       end
     end
   end
