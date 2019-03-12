@@ -8,13 +8,13 @@ module LunaPark
         def from_rows(hashes)
           return [] if hashes.nil?
 
-          hashes.map { |hash| from_row(hash) }
+          hashes.to_a.map { |hash| from_row(hash) }
         end
 
         def to_rows(entities)
           return [] if entities.nil?
 
-          entities.map { |entity| to_row(entity) }
+          entities.to_a.map { |entity| to_row(entity) }
         end
 
         def from_row(_hash)
