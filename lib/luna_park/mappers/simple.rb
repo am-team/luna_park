@@ -17,7 +17,7 @@ module LunaPark
         private
 
         def map(*keys)
-          keys.concat(keys) if keys.any?
+          self.keys.concat(keys) if keys.any?
         end
 
         def keys
