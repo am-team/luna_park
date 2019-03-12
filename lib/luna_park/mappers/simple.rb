@@ -7,7 +7,7 @@ module LunaPark
     class Simple < Base
       class << self
         def from_row(row_hash)
-          row_hash.slice(*keys)
+          row_hash.to_h.slice(*keys)
         end
 
         def to_row(attrs_hash)
