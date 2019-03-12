@@ -4,7 +4,7 @@ module LunaPark
   module Mappers
     # TODO: refactoring
     # add description
-    class Codirectional < Simple
+    class Codirectional < Base
       class << self
         def from_row(row_hash)
           attrs_hash = {}

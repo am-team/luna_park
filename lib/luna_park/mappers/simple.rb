@@ -2,43 +2,26 @@
 
 module LunaPark
   module Mappers
+    # TODO: refactoring
     # add description
-    class Simple
+    class Simple < Base
       class << self
-        def from_rows(hashes)
-          return [] if hashes.nil?
-
-          hashes.to_a.map { |hash| from_row(hash) }
+        def from_row(row_hash)
+          row_hash.slice(*keys)
         end
 
-        def to_rows(entities)
-          return [] if entities.nil?
-
-          entities.to_a.map { |entity| to_row(entity) }
+        def to_row(attrs_hash)
+          attrs_hash.to_h.slice(*keys)
         end
 
-        def from_row(_hash)
-          raise NotImplementedError
+        private
+
+        def map(*keys)
+          keys.concat(keys) if keys.any?
         end
 
-        def to_row(_entity)
-          raise NotImplementedError
-        end
-
-        def to_record(arg)
-          to_row(arg)
-        end
-
-        def to_records(*args)
-          to_rows(*args)
-        end
-
-        def from_record(arg)
-          from_row(arg)
-        end
-
-        def from_records(*args)
-          from_rows(*args)
+        def keys
+          @keys ||= []
         end
       end
     end
