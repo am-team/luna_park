@@ -19,15 +19,15 @@ module LunaPark
 
         private
 
+        def validation
+          @validation ||= self.class.validate(params)
+        end
+
         # :nocov:
         def params
           raise Errors::AbstractMethod
         end
         # :nocov:
-
-        def validation
-          @validation ||= self.class.validate(params)
-        end
 
         delegate %i[validate! valid? validation_errors valid_params] => :validation
       end
