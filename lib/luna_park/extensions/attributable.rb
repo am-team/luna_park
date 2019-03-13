@@ -8,6 +8,7 @@ module LunaPark
 
       def set_attributes(hash) # rubocop:disable Naming/AccessorMethodName
         hash.each { |k, v| send(:"#{k}=", v) }
+        self
       end
     end
   end
