@@ -9,12 +9,6 @@ module LunaPark
         @params = params
       end
 
-      def validate!
-        @result = nil
-        result
-        valid?
-      end
-
       def valid?
         result.success?
       end
@@ -24,7 +18,7 @@ module LunaPark
       end
 
       def validation_errors
-        result&.errors || {}
+        result.errors || {}
       end
 
       private
@@ -40,9 +34,7 @@ module LunaPark
           @_schema
         end
 
-        def validate(params)
-          new(params).tap(&:validate!)
-        end
+        alias validate new
 
         private
 

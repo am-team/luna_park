@@ -2,7 +2,29 @@
 
 module LunaPark
   module Forms
-    # add description
+    ##
+    # Form object represents blank document, required to filled right, and can be performed
+    #
+    # @example
+    #  class MyForm < LunaPark::Forms::SingleItem
+    #    validator MyValidator # respond to .validate, #valid?, #validation_errors, #valid_params
+    #
+    #    def perform
+    #      'PerformResult'
+    #    ena
+    #
+    #    def foo_bar=(foo_bar)
+    #      @foo_bar = foo_bar
+    #    end
+    #  end
+    #
+    #  form = MyForm.new({ foo_bar: {} })
+    #
+    #  if form.submit
+    #    form.result # => 'PerformResult'
+    #  else
+    #    form.errors # => { foo_bar: ['is wrong'] }
+    #  end
     class SingleItem
       include Extensions::Attributable
       include Extensions::Validateable
@@ -13,8 +35,8 @@ module LunaPark
         @params = params
       end
 
-      def complete!
-        if validate!
+      def submit
+        if valid?
           fill!
           perform!
           true
@@ -29,7 +51,6 @@ module LunaPark
       attr_reader :params
 
       def fill!
-        # For JSONApi rewrite .dig(:data, :attributes)
         set_attributes valid_params
       end
 

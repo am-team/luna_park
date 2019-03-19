@@ -29,7 +29,7 @@ module LunaPark
         end
         # :nocov:
 
-        delegate %i[validate! valid? validation_errors valid_params] => :validation
+        delegate %i[valid? validation_errors valid_params] => :validation
       end
 
       module ClassMethods
