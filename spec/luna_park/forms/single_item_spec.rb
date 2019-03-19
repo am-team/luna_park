@@ -112,13 +112,13 @@ module LunaPark
     describe '.result' do
       subject { form.result }
 
-      context 'before form completed' do
+      context 'before form submited' do
         let(:params) { correct_record }
 
         it { is_expected.to be_nil }
       end
 
-      context 'after form completed' do
+      context 'after form submited' do
         before { form.submit }
 
         context 'when fill form with correct record' do
