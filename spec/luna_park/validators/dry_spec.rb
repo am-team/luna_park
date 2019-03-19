@@ -30,22 +30,6 @@ RSpec.describe LunaPark::Validators::Dry do
     end
   end
 
-  describe '.validate!' do
-    subject { validator.validate! }
-
-    context 'when sent valid params' do
-      let(:params) { valid_params }
-
-      it { is_expected.to be true }
-    end
-
-    context 'when sent invalid params' do
-      let(:params) { invalid_params }
-
-      it { is_expected.to be false }
-    end
-  end
-
   describe '.valid_params' do
     subject { validator.valid_params }
 

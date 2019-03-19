@@ -106,7 +106,7 @@ DDD включает в себя практику реализации чере�
 ```ruby
   module Reception
     class Endpoints < Sinatra::Base
-    
+
     # Show item
     get '/residents/:id', provides: :json do
       resident = Repository::Residents.find params[:id]
@@ -132,7 +132,7 @@ _Работа с системой хранения_ в виде графичес
 ```ruby
   module Reception
     class Endpoints < Sinatra::Base
-      
+
       # Register resident arrival
       post '/residents/:uid/arrival', provides: :json do
         result = Interactors::Arrival.call(resident_id: params[:id])
@@ -171,7 +171,7 @@ module Reception
   # Register new resident
     post '/residents', provides: [:json] do
       form = Forms::Registration.new(params)
-      complete! form do
+      submit! form do
         check! form.result do
           status 201
           serialize form.result.data

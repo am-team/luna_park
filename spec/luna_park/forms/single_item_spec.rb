@@ -63,8 +63,8 @@ module LunaPark
 
     let(:form) { klass.new(params) }
 
-    describe '.complete!' do
-      subject { form.complete! }
+    describe '.submit' do
+      subject { form.submit }
 
       context 'when fill form with correct record' do
         let(:params) { correct_record }
@@ -91,7 +91,7 @@ module LunaPark
       end
     end
 
-    describe '.errors!' do
+    describe '.errors' do
       subject { form.errors }
 
       context 'when fill form with correct record' do
@@ -119,7 +119,7 @@ module LunaPark
       end
 
       context 'after form completed' do
-        before { form.complete! }
+        before { form.submit }
 
         context 'when fill form with correct record' do
           let(:params) { correct_record }
