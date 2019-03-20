@@ -7,26 +7,21 @@ module LunaPark
     #
     # @example
     #  class MyForm < LunaPark::Forms::SingleItem
-    #    validator MyValidator # respond to .validate, #valid?, #validation_errors, #valid_params
+    #    validation MyValidator # respond to .validate, #valid?, #errors, #valid_params
     #
-    #    def perform
-    #      'PerformResult'
-    #    end
-    #
-    #    def foo_bar=(foo_bar)
-    #      @foo_bar = foo_bar
+    #    def perform(valid_params)
+    #      "Performed #{valid_params[:foo_bar]}"
     #    end
     #  end
     #
-    #  form = MyForm.new({ foo_bar: {} })
+    #  form = MyForm.new({ foo_bar: 'FooBar' })
     #
     #  if form.submit
-    #    form.result # => 'PerformResult'
+    #    form.result # => 'Performed FooBar'
     #  else
     #    form.errors # => { foo_bar: ['is wrong'] }
     #  end
-    class SingleItem
-      include Extensions::Attributable
+    class Simple
       include Extensions::Validateable
 
       attr_reader :result
@@ -37,7 +32,6 @@ module LunaPark
 
       def submit
         if valid?
-          fill!
           perform!
           true
         else false
@@ -50,16 +44,12 @@ module LunaPark
 
       attr_reader :params
 
-      def fill!
-        set_attributes valid_params
-      end
-
       def perform!
-        @result = perform
+        @result = perform(valid_params)
       end
 
       # :nocov:
-      def perform
+      def perform(_valid_params)
         raise Errors::AbstractMethod
       end
       # :nocov:
