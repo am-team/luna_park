@@ -2,7 +2,7 @@
 
 require 'singleton'
 
-module Reception
+module Reception2
   class VisitorValidator < LunaPark::Validators::Dry
     validation_schema do
       required(:name).value(type?: String)
@@ -30,40 +30,34 @@ module Reception
     attr_reader :records
   end
 
-  class RegisterVisitor < LunaPark::Forms::SingleItem
+  class RegisterVisitor < LunaPark::Forms::Simple
     validator VisitorValidator
 
     private
 
-    attr_reader :name
-
-    def perform
-      JournalRepo.instance.save name
-    end
-
-    def name=(input)
-      @name = String(input)
+    def perform(valid_params)
+      JournalRepo.instance.save valid_params[:name]
     end
   end
 end
 
 module LunaPark
-  RSpec.describe Forms::SingleItem do
+  RSpec.describe Forms::Simple do
     shared_examples 'performed' do
       it 'performed object changes' do
-        expect { subject }.to change { Reception::JournalRepo.instance.count }.by 1
+        expect { subject }.to change { Reception2::JournalRepo.instance.count }.by 1
       end
     end
 
     shared_examples 'not performed' do
       it 'performed object not changed' do
-        expect { subject }.not_to change { Reception::JournalRepo.instance.count }
+        expect { subject }.not_to change { Reception2::JournalRepo.instance.count }
       end
     end
 
     let(:correct_record)   { { name: 'John Doe' } }
     let(:incorrect_record) { { name: 42 } }
-    let(:klass) { Reception::RegisterVisitor }
+    let(:klass) { Reception2::RegisterVisitor }
 
     let(:form) { klass.new(params) }
 
@@ -129,7 +123,7 @@ module LunaPark
           let(:params) { correct_record }
 
           it 'returns performed object' do
-            is_expected.to eq Reception::JournalRepo.instance
+            is_expected.to eq Reception2::JournalRepo.instance
           end
         end
 
