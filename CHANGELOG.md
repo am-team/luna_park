@@ -25,6 +25,8 @@ Moved to modules:
   (#differences_structure renamed to #detailed_comparsion with alias #detailed_cmp)
 - Extensions::Comparable adds `#enable_debug` and `.enable_debug` that just includes `Extensions::ComparableDebug` to current class
   has aliases `#debug`, `.debug`
+- Extensions::PredicateAttribute adds `#predicate_attr_reader`, `#predicate_attr_accessor` and aliased `#attr_reader?`, `#artr_accessor?`
+- Extensions::CoercibleAttribute adds `#coercible_attr_writer`, `#coercible_attr_accessor`
 
 ### Fixed
 - DSL `.attr .attrs .attr? .attrs? .namespace` method now can be reloaded with using `super` (before the `super` was not available)

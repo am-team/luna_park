@@ -43,6 +43,9 @@ module LunaPark
         DEFAULT_COERCER_METH = :call
         private_constant :DEFAULT_COERCER_METH
 
+        include PredicateAttrAccessor
+        include CoercibleAttrAccessor
+
         ##
         # .attr that also adds `reader?`
         #
@@ -82,15 +85,15 @@ module LunaPark
         #
         # @return [Array of Hash(Symbol => Symbol)] Hash of defined methods
         def attrs(*args, **options)
-          *names, coercer, coerce_meth = if args.last.respond_to?(DEFAULT_COERCER_METH)
-                                           [*args, DEFAULT_COERCER_METH]
-                                         elsif args[-1].is_a?(Symbol) && args[-2].respond_to?(args[-1])
-                                           args
-                                         else
-                                           [*args, nil, nil]
-                                         end
+          *names, coercer, coercer_meth = if args.last.respond_to?(DEFAULT_COERCER_METH)
+                                            [*args, DEFAULT_COERCER_METH]
+                                          elsif args[-1].is_a?(Symbol) && args[-2].respond_to?(args[-1])
+                                            args
+                                          else
+                                            [*args, nil, nil]
+                                          end
 
-          names.map { |name| attr name, coercer, coerce_meth, **options }
+          names.map { |name| attr name, coercer, coercer_meth, **options }
         end
 
         ##
@@ -107,39 +110,20 @@ module LunaPark
         #
         # @return [Hash(Symbol => Symbol)]
         #   Hash of defined methods { :method_role => :method_name }; `{ getter: :foo }`
-        def attr(name, coercer = nil, coerce_meth = nil, comparable: true, array: false)
-          coerce_meth ||= DEFAULT_COERCER_METH
+        def attr(name, coercer = nil, coercer_meth = nil, comparable: true, array: false)
+          coercer_meth ||= DEFAULT_COERCER_METH
           attr_reader(name)
 
           serializable_attributes(name) if include?(Serializable)
           comparable_attributes(name)   if comparable && include?(Comparable)
 
           if coercer
-            coercible_attr_writer(name, coercer.method(coerce_meth), is_array: array)
+            coercible_attr_writer(name, coercer.method(coercer_meth), is_array: array)
           else
             attr_writer(name)
           end
 
           { getter: name, setter: "#{name}=" }
-        end
-
-        def attr_reader?(*names)
-          names.each do |name|
-            ivar = :"@#{name}"
-            define_method(:"#{name}?") { instance_variable_get(ivar) }
-          end
-        end
-
-        def coercible_attr_writer(*names, coersion, is_array: false)
-          names.each do |name|
-            setter = :"#{name}="
-            ivar   = :"@#{name}"
-            if is_array
-              define_method(setter) { |input| instance_variable_set(ivar, input&.map { |elem| coersion.call(elem) }) }
-            else
-              define_method(setter) { |input| instance_variable_set(ivar, coersion.call(input)) }
-            end
-          end
         end
       end
     end
