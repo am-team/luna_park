@@ -15,7 +15,7 @@ Moved to modules:
 
 ### Added
 - YARDoc
-- Extensions::Dsl::ForeignKey adds `.fk` for create foreign key accessor with ergonomically-related object acessor
+- Extensions::Dsl::ForeignKey adds `.foreign_key` for create foreign key accessor with ergonomically-related object acessor. Has `.fk` as shorter variant (not alias)
 - Entities::Attributable (Entities::Simple with included Extensions::Comparable, Extensions::Serializable, Extensions::Dsl::Attributes)
 - Values::Attributable (Values::Simple with included Extensions::Comparable, Extensions::Serializable, Extensions::Dsl::Attributes)
 - DSL `.attr` can create coercible arrays by option `array: true`
