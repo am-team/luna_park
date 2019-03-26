@@ -8,9 +8,12 @@ module LunaPark
       #    # ...
       #    include LunaPark::Extensions::Dsl::ForeignKey
       #
-      #    fk :user_uid, :user, pk: :uid # `pk:` default is `:id`
-      #                                  # fk is foreign_key, pk is primary_key
-      #                                  # foreign_key points to primary_key
+      #    foreign_key :user_uid, :user, primary_key: :uid # `primary_key:` default is `:id`
+      #                                                    # foreign_key points to primary_key
+      #
+      #    # OR alias:
+      #    fk :user_uid, :user, pk: :uid
+      #
       #    # ...
       #  end
       #
@@ -44,14 +47,19 @@ module LunaPark
         end
 
         module ClassMethods
-          def fk(fk_name, assoc_name, pk: :id) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+          def fk(fk_name, assoc_name, pk: :id)
+            foreign_key(fk_name, assoc_name, primary_key: pk)
+          end
+
+          def foreign_key(fk_name, assoc_name, primary_key: :id) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+            pk_name = primary_key
             serializable_attributes(fk_name) if include?(Serializable)
             comparable_attributes(fk_name)   if include?(Comparable)
 
             attr_reader fk_name, assoc_name
 
             define_method(:"#{assoc_name}=") do |new_assoc|
-              new_assoc_pk = extract_pk_value_from_object__(new_assoc, pk)
+              new_assoc_pk = extract_pk_value_from_object__(new_assoc, pk_name)
               instance_variable_set(:"@#{fk_name}", new_assoc_pk)
               instance_variable_set(:"@#{assoc_name}", new_assoc)
             end
@@ -61,7 +69,7 @@ module LunaPark
               instance_variable_set(:"@#{fk_name}", new_fk)
               return new_fk if assoc.nil?
 
-              current_assoc_pk = extract_pk_value_from_object__(assoc, pk)
+              current_assoc_pk = extract_pk_value_from_object__(assoc, pk_name)
               instance_variable_set(:"@#{assoc_name}", nil) unless new_fk == current_assoc_pk
               new_fk
             end
