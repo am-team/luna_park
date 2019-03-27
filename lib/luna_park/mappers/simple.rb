@@ -4,7 +4,9 @@ require 'luna_park/errors'
 
 module LunaPark
   module Mappers
+    ##
     # Abstract mapper for transform data from Entity attributes schema to Database row schema
+    #
     # @example
     #   class TransactionMapper < LunaPark::Mappers::Simple
     #     def self.from_row(row)
