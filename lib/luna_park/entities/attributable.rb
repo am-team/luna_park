@@ -6,6 +6,7 @@ module LunaPark
     class Attributable < Simple
       include Extensions::Comparable
       include Extensions::Serializable
+      extend  Extensions::Wrappable
       extend  Extensions::Dsl::Attributes
     end
   end

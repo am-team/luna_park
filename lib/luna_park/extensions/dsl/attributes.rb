@@ -40,8 +40,8 @@ module LunaPark
       #
       #   e1.alive? # => true
       module Attributes
-        DEFAULT_COERCER_METH = :call
-        private_constant :DEFAULT_COERCER_METH
+        DEFAULT_TYPE_METH = :call
+        private_constant :DEFAULT_TYPE_METH
 
         include PredicateAttrAccessor
         include CoercibleAttrAccessor
@@ -85,8 +85,8 @@ module LunaPark
         #
         # @return [Array of Hash(Symbol => Symbol)] Hash of defined methods
         def attrs(*args, **options)
-          *names, coercer, coercer_meth = if args.last.respond_to?(DEFAULT_COERCER_METH)
-                                            [*args, DEFAULT_COERCER_METH]
+          *names, coercer, coercer_meth = if args.last.respond_to?(DEFAULT_TYPE_METH)
+                                            [*args, DEFAULT_TYPE_METH]
                                           elsif args[-1].is_a?(Symbol) && args[-2].respond_to?(args[-1])
                                             args
                                           else
@@ -110,20 +110,27 @@ module LunaPark
         #
         # @return [Hash(Symbol => Symbol)]
         #   Hash of defined methods { :method_role => :method_name }; `{ getter: :foo }`
-        def attr(name, coercer = nil, coercer_meth = nil, comparable: true, array: false)
-          coercer_meth ||= DEFAULT_COERCER_METH
+        def attr(name, type = nil, type_meth = nil, comparable: true, array: false)
+          type_meth ||= DEFAULT_TYPE_METH
           attr_reader(name)
 
           serializable_attributes(name) if include?(Serializable)
           comparable_attributes(name)   if comparable && include?(Comparable)
 
-          if coercer
-            coercible_attr_writer(name, coercer.method(coercer_meth), is_array: array)
+          if type
+            coercible_attr_writer(name, type.method(type_meth), is_array: array)
           else
             attr_writer(name)
           end
 
-          { getter: name, setter: "#{name}=" }
+          { getter: name, setter: :"#{name}=" }
+        end
+
+        def attributes_list
+          return @attributes_list if @attributes_list
+
+          raise Errors::NotConfigured,
+                "You must set at least one attribute using #{self}.attr(name, type = nil, type_method = :call)"
         end
       end
     end

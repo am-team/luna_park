@@ -39,6 +39,8 @@ module LunaPark
         ##
         # Describe methods list that will be used for comparsion via `#==` method
         def comparable_attributes(*names)
+          raise 'No attributes given' if names.compact.empty?
+
           @comparable_attributes_list ||= []
           @comparable_attributes_list.concat(names).compact!
         end
