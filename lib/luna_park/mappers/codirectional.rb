@@ -29,21 +29,22 @@ module LunaPark
       class << self
         ##
         # Describe translation between two schemas: entity and table
-        # `entity:` has alias key `attr:`, `store:` has alias key `row:`
+        # `entity:` has alias `attr:`,
+        # `store:` has aliases `row:` (for relational db)
         #
         # @example
         #   class Mappers::Transaction < LunaPark::Mappers::Codirectional
-        #     map entity: :uid,                 store: :id
-        #     map entity: [:charge, :amount],   store: :charge_amount
+        #     map entity: :uid,               store: :id
+        #     map entity: [:charge, :amount], store: :charge_amount
         #     map :comment
         #   end
         #
         #   Mappers::Transaction.to_row({ uid: 1, charge: { amount: 2 } }) # => { id: 1, charge_amount: 2 }
         #   Mappers::Transaction.from_row({ id: 1, charge_amount: 2 }) # => { uid: 1, charge: { amount: 2 } }
-        def map(*common_keys, store: nil, row: store, entity: nil, attr: entity)
+        def map(*common_keys, row: nil, attr: nil, store: row, entity: attr)
           @copyists ||= []
-          @copyists << Copyists::Simple.new(common_keys)                    if common_keys.any?
-          @copyists << Copyists::Nested.new(row_path: row, attr_path: attr) if row && attr
+          @copyists << Copyists::Simple.new(common_keys)                          if common_keys.any?
+          @copyists << Copyists::Nested.new(store_path: store, attr_path: entity) if store && entity
         end
 
         def from_row(input)
@@ -77,17 +78,20 @@ module LunaPark
         end
 
         class Nested
-          def initialize(row_path:, attr_path:)
-            @row_path  = row_path
+          def initialize(store_path:, attr_path:)
+            @store_path = store_path
             @attr_path = attr_path
+
+            raise 'store path can not be nil' if store_path.nil?
+            raise 'attr path can not be nil' if attr_path.nil?
           end
 
           def from_row(row:, attrs:)
-            copy_nested(from: row, to: attrs, from_path: @row_path, to_path: @attr_path)
+            copy_nested(from: row, to: attrs, from_path: @store_path, to_path: @attr_path)
           end
 
           def to_row(row:, attrs:)
-            copy_nested(from: attrs, to: row, from_path: @attr_path, to_path: @row_path)
+            copy_nested(from: attrs, to: row, from_path: @attr_path, to_path: @store_path)
           end
 
           private
