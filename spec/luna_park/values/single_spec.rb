@@ -10,6 +10,10 @@ class CardRank < LunaPark::Values::Single
     super(arg)
   end
 
+  def to_s
+    value.to_s
+  end
+
   class << self
     def wrap(input)
       input.is_a?(String) ? new(input) : super

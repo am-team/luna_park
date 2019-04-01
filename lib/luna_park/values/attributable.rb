@@ -5,7 +5,6 @@ module LunaPark
     class Attributable < Compound
       include Extensions::Comparable
       include Extensions::Serializable
-      extend  Extensions::Wrappable
       extend  Extensions::Dsl::Attributes
 
       # redefine: make defined setters privat
