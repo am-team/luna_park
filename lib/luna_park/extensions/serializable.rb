@@ -58,7 +58,7 @@ module LunaPark
               .each_with_object({}) do |field, output|
             next unless instance_variable_defined?(:"@#{field}")
 
-            output[field] = serialize_value__(public_send(field))
+            output[field] = serialize_value__(send(field))
           end
         end
 
