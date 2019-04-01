@@ -20,12 +20,19 @@ module LunaPark
       end
     end
 
-    context 'when given Hash,' do
-      let(:input) { klass.new(attrs) }
-      let(:attrs) { { type: 'user', uid: '42' } }
+    context 'when given Hash(Symbol=>),' do
+      let(:input) { { type: 'user', uid: '42' } }
 
       it 'returns new object with given attributes' do
-        expect(wrap.to_h).to eq attrs
+        expect(wrap.to_h).to eq input
+      end
+    end
+
+    context 'when given Hash(String=>),' do
+      let(:input) { { 'type' => 'user', 'uid' => '42' } }
+
+      it 'returns new object with given attributes' do
+        expect(wrap.to_h).to eq input.transform_keys(&:to_sym)
       end
     end
 
