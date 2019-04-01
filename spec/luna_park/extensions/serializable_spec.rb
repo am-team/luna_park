@@ -4,9 +4,15 @@ module ExtensionsSerializableSpec
   class Book
     include LunaPark::Extensions::Serializable
 
-    attr_accessor :title, :author, :comment
+    attr_accessor :title, :author, :comment, :in_sale
 
-    serializable_attributes :title, :author
+    protected(:in_sale) # rubocop:disable Style/AccessModifierDeclarations
+
+    def in_sale?
+      @in_sale
+    end
+
+    serializable_attributes :title, :author, :in_sale
   end
 
   class ElectronicBook < Book; end
@@ -31,11 +37,12 @@ module LunaPark
           klass.new.tap do |object|
             object.title  = 'Fahrenheit 451'
             object.author = 'Ray Douglas Bradbury'
+            object.in_sale = true
           end
         end
 
         it 'returns Hash with all given properties' do
-          is_expected.to eq(title: 'Fahrenheit 451', author: 'Ray Douglas Bradbury')
+          is_expected.to eq(title: 'Fahrenheit 451', author: 'Ray Douglas Bradbury', in_sale: true)
         end
       end
 
