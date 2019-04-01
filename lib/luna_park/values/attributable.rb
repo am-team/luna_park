@@ -5,12 +5,13 @@ module LunaPark
     class Attributable < Compound
       include Extensions::Comparable
       include Extensions::Serializable
-      include Extensions::Dsl::Attributes
+      extend  Extensions::Wrappable
+      extend  Extensions::Dsl::Attributes
 
       # redefine: make defined setters privat
       def self.attr(*args, **opts)
         super.tap do |result|
-          private(result[:setter]) # rubocop:disable Style/AccessModifierDeclarations
+          protected(result[:setter]) # rubocop:disable Style/AccessModifierDeclarations
         end
       end
     end

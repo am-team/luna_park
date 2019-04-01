@@ -28,6 +28,8 @@ module LunaPark
         ##
         # Describe methods list that will be used for serialization via `#to_h` and `#serialize` methods
         def serializable_attributes(*names)
+          raise 'No attributes given' if names.compact.empty?
+
           @serializable_attributes_list ||= []
           @serializable_attributes_list.concat(names).compact!
         end

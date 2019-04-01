@@ -6,7 +6,7 @@ module LunaPark
       extend  Extensions::Wrappable
       include Extensions::Attributable
 
-      def initialize(attrs)
+      def initialize(attrs = {})
         set_attributes attrs
       end
 
