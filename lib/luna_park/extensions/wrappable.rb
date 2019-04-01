@@ -30,7 +30,7 @@ module LunaPark
       def wrap(input)
         case input
         when self then input
-        when Hash then new(**input)
+        when Hash then new(input)
         else raise Errors::Unwrapable, "#{self} can not wrap #{input.class}"
         end
       end
