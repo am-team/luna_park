@@ -69,14 +69,14 @@ ten_clubs = Values::PlayingCards.new(rank: ten, clubs: clubs)
 ```ruby
 class PlayingCard < Lunapark::Values::Compound
   def self.wrap(obj)
-    case obj.is_a? self.class # Если мы получили объект класса PlayingCard
-      obj                     # то мы его и вернем
-    case obj.is_a? Hash       # Если мы получили хэш, то создадим на его основе
-      new(obj)                # Новую игральную карту
-    case obj.is_a String      # Если мы получили строку, то последний символ будет
+    case self   # Если мы получили объект класса PlayingCard
+      obj       # то мы его и вернем
+    case Hash   # Если мы получили хэш, то создадим на его основе
+      new(obj)  # Новую игральную карту
+    case String # Если мы получили строку, то последний символ будет
       new rank: obj[0..-2], suit:[-1]  # мастью, остальные - достоинством карты.
-    else                      # если тип не совпадает с ожидаемым
-      raise ArgumentError     # выдаем ошибку.
+    else                  # если тип не совпадает с ожидаемым
+      raise ArgumentError # выдаем ошибку.
     end
   end
   def initialize(suit:, rank:) # Еще модифицируем инициализатор класса
@@ -160,7 +160,7 @@ class Weight < LunaPark::Values::Compound
     case { self.unit.to_sym => unit.to_sym }
     when { :kg => :ft }
       Weight.new(value: 2.2046 * value, unit.to_sym)
-    when 
+    when
       # ...
     end
   end
