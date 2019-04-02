@@ -51,13 +51,13 @@ module LunaPark
         #
         # @return [Array of Hash(Symbol => Symbol)] Hash of defined methods
         def attrs?(*args, **options)
-          results = attrs(*args, **options)
-          getter_names = results.map { |r| r[:getter] }
+          defined_methods_arr = attrs(*args, **options)
+          getter_names = defined_methods_arr.map { |r| r[:getter] }
 
           protected(*getter_names)
           attr_reader?(*getter_names)
 
-          results.map { |r| r.merge(predicate: :"#{r[:getter]}?") }
+          defined_methods_arr.map { |r| r.merge(predicate: :"#{r[:getter]}?") }
         end
 
         ##
@@ -66,13 +66,13 @@ module LunaPark
         #
         # @return [Hash(Symbol => Symbol)] Hash of defined methods
         def attr?(*args, **options)
-          result = attr(*args, **options)
-          getter_name = result[:getter]
+          defined_methods = attr(*args, **options)
+          getter_name = defined_methods[:getter]
 
           protected(getter_name)
           attr_reader?(getter_name)
 
-          result.merge(predicate: :"#{getter_name}?")
+          defined_methods.merge(predicate: :"#{getter_name}?")
         end
 
         ##
@@ -84,13 +84,16 @@ module LunaPark
         #   attrs name1, name2, name3, Coercer, :coerce_method, **attr_options
         #
         # @return [Array of Hash(Symbol => Symbol)] Hash of defined methods
-        def attrs(*args, **options)
-          *names, coercer, coercer_meth = if args.last.respond_to?(DEFAULT_TYPE_METH)
+        def attrs(*args, **options) # rubocop:disable Metrics/MethodLength
+          *names, coercer, coercer_meth = if args.all? { |arg| arg.is_a?(Symbol) }
+                                            [*args, nil, nil]
+                                          elsif args[0..-2].all? { |arg| arg.is_a?(Symbol) }
                                             [*args, DEFAULT_TYPE_METH]
-                                          elsif args[-1].is_a?(Symbol) && args[-2].respond_to?(args[-1])
+                                          elsif args[0..-3].all? { |arg| arg.is_a?(Symbol) } && args.last.is_a?(Symbol)
                                             args
                                           else
-                                            [*args, nil, nil]
+                                            raise ArgumentError, 'must be (*names) | ' \
+                                              '(*names, type) | (*names, type, type_meth)'
                                           end
 
           names.map { |name| attr name, coercer, coercer_meth, **options }
@@ -117,11 +120,7 @@ module LunaPark
           serializable_attributes(name) if include?(Serializable)
           comparable_attributes(name)   if comparable && include?(Comparable)
 
-          if type
-            coercible_attr_writer(name, type.method(type_meth), is_array: array)
-          else
-            attr_writer(name)
-          end
+          coercible_attr_writer(name, type&.method(type_meth), is_array: array)
 
           { getter: name, setter: :"#{name}=" }
         end
