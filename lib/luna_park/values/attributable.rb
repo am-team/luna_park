@@ -9,9 +9,7 @@ module LunaPark
 
       # redefine: make defined setters privat
       def self.attr(*args, **opts)
-        super.tap do |result|
-          protected(result[:setter]) # rubocop:disable Style/AccessModifierDeclarations
-        end
+        super.tap { |result| protected(result[:setter]) } # rubocop:disable Style/AccessModifierDeclarations
       end
     end
   end
