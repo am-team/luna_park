@@ -2,7 +2,7 @@
 
 module ExtensionsWrappableSpec
   Account = Struct.new(:type, :uid, keyword_init: true) do
-    extend LunaPark::Extensions::Wrappable
+    extend LunaPark::Extensions::Wrappable::Hash
   end
 end
 

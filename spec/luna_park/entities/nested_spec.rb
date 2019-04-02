@@ -3,8 +3,8 @@
 require 'ostruct'
 require 'securerandom'
 
-Eyes = Struct.new(:left, :right, keyword_init: true) { extend LunaPark::Extensions::Wrappable }
-Gun  = Struct.new(:title,        keyword_init: true) { extend LunaPark::Extensions::Wrappable }
+Eyes = Struct.new(:left, :right, keyword_init: true) { extend LunaPark::Extensions::Wrappable::Hash }
+Gun  = Struct.new(:title,        keyword_init: true) { extend LunaPark::Extensions::Wrappable::Hash }
 
 class Elephant < LunaPark::Entities::Nested
   namespace :head do

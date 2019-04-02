@@ -4,7 +4,7 @@ module LunaPark
   module Entities
     # add description
     class Simple
-      extend  Extensions::Wrappable
+      extend  Extensions::Wrappable::Hash
       include Extensions::Attributable
 
       def initialize(attrs = {})

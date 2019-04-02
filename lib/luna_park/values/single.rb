@@ -3,6 +3,7 @@
 module LunaPark
   module Values
     class Single
+      extend  Extensions::Wrappable
       include Extensions::Attributable
 
       def self.wrap(input)

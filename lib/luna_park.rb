@@ -16,7 +16,8 @@ end
 
 require_relative 'luna_park/errors'
 require_relative 'luna_park/extensions/attributable'
-require_relative 'luna_park/extensions/wrappable'
+require_relative 'luna_park/extensions/wrappable/simple'
+require_relative 'luna_park/extensions/wrappable/hash'
 require_relative 'luna_park/extensions/callable'
 require_relative 'luna_park/extensions/serializable'
 require_relative 'luna_park/extensions/comparable_debug'
