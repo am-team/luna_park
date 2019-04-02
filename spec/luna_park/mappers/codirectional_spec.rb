@@ -5,6 +5,8 @@ module MappersCodirectionalSpec
     map entity: :uid,                      store: :id
     map entity: %i[funds charge amount],   store: :funds_charge_amount
     map attr:   %i[funds charge currency], row:   :funds_charge_currency
+    map %i[sizes waist]
+    map %i[sizes length]
     map :comment
   end
 
@@ -15,10 +17,11 @@ module MappersCodirectionalSpec
       @uid = opts[:uid]
       @funds = Funds.new(opts[:funds])
       @comment = opts[:comment]
+      @sizes = opts[:sizes]
     end
 
     def to_h
-      { uid: uid, funds: funds.to_h, comment: comment }
+      { uid: uid, funds: funds.to_h, comment: comment, sizes: @sizes.to_h }
     end
   end
 
@@ -53,8 +56,10 @@ module LunaPark
   RSpec.describe Serializers::Simple do
     subject(:mapper) { MappersCodirectionalSpec::TransactionMapper }
 
-    let(:attrs) { { uid: 42, funds: { charge: { amount: 10, currency: 'USD' } }, comment: 'Foobar' } }
-    let(:row)   { { id: 42, funds_charge_amount: 10, funds_charge_currency: 'USD', comment: 'Foobar' } }
+    let(:sizes) { { waist: 42, length: 176 } }
+
+    let(:attrs) { { uid: 42, funds: { charge: { amount: 10, currency: 'USD' } }, sizes: sizes, comment: 'Foobar' } }
+    let(:row)   { { id: 42, funds_charge_amount: 10, funds_charge_currency: 'USD', sizes: sizes, comment: 'Foobar' } }
 
     describe '.to_row' do
       subject(:to_row) { mapper.to_row(input) }

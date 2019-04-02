@@ -3,7 +3,7 @@
 module LunaPark
   module Mappers
     ##
-    # DSL for describe Nested Schema translation: entity attributes to database row and vice-versa
+    # DSL for describe Asymmetric Schema translation: entity attributes to database row and vice-versa
     #
     # @example
     #   class Mappers::Transaction < LunaPark::Mappers::Codirectional
@@ -43,8 +43,8 @@ module LunaPark
         #   Mappers::Transaction.from_row({ id: 1, charge_amount: 2 }) # => { uid: 1, charge: { amount: 2 } }
         def map(*common_keys, row: nil, attr: nil, store: row, entity: attr)
           @copyists ||= []
-          @copyists << Copyists::Simple.new(common_keys)                          if common_keys.any?
-          @copyists << Copyists::Nested.new(store_path: store, attr_path: entity) if store && entity
+          @copyists << Copyists::Symmetric.new(common_keys)                           if common_keys.any?
+          @copyists << Copyists::Asymmetric.new(store_path: store, attr_path: entity) if store && entity
         end
 
         def from_row(input)
@@ -63,21 +63,56 @@ module LunaPark
       end
 
       module Copyists
-        class Simple
+        class Abstract
+          private
+
+          def copy_nested(from:, to:, from_path:, to_path:) # rubocop:disable Metrics/MethodLength:
+            value = if from_path.is_a?(Array) # when given `%i[key path]` - not just `:key`
+                      *path, head_key = from_path
+                      hash = from.dig(*path)
+                      return unless hash&.key?(head_key)
+
+                      hash.fetch(head_key)
+                    else
+                      return unless from.key?(from_path)
+
+                      from.fetch(from_path)
+                    end
+
+            if to_path.is_a?(Array) # when given `%i[key path]` - not just `:key`
+              write_nested(to, to_path, value)
+            else # when given just `:key`
+              to[to_path] = value
+            end
+          end
+
+          def write_nested(hash, full_path, value)
+            *path, key = full_path
+            prepare_nested(hash, path)[key] = value
+          end
+
+          def prepare_nested(nested_hash, path)
+            path.inject(nested_hash) { |hash, key| hash[key] ||= {} }
+          end
+        end
+
+        class Symmetric < Abstract
           def initialize(keys)
-            @keys = keys
+            @paths, @keys = keys.partition { |key| key.is_a?(Array) }
           end
 
           def from_row(row:, attrs:)
             attrs.merge! row.slice(*@keys)
+            @paths.each { |path| copy_nested(from: row, to: attrs, from_path: path, to_path: path) }
           end
 
           def to_row(row:, attrs:)
             row.merge! attrs.slice(*@keys)
+            @paths.each { |path| copy_nested(from: attrs, to: row, from_path: path, to_path: path) }
           end
         end
 
-        class Nested
+        class Asymmetric < Abstract
           def initialize(store_path:, attr_path:)
             @store_path = store_path
             @attr_path = attr_path
@@ -92,37 +127,6 @@ module LunaPark
 
           def to_row(row:, attrs:)
             copy_nested(from: attrs, to: row, from_path: @attr_path, to_path: @store_path)
-          end
-
-          private
-
-          def copy_nested(from:, to:, from_path:, to_path:) # rubocop:disable Metrics/MethodLength:
-            value = if from_path.is_a?(Array)
-                      *path, head_key = from_path
-                      hash = from.dig(*path)
-                      return unless hash&.key?(head_key)
-
-                      hash.fetch(head_key)
-                    else
-                      return unless from.key?(from_path)
-
-                      from.fetch(from_path)
-                    end
-
-            if to_path.is_a?(Array)
-              write_to_hested_hash(to, to_path, value)
-            else
-              to[to_path] = value
-            end
-          end
-
-          def write_to_hested_hash(hash, full_path, value)
-            *path, key = full_path
-            prepare_nested_hash(hash, path)[key] = value
-          end
-
-          def prepare_nested_hash(nested_hash, path)
-            path.inject(nested_hash) { |hash, key| hash[key] ||= {} }
           end
         end
       end
