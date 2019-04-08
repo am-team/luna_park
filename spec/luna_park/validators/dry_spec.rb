@@ -14,8 +14,8 @@ RSpec.describe LunaPark::Validators::Dry do
   let(:valid_params)    { { type: 'human' } }
   let(:invalid_params)  { { type: 'robot' } }
 
-  describe '.valid?' do
-    subject { validator.valid? }
+  describe '#success?' do
+    subject { validator.success? }
 
     context 'when sent valid params' do
       let(:params) { valid_params }
@@ -30,7 +30,7 @@ RSpec.describe LunaPark::Validators::Dry do
     end
   end
 
-  describe '.valid_params' do
+  describe '#valid_params' do
     subject { validator.valid_params }
 
     context 'when sent valid params' do
@@ -60,8 +60,8 @@ RSpec.describe LunaPark::Validators::Dry do
     end
   end
 
-  describe '.validation_errors' do
-    subject { validator.validation_errors }
+  describe '#errors' do
+    subject { validator.errors }
 
     context 'when sent valid params' do
       let(:params) { valid_params }
@@ -78,7 +78,7 @@ RSpec.describe LunaPark::Validators::Dry do
     end
   end
 
-  describe '#validate' do
+  describe '.validate' do
     subject { validator_class.validate(valid_params) }
 
     it 'should be an instance of validation class' do
