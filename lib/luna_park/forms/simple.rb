@@ -22,7 +22,7 @@ module LunaPark
     #    form.errors # => { foo_bar: ['is wrong'] }
     #  end
     class Simple
-      include Extensions::Validateable
+      include Extensions::Validatable
 
       attr_reader :result
 

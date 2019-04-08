@@ -27,7 +27,7 @@ module LunaPark
     #  end
     class SingleItem
       include Extensions::Attributable
-      include Extensions::Validateable
+      include Extensions::Validatable
 
       attr_reader :result
 

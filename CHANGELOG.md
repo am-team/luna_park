@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.8] - 2019-04-09
+### Changed
+- Validateable renamed to Validatable (without backward compatibility)
+- Validator`#valid?` DEPRECATED, use `#success?` instead
+- Validator`#validation_errors?` DEPRECATED, use `#errors` instead
+
+### Added
+- Extensions::Validatable`#valid?` `#validation_errors` `#valid_params` now can work without defined `.validator`
+
 ## [0.5.7] - 2019-03-20
 ### Added
 - `Forms::Simple`
