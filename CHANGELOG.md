@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.9] - 2019-04-09
+### Added
+- `Extensions::Validateable::Dry` - same as normal `Validateable`, but method `.validator` can receive block
+	  to create anonymous validator `Validator::Dry` (block will be passed to .validation_schema of new validator)
+
 ## [0.5.8] - 2019-04-09
 ### Changed
 - Validateable renamed to Validatable (without backward compatibility)
