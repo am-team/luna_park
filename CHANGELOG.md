@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `Extensions::Validateable::Dry` - same as normal `Validateable`, but method `.validator` can receive block
 	  to create anonymous validator `Validator::Dry` (block will be passed to .validation_schema of new validator)
+- `Extensions::Validateable.validator` now can be setter (when arguments given) and getter (without args)
 
 ## [0.5.8] - 2019-04-09
 ### Changed

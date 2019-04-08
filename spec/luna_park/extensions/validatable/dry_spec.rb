@@ -1,35 +1,13 @@
 # frozen_string_literal: true
 
-module ExtensionsValidatableSpec
-  class MyValidator
-    def self.validate(params)
-      new(params)
-    end
-
-    def initialize(params)
-      @params = params
-    end
-
-    def errors
-      @errors ||= {}.tap do |errors|
-        errors[:foo] ||= 'is missing' unless @params.key?(:foo) || @params.key?('foo')
-        errors[:bar] ||= 'is missing' unless @params.key?(:bar) || @params.key?('bar')
-      end
-    end
-
-    def success?
-      errors.empty?
-    end
-
-    def valid_params
-      @valid_params ||= success? ? @params.transform_keys(&:to_sym) : {}
-    end
-  end
-
+module ExtensionsValidatableDrySpec
   class MyForm
-    include LunaPark::Extensions::Validatable
+    include LunaPark::Extensions::Validatable::Dry
 
-    validator MyValidator # must respond_to #errors, #success?, #valid_params, .validate
+    validator do
+      required(:foo) { filled? & str? & eql?('Foo') }
+      required(:bar) { filled? & str? & eql?('Bar') }
+    end
 
     def initialize(params)
       @params = params
@@ -47,16 +25,10 @@ module ExtensionsValidatableSpec
 end
 
 module LunaPark
-  RSpec.describe Extensions::Validatable do
+  RSpec.describe Extensions::Validatable::Dry do
     subject(:form) { form_class.new(params) }
 
-    let(:form_class) { ExtensionsValidatableSpec::MyForm }
-
-    describe '.validator' do
-      subject(:validator) { form_class.validator }
-
-      it { is_expected.to be ExtensionsValidatableSpec::MyValidator }
-    end
+    let(:form_class) { ExtensionsValidatableDrySpec::MyForm }
 
     context 'when invalid params given,' do
       let(:params) { { 'foo' => 'Foo' } }
@@ -67,7 +39,7 @@ module LunaPark
         subject(:validation_errors) { form.validation_errors }
 
         it 'contains expected errors' do
-          is_expected.to eq bar: 'is missing'
+          is_expected.to eq bar: ['is missing']
         end
       end
 
