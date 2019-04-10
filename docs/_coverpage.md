@@ -1,6 +1,6 @@
 ![logo](_media/black_cover.jpg)
 
-# LunaPark <small>0.5</small>
+# LunaPark <small>0.5.6</small>
 
 > Simple Domain-Driven-Design ruby framework
 
@@ -11,3 +11,8 @@
 
 [GitHub](https://github.com/am-team/luna_park/)
 [Guideline](#Область-применения)
+
+Contacts: 
+- Alexander Kudrin - [kudrin.alexander@gmail.com](mailto:kudrin.alexander@gmail.com)
+- Philipp Sorokin  - [ph-s@mail.ru](mailto:ph-s@mail.ru)
+- Telegram         - https://t.me/lunapark_dev
