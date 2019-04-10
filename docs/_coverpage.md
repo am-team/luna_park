@@ -1,6 +1,6 @@
 ![logo](_media/black_cover.jpg)
 
-# LunaPark <small>0.5.8</small>
+# LunaPark <small>0.5.9</small>
 
 > Simple Domain-Driven-Design ruby framework
 
@@ -13,6 +13,6 @@
 [Guideline](#Область-применения)
 
 Contacts: 
-- Alexander Kudrin - [kudrin.alexander@gmail.com](mailto:kudrin.alexander@gmail.com)
-- Philipp Sorokin  - [ph-s@mail.ru](mailto:ph-s@mail.ru)
+- Alexander Kudrin - [alexander.kudrin@lunapark.dev](mailto:alexander.kudrin@lunapark.dev)
+- Philipp Sorokin  - [philipp.sorokin@lunapark.dev](mailto:philipp.sorokin@lunapark.dev)
 - Telegram         - https://t.me/lunapark_dev
