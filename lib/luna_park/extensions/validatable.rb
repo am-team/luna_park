@@ -52,7 +52,7 @@ module LunaPark
         end
 
         def validation
-          @validation ||= self.class.__validate__(params)
+          @validation ||= self.class.validator.validate(params)
         end
 
         # :nocov:
@@ -63,12 +63,8 @@ module LunaPark
       end
 
       module ClassMethods
-        def validator(klass)
-          @_validator = klass
-        end
-
-        def __validate__(params)
-          @_validator&.validate(params)
+        def validator(klass = nil)
+          klass.nil? ? @validator : @validator = klass
         end
       end
     end
