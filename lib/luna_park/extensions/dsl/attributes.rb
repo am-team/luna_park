@@ -44,7 +44,7 @@ module LunaPark
         private_constant :DEFAULT_TYPE_METH
 
         include PredicateAttrAccessor
-        include CoercibleAttrAccessor
+        include TypedAttrAccessor
 
         ##
         # .attr that also adds `reader?`
@@ -80,32 +80,32 @@ module LunaPark
         #
         # @example
         #   attrs name1, name2, name3, **attr_options
-        #   attrs name1, name2, name3, CallableCoercer, **attr_options
-        #   attrs name1, name2, name3, Coercer, :coerce_method, **attr_options
+        #   attrs name1, name2, name3, CallableType, **attr_options
+        #   attrs name1, name2, name3, Type, :type_method, **attr_options
         #
         # @return [Array of Hash(Symbol => Symbol)] Hash of defined methods
         def attrs(*args, **options) # rubocop:disable Metrics/MethodLength
-          *names, coercer, coercer_meth = if args.all? { |arg| arg.is_a?(Symbol) }
-                                            [*args, nil, nil]
-                                          elsif args[0..-2].all? { |arg| arg.is_a?(Symbol) }
-                                            [*args, DEFAULT_TYPE_METH]
-                                          elsif args[0..-3].all? { |arg| arg.is_a?(Symbol) } && args.last.is_a?(Symbol)
-                                            args
-                                          else
-                                            raise ArgumentError, 'must be (*names) | ' \
-                                              '(*names, type) | (*names, type, type_meth)'
-                                          end
+          *names, type, type_meth = if args.all? { |arg| arg.is_a?(Symbol) }
+                                      [*args, nil, nil]
+                                    elsif args[0..-2].all? { |arg| arg.is_a?(Symbol) }
+                                      [*args, DEFAULT_TYPE_METH]
+                                    elsif args[0..-3].all? { |arg| arg.is_a?(Symbol) } && args.last.is_a?(Symbol)
+                                      args
+                                    else
+                                      raise ArgumentError, 'must be (*names) | ' \
+                                        '(*names, type) | (*names, type, type_meth)'
+                                    end
 
-          names.map { |name| attr name, coercer, coercer_meth, **options }
+          names.map { |name| attr name, type, type_meth, **options }
         end
 
         ##
-        # define coercible attr_accessor, register it for Extenions::Comparable, Extenions::Serializable
+        # define typed attr_accessor, register it for Extenions::Comparable, Extenions::Serializable
         #   so it will be comparable using `#==`, `#eql?` and serializable using `#to_h`, `#serialize`
         #   return Hash of defined methods `{ getter: :foo, setter: :foo= }`
         #
         # @param name [Symbol]
-        # @param type [Object] any object that responds to method described in next param. Skip if you dont need coercion
+        # @param type [Object] any object that responds to method described in next param. Skip if you dont need stypification
         # @param method [Symbol] (call)
         # @option options [Bool] comparable (true)
         # @option options [Bool] array (false)
@@ -120,7 +120,7 @@ module LunaPark
           serializable_attributes(name) if include?(Serializable)
           comparable_attributes(name)   if comparable && include?(Comparable)
 
-          coercible_attr_writer(name, type&.method(type_meth), is_array: array)
+          typed_attr_writer(name, type&.method(type_meth), is_array: array)
 
           { getter: name, setter: :"#{name}=" }
         end

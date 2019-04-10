@@ -2,13 +2,13 @@
 
 module LunaPark
   module Extensions
-    module CoercibleAttrAccessor
-      def coercible_attr_accessor(*names, callable, is_array: false)
+    module TypedAttrAccessor
+      def typed_attr_accessor(*names, callable, is_array: false)
         attr_reader(*names)
-        coercible_attr_writer(*names, callable, is_array: is_array)
+        typed_attr_writer(*names, callable, is_array: is_array)
       end
 
-      def coercible_attr_writer(*names, callable, is_array: false)
+      def typed_attr_writer(*names, callable, is_array: false)
         return attr_writer(*names) if callable.nil?
 
         names.each do |name|

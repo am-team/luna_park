@@ -18,7 +18,7 @@ Moved to modules:
 - Extensions::Dsl::ForeignKey adds `.foreign_key` for create foreign key accessor with ergonomically-related object acessor. Has `.fk` as shorter variant (not alias)
 - Entities::Attributable (Entities::Simple with included Extensions::Comparable, Extensions::Serializable, Extensions::Dsl::Attributes)
 - Values::Attributable (Values::Simple with included Extensions::Comparable, Extensions::Serializable, Extensions::Dsl::Attributes)
-- DSL `.attr` can create coercible arrays by option `array: true`
+- DSL `.attr` can create typed arrays by option `array: true`
 - DSL `.attr` can create private setter by option `private_setter: true`
 - Some meaningfull exceptions when library used wrong
 - Extensions::ComparableDebug#detailed_differences method that returns only differences
@@ -26,7 +26,7 @@ Moved to modules:
 - Extensions::Comparable adds `#enable_debug` and `.enable_debug` that just includes `Extensions::ComparableDebug` to current class
   has aliases `#debug`, `.debug`
 - Extensions::PredicateAttribute adds `#predicate_attr_reader`, `#predicate_attr_accessor` and aliased `#attr_reader?`, `#artr_accessor?`
-- Extensions::CoercibleAttribute adds `#coercible_attr_writer`, `#coercible_attr_accessor`
+- Extensions::TypedAttribute adds `#typed_attr_writer`, `#typed_attr_accessor`
 
 ### Fixed
 - DSL `.attr .attrs .attr? .attrs? .namespace` method now can be reloaded with using `super` (before the `super` was not available)
