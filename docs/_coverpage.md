@@ -1,6 +1,6 @@
 ![logo](_media/black_cover.jpg)
 
-# LunaPark <small>0.5.6</small>
+# LunaPark <small>0.5.8</small>
 
 > Simple Domain-Driven-Design ruby framework
 
