@@ -28,11 +28,10 @@ Gem::Specification.new do |spec|
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
     `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   end
-  spec.bindir        = 'exe'
-  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
+  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'bundler', '~> 1.16'
+  spec.add_dependency 'bundler', '>= 1.6'
   spec.add_development_dependency 'byebug', '~> 10.0'
   spec.add_development_dependency 'codecov', '~> 0.1'
   spec.add_development_dependency 'dry-validation', '~> 0.12'
@@ -43,4 +42,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 0.49'
   spec.add_development_dependency 'simplecov', '~> 0.16'
+  spec.add_development_dependency 'thor'
+  spec.add_development_dependency 'tty-file', '~> 0.7.0'
 end

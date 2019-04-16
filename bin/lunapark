@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+require 'byebug'
+require 'bundler'
+require 'luna_park/cli'
+
+
+Bundler.require(:plugins) if File.exist?(ENV['BUNDLE_GEMFILE'] || 'Gemfile')
+LunaPark::CLI::App.start(ARGV)
