@@ -115,12 +115,26 @@ module LunaPark
         #   Hash of defined methods { :method_role => :method_name }; `{ getter: :foo }`
         def attr(name, type = nil, type_meth = nil, comparable: true, array: false)
           type_meth ||= DEFAULT_TYPE_METH
-          attr_reader(name)
 
           serializable_attributes(name) if include?(Serializable)
           comparable_attributes(name)   if comparable && include?(Comparable)
 
-          typed_attr_writer(name, type&.method(type_meth), is_array: array)
+          # typed_attr_writer(name, type&.method(type_meth), is_array: array)
+          mixin = Module.new do
+            attr_reader(name)
+
+            callable = type&.method(type_meth)
+            setter = :"#{name}="
+            ivar   = :"@#{name}"
+            if type.nil?
+              attr_writer(name)
+            elsif array
+              define_method(setter) { |input| instance_variable_set(ivar, input&.map { |elem| callable.call(elem) }) }
+            else
+              define_method(setter) { |input| instance_variable_set(ivar, callable.call(input)) }
+            end
+          end
+          include(mixin)
 
           { getter: name, setter: :"#{name}=" }
         end
