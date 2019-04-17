@@ -19,7 +19,6 @@ Moved to modules:
 - Entities::Attributable (Entities::Simple with included Extensions::Comparable, Extensions::Serializable, Extensions::Dsl::Attributes)
 - Values::Attributable (Values::Simple with included Extensions::Comparable, Extensions::Serializable, Extensions::Dsl::Attributes)
 - DSL `.attr` can create typed arrays by option `array: true`
-- DSL `.attr` can create private setter by option `private_setter: true`
 - Some meaningfull exceptions when library used wrong
 - Extensions::ComparableDebug#detailed_differences method that returns only differences
   (#differences_structure renamed to #detailed_comparsion with alias #detailed_cmp)
