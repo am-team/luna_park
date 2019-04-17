@@ -110,5 +110,26 @@ module LunaPark
         end
       end
     end
+
+    context 'when redefined with `super`' do
+      before do
+        klass.class_eval do
+          def eyes_count=(i)
+            super(i.to_s)
+          end
+
+          def alive=(i)
+            super(!!i)
+          end
+        end
+      end
+
+      it 'from #attr, workes with super' do
+        expect { e.eyes_count = '8' }.not_to raise_error
+      end
+      it 'from #attr?, workes with super' do
+        expect { e.alive = 'yes' }.not_to raise_error
+      end
+    end
   end
 end
