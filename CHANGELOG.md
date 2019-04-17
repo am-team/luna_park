@@ -4,6 +4,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2019-04-17
+### Internal changes
+Moved to modules:
+- Extensions::Wrappable adds `.wrap`
+- Extensions::Serializable adds `#to_h` and `#serialize` as alias
+- Extensions::Comparable adds `#==` and `#eql?`
+- Extensions::Dsl::Attributes adds `.attr .attrs .attr? .attrs?` DSL methods
+  - optionaly works in synergy with Extensions::Serializable and Extensions::Comparable
+
+### Added
+- YARDoc
+- Extensions::Dsl::ForeignKey adds `.foreign_key` for create foreign key accessor with ergonomically-related object acessor. Has `.fk` as shorter variant (not alias)
+- Entities::Attributable (Entities::Simple with included Extensions::Comparable, Extensions::Serializable, Extensions::Dsl::Attributes)
+- Values::Attributable (Values::Simple with included Extensions::Comparable, Extensions::Serializable, Extensions::Dsl::Attributes)
+- DSL `.attr` can create typed arrays by option `array: true`
+- DSL `.attr` can create private setter by option `private_setter: true`
+- Some meaningfull exceptions when library used wrong
+- Extensions::ComparableDebug#detailed_differences method that returns only differences
+  (#differences_structure renamed to #detailed_comparsion with alias #detailed_cmp)
+- Extensions::Comparable adds `#enable_debug` and `.enable_debug` that just includes `Extensions::ComparableDebug` to current class
+  has aliases `#debug`, `.debug`
+- Extensions::PredicateAttribute adds `#predicate_attr_reader`, `#predicate_attr_accessor` and aliased `#attr_reader?`, `#artr_accessor?`
+- Extensions::TypedAttribute adds `#typed_attr_writer`, `#typed_attr_accessor`
+
+### Fixed
+- DSL `.attr .attrs .attr? .attrs? .namespace` method now can be reloaded with using `super` (before the `super` was not available)
+- `#to_h`, `#==` from Extensions::Serializable and Extensions::Comparable now works fine in inverited classes
+- Values::Single now will be serialized too when you will try send #to_h to aggregate, included Values::Single instance
+
+### Changed
+- ComparableDebug#detailed_comparsion renamed from #differences_structure.
+  (Now available: #detailed_differences and #detailed_comparsion
+  with aliases: #detailed_diff and #detailed_cmp)
+
 ## [0.5.9] - 2019-04-09
 ### Added
 - `Extensions::Validateable::Dry` - same as normal `Validateable`, but method `.validator` can receive block

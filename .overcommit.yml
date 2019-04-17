@@ -1,4 +1,6 @@
 PreCommit:
+  Spec:
+    enabled: true
   RuboCop:
     enabled: true
     on_warn: fail # Treat all warnings as failures

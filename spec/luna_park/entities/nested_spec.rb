@@ -3,18 +3,8 @@
 require 'ostruct'
 require 'securerandom'
 
-module Wrappable
-  def wrap(input)
-    case input
-    when self then input
-    when Hash then new(input)
-    else raise ArgumentError
-    end
-  end
-end
-
-Eyes = Struct.new(:left, :right, keyword_init: true) { extend Wrappable }
-Gun  = Struct.new(:title,        keyword_init: true) { extend Wrappable }
+Eyes = Struct.new(:left, :right, keyword_init: true) { extend LunaPark::Extensions::Wrappable }
+Gun  = Struct.new(:title,        keyword_init: true) { extend LunaPark::Extensions::Wrappable }
 
 class Elephant < LunaPark::Entities::Nested
   namespace :head do
@@ -63,7 +53,6 @@ module LunaPark
         expect(new.head.ears).to                 be_a OpenStruct
         expect(new.head.trunk_length).to         be_a Float
         expect(new.weapon).to                    be_a Gun
-        expect(new.alive).to                     be_a TrueClass
         expect(new.alive?).to                    be_a TrueClass
         expect(new.number_of_crushed_enemies).to be_a Integer
         expect(new.last_battle_time).to          be_a Date
@@ -76,7 +65,6 @@ module LunaPark
         expect(new.head.ears.right).to           eq 'Damaged'
         expect(new.head.trunk_length).to         eq 2.1
         expect(new.weapon.title).to              eq 'BFG'
-        expect(new.alive).to                     be true
         expect(new.alive?).to                    be true
         expect(new.number_of_crushed_enemies).to eq 2328
         expect(new.last_battle_time).to          eq Date.parse('2018-12-07 06:40:09 UTC')
@@ -91,7 +79,7 @@ module LunaPark
 
       include_examples 'wrap method'
 
-      context 'when given Hash' do
+      context 'when given Hash,' do
         let(:input) { arguments }
 
         it 'returns self type' do
@@ -144,33 +132,31 @@ module LunaPark
     end
 
     describe '#== (controlled by `attr .., comparable: ..` option),' do
-      subject(:equality) { entity == other }
-
       let(:other) { sample_class.new(other_params) }
 
-      context 'when other created with the same params' do
+      context 'when other created with the same params,' do
         let(:other_params) { params }
 
-        it { is_expected.to be true }
+        it { expect(entity).to eq other }
       end
 
-      context 'when other created with different but uncomparable params' do
+      context 'when other created with different but uncomparable params,' do
         let(:other_params) do
           params.merge(last_battle_time: Date.parse('2018-12-07 00:00:00 UTC'),
                        number_of_crushed_enemies: 2330)
         end
 
-        it { is_expected.to be true }
+        it { expect(entity).to eq other }
       end
 
-      context 'when other created with the different params' do
+      context 'when other created with the different params,' do
         let(:other_params) do
           o_params = params.dup
           o_params[:head][:ears][:left] = nil
           o_params
         end
 
-        it { is_expected.to be false }
+        it { expect(entity).not_to eq other }
       end
     end
 
@@ -179,14 +165,14 @@ module LunaPark
 
       it 'returns expected string' do
         is_expected.to eq '#<Elephant ' \
-          '@head=#<Namespace:head ' \
-          '@eyes=#<struct Eyes left="Red", right=nil> ' \
-          '@ears=#<OpenStruct left="Normal", right="Damaged"> ' \
-          '@legs=#<OpenStruct lb=true, rb=true, lf=true, rf=true> ' \
-          '@trunk_length=2.1> @alive=true ' \
-          '@weapon=#<struct Gun title="BFG"> @height=4.2 ' \
-          '@number_of_crushed_enemies=2328 ' \
-          '@last_battle_time=#<Date: 2018-12-07 ((2458460j,0s,0n),+0s,2299161j)>>'
+          'head=#<Namespace:head ' \
+          'eyes=#<struct Eyes left="Red", right=nil> ' \
+          'ears=#<OpenStruct left="Normal", right="Damaged"> ' \
+          'legs=#<OpenStruct lb=true, rb=true, lf=true, rf=true> ' \
+          'trunk_length=2.1> alive=true ' \
+          'weapon=#<struct Gun title="BFG"> height=4.2 ' \
+          'number_of_crushed_enemies=2328 ' \
+          'last_battle_time=#<Date: 2018-12-07 ((2458460j,0s,0n),+0s,2299161j)>>'
       end
     end
   end
