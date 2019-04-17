@@ -15,6 +15,7 @@ module LunaPark
 end
 
 require_relative 'luna_park/errors'
+require_relative 'luna_park/utils/superclass_eval'
 require_relative 'luna_park/extensions/attributable'
 require_relative 'luna_park/extensions/wrappable'
 require_relative 'luna_park/extensions/callable'

@@ -12,13 +12,12 @@ module LunaPark
         namespace_class.define_singleton_method(:name) { "Namespace:#{name}" }
         namespace_class.class_eval(&block)
 
-        anonym_mixin = Module.new do
+        Utils::SuperclassEval.superclass_eval(self) do
           attr_reader(name)
           define_method(:"#{name}=") do |input|
             instance_variable_set(:"@#{name}", namespace_class.wrap(input))
           end
         end
-        include(anonym_mixin)
       end
     end
   end
