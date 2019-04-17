@@ -66,5 +66,20 @@ module LunaPark
         expect { t.user_uid = 666 }.to change { t.user }.from(user).to(nil)
       end
     end
+
+    context 'when redefined with `super`' do
+      before do
+        ExtensionsDslForeignKeySpec::Transaction.class_eval do
+          def user_uid=(i)
+            super(i.to_s)
+          end
+        end
+      end
+
+      it 'works as expected' do
+        t.user_uid = 42
+        expect(t.user_uid).to eq '42'
+      end
+    end
   end
 end
