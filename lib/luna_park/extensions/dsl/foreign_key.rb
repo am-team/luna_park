@@ -58,21 +58,24 @@ module LunaPark
 
             attr_reader fk_name, assoc_name
 
-            define_method(:"#{assoc_name}=") do |new_assoc|
-              new_assoc_pk = extract_pk_value_from_object__(new_assoc, pk_name)
-              instance_variable_set(:"@#{fk_name}", new_assoc_pk)
-              instance_variable_set(:"@#{assoc_name}", new_assoc)
-            end
+            anonym_mixin = Module.new do
+              define_method(:"#{assoc_name}=") do |new_assoc|
+                new_assoc_pk = extract_pk_value_from_object__(new_assoc, pk_name)
+                instance_variable_set(:"@#{fk_name}", new_assoc_pk)
+                instance_variable_set(:"@#{assoc_name}", new_assoc)
+              end
 
-            define_method(:"#{fk_name}=") do |new_fk|
-              assoc = public_send(assoc_name)
-              instance_variable_set(:"@#{fk_name}", new_fk)
-              return new_fk if assoc.nil?
+              define_method(:"#{fk_name}=") do |new_fk|
+                assoc = public_send(assoc_name)
+                instance_variable_set(:"@#{fk_name}", new_fk)
+                return new_fk if assoc.nil?
 
-              current_assoc_pk = extract_pk_value_from_object__(assoc, pk_name)
-              instance_variable_set(:"@#{assoc_name}", nil) unless new_fk == current_assoc_pk
-              new_fk
+                current_assoc_pk = extract_pk_value_from_object__(assoc, pk_name)
+                instance_variable_set(:"@#{assoc_name}", nil) unless new_fk == current_assoc_pk
+                new_fk
+              end
             end
+            include anonym_mixin
           end
         end
 
