@@ -9,19 +9,13 @@ class Pie < LunaPark::Entities::Simple
 end
 
 class MakingApplePie < LunaPark::Interactors::Sequence
-  private
-
-  def execute
+  def call!
     @pie = Pie.new(filler: :apple)
-  end
-
-  def returned_data
-    @pie
   end
 end
 
 class MakingBurnedPie < MakingApplePie
-  def execute
+  def call!
     raise LunaPark::Errors::Processing, 'Pie is burn out'
   end
 end
@@ -43,7 +37,7 @@ module LunaPark
 
       describe '.call' do
         subject { sequence.call }
-        it { is_expected.to be true }
+        it { is_expected.to be sequence }
       end
 
       describe '.data' do
@@ -108,7 +102,7 @@ module LunaPark
 
       describe '.call' do
         subject { sequence.call }
-        it      { is_expected.to be false }
+        it      { is_expected.to be sequence }
       end
 
       describe '.data' do
