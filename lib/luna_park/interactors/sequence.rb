@@ -17,57 +17,48 @@ module LunaPark
         set_attributes attrs
         @state          = INIT
         @fail_message   = nil
+        @data           = nil
       end
 
+      # :nocov:
+
+      # @abstract
       def call!
-        execute
+        raise Errors::AbstractMethod
       end
+      # :nocov:
 
       def call
-        catch { call! }
-        success?
+        catch { @data = call! }
+        self
       end
 
       def data
-        returned_data if success?
+        @data if success?
       end
 
       def fail?
-        @state == FAILURE
+        state == FAILURE
       end
 
       def success?
-        @state == SUCCESS
-      end
-
-      class << self
-        def call(*attrs)
-          new(*attrs).tap(&:call)
-        end
+        state == SUCCESS
       end
 
       private
+
+      attr_reader :state
 
       def catch
         yield
         @state = SUCCESS
       rescue Errors::Processing => e
+        on_fail
         @fail_message = e.message
         @state        = FAILURE
       end
 
-      # :nocov:
-
-      # @abstract
-      def execute
-        raise Errors::AbstractMethod
-      end
-
-      # @abstract
-      def returned_data
-        raise Errors::AbstractMethod
-      end
-      # :nocov:
+      def on_fail; end
     end
   end
 end

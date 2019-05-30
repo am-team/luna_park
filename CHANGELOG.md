@@ -4,6 +4,118 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2019-05-30
+Simplify interactors 
+
+### Changed
+- UseCases::Service - removed, instead of this methods use
+`extend Extensions::Callable` or `LunaPark::Callable`
+```ruby
+# Depricated
+class YourService < LunaPark::UseCases::Service
+  private 
+  def execute
+    # your logic there
+  end
+end
+
+# Use
+class YourService
+  extend Extensions::Callable
+
+  def call
+    # your logic there
+  end
+end
+
+# Or
+
+class YourService < LunaPark::Callable
+  def call
+    # your logic there
+  end
+end
+```
+
+- UseCases::Command - removed, instead of this methods use
+`extend Extensions::Callable` or `LunaPark::Callable`
+```ruby
+# Depricated
+class YourCommand < LunaPark::UseCases::Command
+  private 
+  def execute
+    # your logic there
+  end
+end
+
+# Use
+class YourCommand
+  extend Extensions::Callable
+
+  def call
+    # your logic there
+    true 
+  end
+end
+
+# Or
+
+class YourCommand < LunaPark::Callable
+  def call
+    # your logic there
+    true 
+  end
+end
+```
+
+- method `execute` at `Interactors::Sequnce` is removed, instead of this methods use `call!`
+
+- method `returned_data` is removed, instead of this methods return data at `call!`
+
+```ruby
+# Depricated
+class YourSequence < LunaPark::Intractors::Sequence
+  private 
+  def execute
+    # your logic there
+  end
+  
+  def returned_data
+    { foo: :bar }
+  end
+end
+
+# Use
+class YourSequence < LunaPark::Intractors::Sequence 
+  def call!
+    # your logic there
+    { foo: :bar } 
+  end
+end
+```
+
+# Added
+- callback method `on_fail` at `Interactors::Sequence`
+
+```ruby
+class YourSequence < LunaPark::Intractors::Sequence 
+  def call!
+    raise Errors::Processing  
+  end
+  
+  private
+  
+  def on_fail
+    puts 'foobar'
+  end
+end
+
+i = YourSequence.call
+
+#=> foobar
+
+```
+
 ## [0.6.2] - 2019-05-03
 ### Changed
 - Extensions::Attributable now uses `#each_pair` instead of `#each`
