@@ -4,7 +4,9 @@ RSpec.describe LunaPark::Validators::Dry do
   let(:human_validator) do
     Class.new(described_class) do
       validation_schema do
-        required(:type).value(eql?: 'human')
+        params do
+          required(:type).value(eql?: 'human')
+        end
       end
     end
   end

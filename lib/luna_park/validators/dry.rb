@@ -9,30 +9,16 @@ module LunaPark
         @params = params
       end
 
-      # :nocov:
-      def valid?
-        warn 'DEPRECATED: Change `LunaPark::Validators::Dry#valid?` to `#success?`'
-        success?
-      end
-      # :nocov:
-
       def success?
         result.success?
       end
 
       def valid_params
-        (success? && result.output) || {}
+        (success? && result.to_h) || {}
       end
-
-      # :nocov:
-      def validation_errors
-        warn 'DEPRECATED: Change `LunaPark::Validators::Dry#validation_errors` to `#errors`'
-        errors
-      end
-      # :nocov:
 
       def errors
-        result.errors || {}
+        result.errors.to_h || {}
       end
 
       private
@@ -51,7 +37,7 @@ module LunaPark
         alias validate new
 
         def validation_schema(&block)
-          @_schema = ::Dry::Validation.Params(&block)
+          @_schema = Class.new(::Dry::Validation::Contract, &block).new
         end
       end
     end
