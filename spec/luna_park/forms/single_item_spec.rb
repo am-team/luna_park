@@ -6,7 +6,9 @@ module FormsSingleItemSpec
   module Reception
     class VisitorValidator < LunaPark::Validators::Dry
       validation_schema do
-        required(:name).value(type?: String)
+        params do
+          required(:name).value(type?: String)
+        end
       end
     end
 

@@ -5,8 +5,10 @@ module ExtensionsValidatableDrySpec
     include LunaPark::Extensions::Validatable::Dry
 
     validator do
-      required(:foo) { filled? & str? & eql?('Foo') }
-      required(:bar) { filled? & str? & eql?('Bar') }
+      params do
+        required(:foo) { filled? & str? & eql?('Foo') }
+        required(:bar) { filled? & str? & eql?('Bar') }
+      end
     end
 
     def initialize(params)
