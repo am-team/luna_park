@@ -54,11 +54,11 @@ module LunaPark
       end
 
       module InstanceMethods
-        private
-
         def transaction(&block)
           dataset.transaction(&block)
         end
+
+        private
 
         # Helpers
 

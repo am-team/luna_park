@@ -145,5 +145,40 @@ module LunaPark
         expect { repo.create_many(new_entities) }.to change { repo.all }.from(expected_entities).to(expected_entities + new_entities)
       end
     end
+
+    describe '#transaction' do
+      let(:repo) do
+        dataset_ = dataset
+        klass = Class.new { include Extensions::DataMapper }
+        klass.define_method(:dataset) { dataset_.new }
+        klass
+      end
+
+      let(:dataset) do
+        Struct.new(:_) do
+          def transaction
+            yield
+          end
+        end
+      end
+
+      it 'calls transaction of dataset' do
+        expect_any_instance_of(dataset).to receive(:transaction)
+        repo.new.transaction { 'some' }
+      end
+
+      it 'transaction returns block result' do
+        expect(repo.new.transaction { 'RESULT' }).to eq 'RESULT'
+      end
+    end
+
+    describe '#dataset' do
+      subject(:dataset) { repo.new.send(:dataset) }
+      let(:repo) { Class.new { include Extensions::DataMapper } }
+
+      it 'raises NotImplementedError' do
+        expect { dataset }.to raise_error(NotImplementedError)
+      end
+    end
   end
 end
