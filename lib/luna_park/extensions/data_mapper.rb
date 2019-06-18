@@ -125,6 +125,7 @@ module LunaPark
 
         # @example
         #   to_entities(attributes_hashes) # => Array of Entity
+        #   to_entities(attributes_hash)   # => Array of Entity
         def to_entities(attrs_array)
           Array(attrs_array).map { |attrs| to_entity(attrs) }
         end
@@ -142,6 +143,7 @@ module LunaPark
         # @example
         #   to_entities(attributes_hashes) # => Array of Entity
         #   to_entities(entities)          # => Array of Entity
+        #   to_entities(entity)            # => Array of Entity
         def wrap_all(input_array)
           Array(input_array).map { |input| wrap(input) }
         end
