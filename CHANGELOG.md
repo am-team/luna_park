@@ -4,19 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.1] - 2019-06-18
+Added
+- Extensions::DataMapper for implement Repository for concrete Entity
+- Repositories::Sequel that uses Extensions::DataMapper
+
 ## [0.8.0] - 2019-06-17
 Update dry validations 0.13 to 1.1
 
 ## [0.7.0] - 2019-05-30
-Simplify interactors 
+Simplify interactors
 
 ### Changed
 - UseCases::Service - removed, instead of this methods use
 `extend Extensions::Callable` or `LunaPark::Callable`
 ```ruby
-# Depricated
+# Deprecated
 class YourService < LunaPark::UseCases::Service
-  private 
+  private
   def execute
     # your logic there
   end
@@ -43,9 +48,9 @@ end
 - UseCases::Command - removed, instead of this methods use
 `extend Extensions::Callable` or `LunaPark::Callable`
 ```ruby
-# Depricated
+# Deprecated
 class YourCommand < LunaPark::UseCases::Command
-  private 
+  private
   def execute
     # your logic there
   end
@@ -57,7 +62,7 @@ class YourCommand
 
   def call
     # your logic there
-    true 
+    true
   end
 end
 
@@ -66,7 +71,7 @@ end
 class YourCommand < LunaPark::Callable
   def call
     # your logic there
-    true 
+    true
   end
 end
 ```
@@ -76,23 +81,23 @@ end
 - method `returned_data` is removed, instead of this methods return data at `call!`
 
 ```ruby
-# Depricated
+# Deprecated
 class YourSequence < LunaPark::Intractors::Sequence
-  private 
+  private
   def execute
     # your logic there
   end
-  
+
   def returned_data
     { foo: :bar }
   end
 end
 
 # Use
-class YourSequence < LunaPark::Intractors::Sequence 
+class YourSequence < LunaPark::Intractors::Sequence
   def call!
     # your logic there
-    { foo: :bar } 
+    { foo: :bar }
   end
 end
 ```
@@ -101,13 +106,13 @@ end
 - callback method `on_fail` at `Interactors::Sequence`
 
 ```ruby
-class YourSequence < LunaPark::Intractors::Sequence 
+class YourSequence < LunaPark::Intractors::Sequence
   def call!
-    raise Errors::Processing  
+    raise Errors::Processing
   end
-  
+
   private
-  
+
   def on_fail
     puts 'foobar'
   end
