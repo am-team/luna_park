@@ -28,19 +28,19 @@ module LunaPark
     context 'without process errors' do
       let(:klass) { MakingApplePie }
 
-      describe '.call!' do
+      describe '#call!' do
         subject { sequence.call! }
         it 'should return correct answer' do
           is_expected.to eq correct_result
         end
       end
 
-      describe '.call' do
+      describe '#call' do
         subject { sequence.call }
         it { is_expected.to be sequence }
       end
 
-      describe '.data' do
+      describe '#data' do
         subject { sequence.data }
 
         context 'before call' do
@@ -49,11 +49,12 @@ module LunaPark
 
         context 'after call' do
           before { sequence.call }
+
           it { is_expected.to eq correct_result }
         end
       end
 
-      describe '.fail?' do
+      describe '#fail?' do
         subject { sequence.fail? }
 
         context 'before call' do
@@ -62,11 +63,12 @@ module LunaPark
 
         context 'after call' do
           before { sequence.call }
+
           it { is_expected.to eq false }
         end
       end
 
-      describe '.success?' do
+      describe '#success?' do
         subject { sequence.success? }
 
         context 'before call' do
@@ -75,6 +77,7 @@ module LunaPark
 
         context 'after call' do
           before { sequence.call }
+
           it { is_expected.to eq true }
         end
       end
@@ -88,24 +91,38 @@ module LunaPark
           expect(subject.success?).to eq true
         end
       end
+
+      describe '#failure' do
+        subject(:failure) { sequence.failure }
+
+        context 'before call' do
+          it { is_expected.to be_nil }
+        end
+
+        context 'after call' do
+          before { sequence.call }
+
+          it { is_expected.to be_nil }
+        end
+      end
     end
 
     context 'when process failed' do
       let(:klass) { MakingBurnedPie }
 
-      describe '.call!' do
+      describe '#call!' do
         subject { sequence.call! }
         it 'raise Errors::Process' do
           expect { subject }.to raise_error Errors::Processing
         end
       end
 
-      describe '.call' do
+      describe '#call' do
         subject { sequence.call }
         it      { is_expected.to be sequence }
       end
 
-      describe '.data' do
+      describe '#data' do
         subject { sequence.data }
 
         context 'before call' do
@@ -114,11 +131,12 @@ module LunaPark
 
         context 'after call' do
           before { sequence.call }
+
           it { is_expected.to eq nil }
         end
       end
 
-      describe '.fail?' do
+      describe '#fail?' do
         subject { sequence.fail? }
 
         context 'before call' do
@@ -127,11 +145,12 @@ module LunaPark
 
         context 'after call' do
           before { sequence.call }
+
           it { is_expected.to eq true }
         end
       end
 
-      describe '.success?' do
+      describe '#success?' do
         subject { sequence.success? }
 
         context 'before call' do
@@ -140,7 +159,22 @@ module LunaPark
 
         context 'after call' do
           before { sequence.call }
+
           it { is_expected.to eq false }
+        end
+      end
+
+      describe '#failure' do
+        subject(:failure) { sequence.failure }
+
+        context 'before call' do
+          it { is_expected.to be_nil }
+        end
+
+        context 'after call' do
+          before { sequence.call }
+
+          it { is_expected.to be_a LunaPark::Errors::Processing }
         end
       end
 

@@ -2,12 +2,59 @@
 
 module LunaPark
   module Interactors
-    # add description
+    # @example
+    #
+    #  module Errors
+    #    class Processing << LunaPark::Errors::Processing; end
+    #    class NotEnoughMoney < Processing
+    #      # ...
+    #    end
+    #  end
+    #
+    #  module Scenarios
+    #    class Withdrawal < LunaPark::Interactors::Sequence
+    #      attr_accessor :account, :charge # will be used for initialize object `new(balance:, user:)`
+    #
+    #      def call!
+    #        Reositories::Balance.transaction do
+    #          balance = Reositories::Balance.find(account.id)
+    #
+    #          guard_balance balance, charge # buisnes-logic check
+    #
+    #          transactions = WithdrawalTransactionsFactory.call(account: account, charge: charge)
+    #          Reositories::Transaction.create_many(transactions)
+    #        end
+    #      end
+    #
+    #      private
+    #
+    #      def on_failure(failure)
+    #        case failure # also accessible as getter
+    #        when Errors::ImportantError then BugTracker.warning(failure)
+    #        end
+    #      end
+    #
+    #      def guard_balance(balance, charge)
+    #        return if balance >= charge
+    #
+    #        raise Errors::NotEnoughMoney.new(account: account, balance: balance, charge: charge)
+    #      end
+    #    end
+    #  end
+    #
+    #  scenario = Scenarios::Withdrawal.call(account: Account.new(account_params), charge: Money.new(charge_params))
+    #
+    #  if scenario.failure?
+    #    scenario.failure # => NotEnoughMoney
+    #    scenario.failure.message # => "Account user 42 tryes to withdraw 1000 USD while has only 0.01 USD"
+    #  else
+    #    scenario.data # =>
+    #  end
     class Sequence
       include Extensions::Attributable
       extend  Extensions::Callable
 
-      attr_reader :fail_message
+      attr_reader :state, :failure, :data
 
       INIT    = :initialized
       SUCCESS = :success
@@ -15,9 +62,9 @@ module LunaPark
 
       def initialize(attrs = {})
         set_attributes attrs
-        @state          = INIT
-        @fail_message   = nil
-        @data           = nil
+        @state   = INIT
+        @failure = nil
+        @data    = nil
       end
 
       # :nocov:
@@ -33,11 +80,7 @@ module LunaPark
         self
       end
 
-      def data
-        @data if success?
-      end
-
-      def fail?
+      def failure?
         state == FAILURE
       end
 
@@ -45,20 +88,38 @@ module LunaPark
         state == SUCCESS
       end
 
-      private
+      # :nocov:
 
-      attr_reader :state
+      # @deprecated
+      def fail_message
+        failure&.message
+      end
+      # :nocov:
+
+      alias fail    failure
+      alias failed? failure?
+      alias fail?   failure?
+      alias succeed? success?
+
+      class << self
+        def call(*attrs)
+          new(*attrs).tap(&:call)
+        end
+      end
+
+      private
 
       def catch
         yield
         @state = SUCCESS
       rescue Errors::Processing => e
-        on_fail
-        @fail_message = e.message
-        @state        = FAILURE
+        @state   = FAILURE
+        @failure = e
+        on_fail(e)
       end
 
-      def on_fail; end
+      # @abstract
+      def on_fail(_processing_exception); end
     end
   end
 end
