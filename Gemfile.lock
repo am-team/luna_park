@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    luna_park (0.8.1)
+    luna_park (0.8.2)
 
 GEM
   remote: https://rubygems.org/
@@ -104,7 +104,7 @@ GEM
     simplecov-html (0.10.2)
     unicode-display_width (1.5.0)
     url (0.3.2)
-    yard (0.9.18)
+    yard (0.9.20)
 
 PLATFORMS
   ruby
@@ -122,7 +122,7 @@ DEPENDENCIES
   rspec (~> 3.0)
   rubocop (~> 0.66)
   simplecov (~> 0.16)
-  yard (~> 0.9.18)
+  yard (~> 0.9.20)
 
 BUNDLED WITH
    1.17.3
