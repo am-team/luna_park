@@ -14,6 +14,7 @@ module LunaPark
   module Values; end
 end
 
+require_relative 'luna_park/extensions/exceptions/substitutive'
 require_relative 'luna_park/errors'
 require_relative 'luna_park/extensions/attributable'
 require_relative 'luna_park/extensions/wrappable'
