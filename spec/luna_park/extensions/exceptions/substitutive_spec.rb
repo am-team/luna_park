@@ -20,7 +20,7 @@ module ExtensionsExceptionsSubstitutiveSpec
       raise RegularError
     end
 
-    def raise_substituted_exception
+    def raise_substitutive_exception
       raise_origin_exception
     rescue StandardError => e
       raise SubstitutiveError.substitute(e)
@@ -32,15 +32,23 @@ module LunaPark
   RSpec.describe Extensions::Exceptions::Substitutive do
     let(:origin_exception)      { catch { ExtensionsExceptionsSubstitutiveSpec.raise_origin_exception } }
     let(:replaced_exception)    { catch { ExtensionsExceptionsSubstitutiveSpec.raise_replaced_exception } }
-    let(:substituted_exception) { catch { ExtensionsExceptionsSubstitutiveSpec.raise_substituted_exception } }
+    let(:substituted_exception) { catch { ExtensionsExceptionsSubstitutiveSpec.raise_substitutive_exception } }
 
     describe 'substitutive exception' do
       it 'has name of origin exception' do
         expect(substituted_exception.message).to be origin_exception.message
       end
 
+      it 'backtrace starts from origin exception backtrace' do
+        expect(substituted_exception.backtrace.first).to be origin_exception.backtrace.first
+      end
+
       it 'includes backtrace of origin exception' do
-        expect(substituted_exception.backtrace).to include origin_exception.backtrace.first
+        expect(substituted_exception.backtrace.map { |p| p.split(':').last }).to include 'in `raise_origin_exception\''
+      end
+
+      it 'includes backtrace of new exception' do
+        expect(substituted_exception.backtrace.map { |p| p.split(':').last }).to include 'in `raise_substitutive_exception\''
       end
 
       it 'contains origin exception object' do
