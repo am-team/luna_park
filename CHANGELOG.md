@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.4] - 2019-07-10
+Added
+- Extensions::Exceptions::Substitutive, that allows you to substitute
+  origin exception with custom exception and save backtrace of origin.
+  In other case information of origin exception will be losed,
+  that can be very painfull when something goes wrong.
+
 ## [0.8.3] - 2019-07-10
 Added
 - method Interactors::Sequence#failure that returns catched Processing exception object
