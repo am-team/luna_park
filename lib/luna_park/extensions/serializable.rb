@@ -31,7 +31,7 @@ module LunaPark
           raise 'No attributes given' if names.compact.empty?
 
           @serializable_attributes_list ||= []
-          @serializable_attributes_list.concat(names).compact!
+          @serializable_attributes_list |= names
         end
 
         ##
