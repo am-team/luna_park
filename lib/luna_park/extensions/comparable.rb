@@ -42,7 +42,7 @@ module LunaPark
           raise 'No attributes given' if names.compact.empty?
 
           @comparable_attributes_list ||= []
-          @comparable_attributes_list.concat(names).compact!
+          @comparable_attributes_list |= names
         end
 
         ##
