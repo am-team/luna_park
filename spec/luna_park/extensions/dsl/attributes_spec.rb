@@ -110,5 +110,33 @@ module LunaPark
         end
       end
     end
+
+    context 'when definition duplicated,' do
+      let(:klass) do
+        Class.new do
+          extend LunaPark::Extensions::Dsl::Attributes
+
+          attr :foo, OpenStruct, :new
+          attr :foo
+          attr :bar
+          attr :bar, OpenStruct, :new
+
+          def initialize(hash = {})
+            self.foo = hash[:foo]
+            self.bar = hash[:bar]
+          end
+        end
+      end
+
+      let(:value) { { bar: 'baz' } }
+
+      it 'attribute redefined without type coercion has no coercion' do
+        expect(klass.new(foo: value).foo).to be value
+      end
+
+      it 'attribute redefined with type coercion has coercion' do
+        expect(klass.new(bar: value).bar).to eq OpenStruct.new(value)
+      end
+    end
   end
 end
