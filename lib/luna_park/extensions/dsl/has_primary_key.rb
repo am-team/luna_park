@@ -5,7 +5,6 @@ module LunaPark
     module Dsl
       # @example
       #   class MyEntity
-      #     include LunaPark::Extensions::Dsl::Attributes
       #     include LunaPark::Extensions::Dsl::HasPrimaryKey
       #
       #     primary_key :uid
@@ -13,7 +12,6 @@ module LunaPark
       #
       #   entity = MyEntity.new(uid: 'a123')
       #   entity.uid               # => "a123"
-      #   entity.pk                # => "a123"
       #   entity.primary_key       # => "a123"
       #   entity.class.primary_key # => :uid
       #
@@ -31,18 +29,17 @@ module LunaPark
       #     # ...
       #   end
       module HasPrimaryKey
-        def self.included(base)
-          base.extend ClassMethods
+        def self.extended(base)
+          base.extend  ClassMethods
           base.include InstanceMethods
         end
 
         module ClassMethods
-          attr_reader :primary_key_type
-
           def primary_key(key = nil)
-            @primary_key || define_primary_key(key) || raise(
-              Errors::NotConfigured, "primary_key is unknown. It must be configured via `#{self}.primary_key(key)`"
-            )
+            return @primary_key            if @primary_key
+            return define_primary_key(key) if key
+
+            raise Errors::NotConfigured, "primary_key is unknown. It must be configured via `#{self}.primary_key(key)`"
           end
 
           def wrap_primary_key(input)
@@ -52,8 +49,10 @@ module LunaPark
           private
 
           def define_primary_key(key)
-            attr(key)
             @primary_key = key
+
+            attr_writer key
+            attr key # if Dsl::Attributes not used - will define reader (old Ruby syntax)
           end
         end
 

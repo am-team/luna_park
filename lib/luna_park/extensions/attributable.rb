@@ -21,6 +21,8 @@ module LunaPark
         hash.each_pair { |k, v| send(:"#{k}=", v) }
         self
       end
+
+      alias update_attributes set_attributes
     end
   end
 end
