@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+require_relative 'simple'
+
+require_relative '../extensions/comparable'
+require_relative '../extensions/serializable'
+require_relative '../extensions/dsl/attributes'
+
 module LunaPark
   module Entities
     # add description

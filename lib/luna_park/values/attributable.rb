@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+require_relative 'compound'
+require_relative '../extensions/comparable'
+require_relative '../extensions/serializable'
+require_relative '../extensions/dsl/attributes'
+
 module LunaPark
   module Values
     class Attributable < Compound

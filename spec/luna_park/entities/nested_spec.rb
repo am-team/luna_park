@@ -3,6 +3,9 @@
 require 'ostruct'
 require 'securerandom'
 
+require_relative '../../../lib/luna_park/entities/nested'
+require_relative '../../../lib/luna_park/extensions/wrappable'
+
 Eyes = Struct.new(:left, :right, keyword_init: true) { extend LunaPark::Extensions::Wrappable }
 Gun  = Struct.new(:title,        keyword_init: true) { extend LunaPark::Extensions::Wrappable }
 

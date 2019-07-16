@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../../lib/luna_park/extensions/comparable'
+
 module ExtensionsComparableDebugSpec
   class Money
     include LunaPark::Extensions::Comparable

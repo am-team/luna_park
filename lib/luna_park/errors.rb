@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'extensions/exceptions/substitutive'
+
 module LunaPark
   module Errors
     class NotConfigured  < StandardError; end

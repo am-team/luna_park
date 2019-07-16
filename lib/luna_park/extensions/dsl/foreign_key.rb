@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative '../comparable'
+require_relative '../serializable'
+
 module LunaPark
   module Extensions
     module Dsl

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../validators/dry'
+
 module LunaPark
   module Extensions
     module Validatable

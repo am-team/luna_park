@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../../lib/luna_park/extensions/comparable'
+
 module ExtensionsComparableSpec
   Book = Struct.new(:title, :author, :weight) do
     include LunaPark::Extensions::Comparable

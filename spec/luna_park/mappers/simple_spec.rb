@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../../lib/luna_park/mappers/simple'
+
 module MappersSimpleSpec
   class TransactionMapper < LunaPark::Mappers::Simple
     def self.from_row(row)

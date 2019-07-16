@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../../lib/luna_park/values/compound'
+
 class SampleMoney < LunaPark::Values::Compound
   attr_reader :currency, :fractional
 

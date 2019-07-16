@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+require_relative '../comparable'
+require_relative '../serializable'
+require_relative '../predicate_attr_accessor'
+require_relative '../typed_attr_accessor'
+
 module LunaPark
   module Extensions
     module Dsl

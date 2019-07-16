@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../../lib/luna_park/extensions/validatable'
+
 module ExtensionsValidatableSpec
   class MyValidator
     def self.validate(params)

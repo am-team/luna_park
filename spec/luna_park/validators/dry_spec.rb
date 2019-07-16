@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../../lib/luna_park/validators/dry'
+
 RSpec.describe LunaPark::Validators::Dry do
   let(:human_validator) do
     Class.new(described_class) do

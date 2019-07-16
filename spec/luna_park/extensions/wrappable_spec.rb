@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative '../../../lib/luna_park/extensions/wrappable'
+require_relative '../../../lib/luna_park/extensions/callable'
+
 module ExtensionsWrappableSpec
   Account = Struct.new(:type, :uid, keyword_init: true) do
     extend LunaPark::Extensions::Wrappable

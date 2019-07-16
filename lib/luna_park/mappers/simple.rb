@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../errors'
+
 module LunaPark
   module Mappers
     # Abstract mapper for transform data from Entity attributes schema to Database row schema

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../../../lib/luna_park/extensions/dsl/attributes'
+
 module ExtensionsAttributesSpec
   Ears = Struct.new(:left, :right, keyword_init: true)
   Enemy = Struct.new(:name)
