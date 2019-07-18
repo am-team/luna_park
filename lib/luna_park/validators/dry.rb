@@ -2,6 +2,12 @@
 
 require_relative '../errors'
 
+begin
+  require 'dry-validation'
+rescue LoadError => e
+  raise unless e.message == 'cannot load such file -- dry-validation'
+end
+
 module LunaPark
   module Validators
     class Dry
@@ -43,9 +49,14 @@ module LunaPark
         alias validate new
 
         def validation_schema(&block)
+          unless defined?(::Dry::Validation)
+            raise NameError, "uninitialized constant ::Dry::Validation\n" \
+                             'Perhaps you forgot to add gem "dry-validation"'
+          end
+
           unless defined?(::Dry::Validation::Contract)
             raise NameError, "uninitialized constant ::Dry::Validation::Contract\n" \
-                             'Perhaps you forgot to require gem "dry-validation" >= 1.0'
+                             'which appears in version 1.0 of gem "dry-validation"'
           end
 
           @_schema = Class.new(::Dry::Validation::Contract, &block).new
