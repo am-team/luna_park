@@ -26,6 +26,8 @@ module LunaPark
     #       entity
     #     end
     #
+    #     private
+    #
     #     # Common dataset method is usefull for extensions
     #     def dataset
     #       SEQUEL_CONNECTION[:products]

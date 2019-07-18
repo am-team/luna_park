@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry-validation'
+require_relative '../errors'
 
 module LunaPark
   module Validators
@@ -43,6 +43,11 @@ module LunaPark
         alias validate new
 
         def validation_schema(&block)
+          unless defined?(::Dry::Validation::Contract)
+            raise NameError, "uninitialized constant ::Dry::Validation::Contract\n" \
+                             'Perhaps you forgot to require gem "dry-validation" >= 1.0'
+          end
+
           @_schema = Class.new(::Dry::Validation::Contract, &block).new
         end
       end

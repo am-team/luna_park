@@ -2,6 +2,8 @@
 
 require_relative '../../../lib/luna_park/validators/dry'
 
+require 'dry-validation'
+
 RSpec.describe LunaPark::Validators::Dry do
   let(:human_validator) do
     Class.new(described_class) do
