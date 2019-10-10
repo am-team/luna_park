@@ -37,6 +37,14 @@ module LunaPark
       end
 
       module InstanceMethods
+        def validation_errors_array
+          validation ? validation.errors_array : {}
+        end
+
+        def validation_errors_tree
+          validation ? validation.errors_tree : []
+        end
+
         def validation_errors
           validation ? validation.errors : {}
         end

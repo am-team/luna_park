@@ -80,6 +80,43 @@ RSpec.describe LunaPark::Validators::Dry do
     end
   end
 
+  describe '#errors_tree' do
+    subject { validator.errors_tree }
+
+    context 'when sent valid params' do
+      let(:params) { valid_params }
+
+      it { is_expected.to be_a Hash }
+      it { is_expected.to be_empty }
+    end
+
+    context 'when sent invalid params' do
+      let(:params) { invalid_params }
+
+      it { is_expected.to be_a Hash }
+      it { is_expected.to_not be_empty }
+    end
+  end
+
+  describe '#errors_array' do
+    subject { validator.errors_array }
+
+    context 'when sent valid params' do
+      let(:params) { valid_params }
+
+      it { is_expected.to be_a Array }
+      it { is_expected.to be_empty }
+    end
+
+    context 'when sent invalid params' do
+      let(:params) { invalid_params }
+
+      it { is_expected.to be_a Array }
+      it { is_expected.to_not be_empty }
+      it { is_expected.to eq [path: [:type], text: 'must be equal to human', input: 'robot'] }
+    end
+  end
+
   describe '.validate' do
     subject { validator_class.validate(valid_params) }
 

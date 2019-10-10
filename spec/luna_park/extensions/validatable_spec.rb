@@ -10,12 +10,14 @@ module ExtensionsValidatableSpec
       @params = params
     end
 
-    def errors
-      @errors ||= {}.tap do |errors|
+    def errors_tree
+      @errors_tree ||= {}.tap do |errors|
         errors[:foo] ||= 'is missing' unless @params.key?(:foo) || @params.key?('foo')
         errors[:bar] ||= 'is missing' unless @params.key?(:bar) || @params.key?('bar')
       end
     end
+
+    alias errors errors_tree
 
     def success?
       errors.empty?
