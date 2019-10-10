@@ -37,17 +37,16 @@ module Entities
 end
 ```
 Мутабельный объект, описывающий структуры бизнес модели, может содержать примитивные типы и _Значения_.
-Класс `LunaPark::Entites::Simple` невероятно прост, вы можете посмотреть его код, он дает нам только одну вещь - легкую инициализацию.
+Класс [`LunaPark::Entites::Simple`](https://github.com/am-team/luna_park/blob/master/lib/luna_park/entities/simple.rb) невероятно прост, вы можете посмотреть его код, он дает нам только одну вещь - легкую инициализацию.
 
-<spoiler title="LunaPark::Entites::Simple">
-``` ruby
+```ruby
 module LunaPark
   module Entities
     class Simple
       def initialize(params)
         set_attributes params
       end
-      
+
       private
 
       def set_attributes(hash)
@@ -57,7 +56,6 @@ module LunaPark
   end
 end
 ```
-</spoiler>
 
 Вы можете написать:
 
@@ -74,10 +72,10 @@ john_doe = Entity::MeatBag.new(
 Как вы уже наверное догадались вес, рост и дату рождения мы хотим обернуть в _Объекты-значения_.
 ```ruby
 module Entities
-  class MeatBag < LunaPark::Entites::Simple    
+  class MeatBag < LunaPark::Entites::Simple
     attr_accessor :id, :name
     attr_reader   :heiht, :wight, :birthday
-    
+
     def height=(height)
         @height = Values::Height.wrap(height)
     end
@@ -86,12 +84,12 @@ module Entities
     end
     def birthday=(day)
       @birthday = Date.parse(day)
-    end   
+    end
   end
 end
 ```
 
-Чтобы не тратить время на подобные конструкторы, у нас подготовлена более сложная _Реализация_ [`LunaPark::Entites::Nested`](https://github.com/am-team/luna_park/blob/master/lib/luna_park/entities/nested.rb) :  
+Чтобы не тратить время на подобные конструкторы, у нас подготовлена более сложная _Реализация_ [`LunaPark::Entites::Nested`](https://github.com/am-team/luna_park/blob/master/lib/luna_park/entities/nested.rb) :
 
 ```ruby
 module Entities
@@ -114,39 +112,39 @@ end
 
 ```ruby
 class Refregerator < LunaPark::Entites::Nested
-  attr :id, 
+  attr :id,
   attr :brand
   attr :title
-  
+
   namespace :fridge do
     namespace :door do
       attr :upper, Shelf, :wrap
-    	  attr :lower, Shelf, :wrap  
+    	  attr :lower, Shelf, :wrap
     end
     attr :upper, Shelf, :wrap
     attr :lower, Shelf, :wrap
   end
-  
+
   namespace :main do
     namespace :door do
     	attr :first,  Shelf, :wrap
-    	attr :second, Shelf, :wrap  
+    	attr :second, Shelf, :wrap
       attr :third,  Shelf, :wrap
     end
-    
+
     namespace :boxes do
   		attr :left,  Box, :wrap
     	attr :right, Box, :wrap
     end
-    
+
     attr :first,  Shelf, :wrap
-    attr :second, Shelf, :wrap  
+    attr :second, Shelf, :wrap
     attr :third,  Shelf, :wrap
     attr :fourth, Shelf, :wrap
   end
-  
+
   attr :last_open_at, comparable: false
-end	 
+end
 ```
 
 Такой подход избавляет нас от создания ненужных _Сущностей_, таких как дверь от холодильника. Без холодильника она должна быть частью холодильника. Такой подход удобен для составления сравнительно больших документов, например заявка на покупку страховки.
@@ -180,7 +178,7 @@ module Entites
 end
 ```
 
-то получим два сопоставимых объекта. 
+то получим два сопоставимых объекта.
 
 Эта _Реализация_ так же обладает свойством оборачиваемости - мы можем использовать метод  класса`wrap
 
@@ -188,6 +186,6 @@ end
 Entites::User.wrap(email: 'john.doe@mail.com', registred_at: Time.now)
 ```
 
-Вы можете использовать в качестве _Entity_ - Hash, OpenStruct или любой понравившийся вам gem, который поможет вам реализовать структуру вашей сущности. 
+Вы можете использовать в качестве _Entity_ - Hash, OpenStruct или любой понравившийся вам gem, который поможет вам реализовать структуру вашей сущности.
 
 _Сущность_ - это модель бизнес объекта, оставьте ее простой. Если какое-то свойство не используется вашим бизнесом, не описывайте его.
