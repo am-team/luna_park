@@ -21,15 +21,15 @@ module LunaPark
           private
 
           def error(title, exception:, request:)
-            unless skip_errors.include? error.response.try(:code) do
-              raise Errors::Diagnostic, title, request:  request,
-                                               response: exception.response
+            unless skip_errors.include? error.response.try(:code)
+              raise Errors::Rest::Diagnostic, title, request:  request,
+                                                     response: exception.response
             end
           end
 
           def timeout_error(title, request:)
-            unless skip_errors.include? :timeout do
-              raise Errors::Timeout, title, request: request
+            unless skip_errors.include?(:timeout)
+              raise Errors::Rest::Timeout, title, request: request
             end
           end
         end
