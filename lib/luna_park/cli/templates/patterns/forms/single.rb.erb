@@ -1,0 +1,9 @@
+class <%=class_name %> < LunaPark::Forms::Simple
+  validator Validators::<%=class_name %>
+
+  attr_accessor <%=opts.inputs %>
+
+  def perform
+    Interactors::<%=class_name %>.call opts.inputs
+  end
+end

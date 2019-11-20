@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 require 'byebug'
 require 'bundler'
 require 'luna_park/cli'
