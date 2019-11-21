@@ -10,16 +10,16 @@ module LunaPark
 
           attr_reader :method, :url, :body, :headers, :read_timeout, :open_timeout
 
-          # rubocop:disable Metrics/ParameterLists
+          # rubocop:disable Metrics/ParameterLists,Metrics/LineLength
           def initialize(method: :post, url:, body: nil, headers: nil, read_timeout: READ_TIMEOUT, open_timeout: OPEN_TIMEOUT)
-            @method = method
-            @url = url
-            @body = body
-            @headers = headers
+            @method       = method
+            @url          = url
+            @body         = body
+            @headers      = headers
             @read_timeout = read_timeout
             @open_timeout = open_timeout
           end
-          # rubocop:enable Metrics/ParameterLists
+          # rubocop:enable Metrics/ParameterLists,Metrics/LineLength
 
           def to_h
             {
@@ -28,7 +28,7 @@ module LunaPark
               payload: body,
               headers: headers,
               read_timeout: read_timeout,
-              open_timeout: open_timeout,
+              open_timeout: open_timeout
             }
           end
         end

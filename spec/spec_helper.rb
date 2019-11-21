@@ -7,6 +7,10 @@ require 'simplecov'
 
 require_relative 'support/shared'
 
+require 'bugsnag'
+require 'dry-validation'
+require 'rest-client'
+
 if ENV['CODECOV_TOKEN']
   require 'codecov'
   SimpleCov.formatter = SimpleCov::Formatter::Codecov

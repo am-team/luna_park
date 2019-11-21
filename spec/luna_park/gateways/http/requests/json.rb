@@ -7,7 +7,7 @@ module LunaPark
         class Json < Base
           JSON_HEADERS = { 'Content-Type': 'application/json' }.freeze
 
-          # rubocop:disable Metrics/ParameterLists,Metrics/LineLength
+          # rubocop:disable Metrics/ParameterLists:
           def initialize(method: :post, url:, body: nil, headers: JSON_HEADERS, read_timeout: READ_TIMEOUT, open_timeout: OPEN_TIMEOUT)
             @method = method
             @url = url
@@ -16,7 +16,7 @@ module LunaPark
             @read_timeout = read_timeout
             @open_timeout = open_timeout
           end
-          # rubocop:enable Metrics/ParameterLists,Metrics/LineLength
+          # rubocop:enable Metrics/ParameterLists:
         end
       end
     end

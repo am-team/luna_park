@@ -33,17 +33,31 @@ require_relative 'luna_park/entities/attributable'
 require_relative 'luna_park/entities/nested'
 require_relative 'luna_park/forms/simple'
 require_relative 'luna_park/forms/single_item'
-require_relative 'luna_park/gateways/http/errors/rest'
-require_relative 'luna_park/gateways/http/handlers/rest'
+
+if defined?(::RestClient) && defined?(::Bugsnag)
+  require_relative 'luna_park/gateways/http/errors/rest_bugsnag'
+  require_relative 'luna_park/gateways/http/handlers/rest_bugsnag'
+end
+
+if defined?(::RestClient)
+  require_relative 'luna_park/gateways/http/errors/rest'
+  require_relative 'luna_park/gateways/http/handlers/rest'
+  require_relative 'luna_park/gateways/http/rest_client'
+end
+
 require_relative 'luna_park/gateways/http/requests/base'
 require_relative 'luna_park/gateways/http/requests/json'
-require_relative 'luna_park/gateways/http/client'
+
 require_relative 'luna_park/handlers/simple'
 require_relative 'luna_park/interactors/sequence'
 require_relative 'luna_park/serializers/simple'
 require_relative 'luna_park/callable'
-require_relative 'luna_park/validators/dry'
-require_relative 'luna_park/extensions/validatable/dry'
+
+if defined?(::Dry::Validation)
+  require_relative 'luna_park/validators/dry'
+  require_relative 'luna_park/extensions/validatable/dry'
+end
+
 require_relative 'luna_park/values/compound'
 require_relative 'luna_park/values/single'
 require_relative 'luna_park/values/attributable'
