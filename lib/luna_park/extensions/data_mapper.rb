@@ -88,7 +88,7 @@ module LunaPark
         #     database.insert_many(rows)
         #   end
         def to_rows(input_array)
-          mapper_class.to_rows(input_array)
+          mapper_class ? mapper_class.to_rows(input_array) : input_array
         end
 
         # @example
@@ -97,7 +97,7 @@ module LunaPark
         #     database.insert(row)
         #   end
         def to_row(input)
-          mapper_class.to_row(input)
+          mapper_class ? mapper_class.to_row(input) : input
         end
 
         # @example
@@ -106,7 +106,7 @@ module LunaPark
         #     entities_attrs.map { |entity_attrs| Entity.new(entity_attrs) }
         #   end
         def from_rows(rows_array)
-          mapper_class.from_rows(rows_array)
+          mapper_class ? mapper_class.from_rows(rows_array) : rows_array
         end
 
         # @example
@@ -118,7 +118,7 @@ module LunaPark
           return if input.nil?
           raise ArgumentError, 'Can not be an Array' if input.is_a?(Array)
 
-          mapper_class.from_row(input.to_h)
+          mapper_class ? mapper_class.from_row(input.to_h) : input
         end
 
         # Entity construction helpers
@@ -135,7 +135,7 @@ module LunaPark
         def to_entity(attrs)
           return if attrs.nil?
 
-          entity_class&.new(attrs) || attrs
+          entity_class ? entity_class.new(attrs) : attrs
         end
 
         # Entity wrapping helpers
@@ -154,7 +154,7 @@ module LunaPark
         def wrap(input)
           return if input.nil?
 
-          entity_class.wrap(input)
+          entity_class ? entity_class.wrap(input) : input
         end
 
         # Read config
