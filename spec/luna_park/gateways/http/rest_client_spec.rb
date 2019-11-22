@@ -2,6 +2,10 @@
 
 require 'webmock/rspec'
 
+require 'luna_park/gateways/http/rest_client'
+require 'luna_park/gateways/http/handlers/default'
+require 'luna_park/gateways/http/requests/json'
+
 module LunaPark
   module Gateways
     module Http

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'luna_park/gateways/http/errors/bugsnag'
+
 module LunaPark
   module Gateways
     module Http
