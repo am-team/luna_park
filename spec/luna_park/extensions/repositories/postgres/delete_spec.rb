@@ -4,7 +4,7 @@ require 'securerandom'
 
 RSpec.describe LunaPark::Extensions::Repositories::Postgres::Delete do
   let(:fake_repo_klass) do
-    Class.new(LunaPark::Repositories::Sequel) do
+    Class.new(LunaPark::Repository) do
       include LunaPark::Extensions::Repositories::Postgres::Delete
 
       attr_accessor :dataset

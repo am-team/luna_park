@@ -4,7 +4,7 @@ RSpec.describe LunaPark::Extensions::Repositories::Postgres::Update do
   let(:fake_repo_klass) do
     fake_entity_klass_ = fake_entity_klass
 
-    Class.new(LunaPark::Repositories::Sequel) do
+    Class.new(LunaPark::Repository) do
       include LunaPark::Extensions::Repositories::Postgres::Update
 
       attr_accessor :dataset

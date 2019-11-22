@@ -2,8 +2,8 @@
 
 module LunaPark
   module Repositories
-    class Sequel
-      include LunaPark::Extensions::DataMapper
-    end
+    # DEPRECATED! Use LunaPark::Repository instead
+    # @deprecated
+    class Sequel < LunaPark::Repository; end
   end
 end
