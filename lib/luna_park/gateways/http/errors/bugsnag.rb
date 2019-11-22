@@ -4,16 +4,16 @@ module LunaPark
   module Gateways
     module Http
       module Errors
-        module RestBugsnag
-          class Diagnostic < RestClient::Exception
-            include Bugsnag::MetaData
+        module Bugsnag
+          class Diagnostic < StandardError
+            include ::Bugsnag::MetaData
 
             attr_reader :title, :request, :response
 
             def initialize(title, request:, response:) # rubocop:disable Metrics/MethodLength
-              super(response)
-              @title   = title
-              @request = request
+              @response = response
+              @title    = title
+              @request  = request
 
               self.bugsnag_meta_data = {
                 title: title,
@@ -40,15 +40,14 @@ module LunaPark
             end
           end
 
-          class Timeout < RestClient::Exceptions::Timeout
-            include Bugsnag::MetaData
+          class Timeout < StandardError
+            include ::Bugsnag::MetaData
 
             attr_reader :title, :request
 
             def initialize(title, request:) # rubocop:disable Metrics/MethodLength
-              super
-              @title   = title
-              @request = request
+              @title    = title
+              @request  = request
 
               self.bugsnag_meta_data = {
                 title: title,

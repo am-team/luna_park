@@ -22,23 +22,23 @@ module LunaPark
                                   handler: handler(options)
         end
 
+        # @example
+        #   # Gemfile
+        #   gem 'rest-client'
+        #
+        #   # ./app.rb
+        #   module App
+        #     include LunaPark::Gateways::Http
+        #
+        #     request = Requests::Base.new( method: :post, url: 'http://example.com', body: 'ping')
+        #     handler = Handlers::Default.new(skip_errors: [404])
+        #
+        #     RestClient.send_request('Ping-pong', request: request, handler: handler)
+        #   end
         # @param title [String] custom message
         # @param request [Requests::Base, Requests::Json] request object
         # @param handler [Handlers::Default] handler of http exceptions
         # @return [::RestClient::Response]
-        # @example
-        # # Gemfile
-        # gem 'rest-client'
-        #
-        # # ./app.rb
-        # module App
-        #   include LunaPark::Gateways::Http
-        #
-        #   request = Requests::Base.new( method: :post, url: 'http://example.com', body: 'ping')
-        #   handler = Handlers::Default.new(skip_errors: [404])
-        #
-        #   RestClient.send_request('Ping-pong', request: request, handler: handler)
-        # end
         def self.send_request(title:, request:, handler:)
           ::RestClient::Request.execute(request.to_h)
         rescue ::RestClient::Exceptions::Timeout

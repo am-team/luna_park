@@ -11,10 +11,9 @@ module LunaPark
           let(:request)   { double }
 
           describe '#error' do
-            subject(:error) { handler.error(title, response: response, request: request) }
-
             let(:response) { double(code: 403) }
 
+            subject(:error) { handler.error(title, response: response, request: request) }
             it { expect { error }.to raise_error Http::Errors::Default::Diagnostic }
 
             context 'when error skipped' do
@@ -26,7 +25,6 @@ module LunaPark
 
           describe '#timeout_error' do
             subject(:timeout_error) { handler.timeout_error(title, request: request) }
-
             it { expect { timeout_error }.to raise_error Http::Errors::Default::Timeout }
 
             context 'when error skipped' do

@@ -4,7 +4,7 @@ module LunaPark
   module Gateways
     module Http
       module Handlers
-        RSpec.describe RestBugsnag do
+        RSpec.describe Bugsnag do
           let(:handler)   { described_class.new }
           let(:title)     { 'custom action' }
           let(:request)   { Requests::Base.new url: 'http://example.com/api/action' }
@@ -14,7 +14,7 @@ module LunaPark
 
             let(:response) { double(code: 403, headers: nil, message: '') }
 
-            it { expect { error }.to raise_error Http::Errors::RestBugsnag::Diagnostic }
+            it { expect { error }.to raise_error Http::Errors::Bugsnag::Diagnostic }
 
             context 'when error skipped' do
               let(:handler) { described_class.new skip_errors: [403] }
@@ -26,7 +26,7 @@ module LunaPark
           describe '#timeout_error' do
             subject(:timeout_error) { handler.timeout_error(title, request: request) }
 
-            it { expect { timeout_error }.to raise_error Http::Errors::RestBugsnag::Timeout }
+            it { expect { timeout_error }.to raise_error Http::Errors::Bugsnag::Timeout }
 
             context 'when error skipped' do
               let(:handler) { described_class.new skip_errors: [:timeout] }

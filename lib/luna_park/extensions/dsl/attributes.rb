@@ -106,7 +106,7 @@ module LunaPark
         #
         # @param name [Symbol]
         # @param type [Object] any object that responds to method described in next param. Skip if you dont need stypification
-        # @param method [Symbol] (call)
+        # @param type_meth [Symbol] (call)
         # @option options [Bool] comparable (true)
         # @option options [Bool] array (false)
         # @option options [Bool] private_setter (false)
