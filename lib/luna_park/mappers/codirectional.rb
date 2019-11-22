@@ -70,7 +70,7 @@ module LunaPark
             value = if from_path.is_a?(Array) # when given `%i[key path]` - not just `:key`
                       *path, head_key = from_path
                       hash = from.dig(*path)
-                      return unless hash&.key?(head_key)
+                      return unless hash&.key?(head_key) # omit undefined keys
 
                       hash.fetch(head_key)
                     else
