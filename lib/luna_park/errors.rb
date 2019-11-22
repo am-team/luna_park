@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'extensions/exceptions/substitutive'
+require 'luna_park/extensions/exceptions/substitutive'
 
 module LunaPark
   module Errors

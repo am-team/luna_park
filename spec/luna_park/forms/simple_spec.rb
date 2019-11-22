@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative '../../../lib/luna_park/forms/simple'
+require 'luna_park/forms/simple'
 
 require 'singleton'
-require_relative '../../../lib/luna_park/validators/dry'
+require 'luna_park/validators/dry'
 
 module FormsSimpleSpec
   module Reception

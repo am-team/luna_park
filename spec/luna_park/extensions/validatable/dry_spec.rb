@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../../../../lib/luna_park'
-require_relative '../../../../lib/luna_park/extensions/validatable/dry'
+require 'luna_park/extensions/validatable'
+require 'luna_park/extensions/validatable/dry'
 
 module ExtensionsValidatableDrySpec
   class MyForm

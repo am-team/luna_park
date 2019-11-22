@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative 'compound'
-require_relative '../extensions/comparable'
-require_relative '../extensions/serializable'
-require_relative '../extensions/dsl/attributes'
+require 'luna_park/values/compound'
+require 'luna_park/extensions/comparable'
+require 'luna_park/extensions/serializable'
+require 'luna_park/extensions/dsl/attributes'
 
 module LunaPark
   module Values

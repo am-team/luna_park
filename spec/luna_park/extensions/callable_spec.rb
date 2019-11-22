@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../lib/luna_park/extensions/callable'
+require 'luna_park/extensions/callable'
 
 class SaulGoodman
   extend LunaPark::Extensions::Callable

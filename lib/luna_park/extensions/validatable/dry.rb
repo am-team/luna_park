@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../validators/dry'
+require 'luna_park/validators/dry'
 
 module LunaPark
   module Extensions

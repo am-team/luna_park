@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative '../comparable'
-require_relative '../serializable'
-require_relative '../predicate_attr_accessor'
-require_relative '../typed_attr_accessor'
+require 'luna_park/extensions/comparable'
+require 'luna_park/extensions/serializable'
+require 'luna_park/extensions/predicate_attr_accessor'
+require 'luna_park/extensions/typed_attr_accessor'
 
 module LunaPark
   module Extensions

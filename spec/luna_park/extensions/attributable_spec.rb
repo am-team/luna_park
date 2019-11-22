@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../lib/luna_park/extensions/attributable'
+require 'luna_park/extensions/attributable'
 
 RSpec.describe LunaPark::Extensions::Attributable do
   let(:klass) do

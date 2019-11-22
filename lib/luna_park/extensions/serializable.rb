@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../errors'
+require 'luna_park/errors'
 
 module LunaPark
   module Extensions

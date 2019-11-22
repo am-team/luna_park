@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../../lib/luna_park/extensions/dsl/foreign_key'
+require 'luna_park/extensions/dsl/foreign_key'
 
 module ExtensionsDslForeignKeySpec
   class Transaction

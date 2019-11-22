@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../lib/luna_park/repositories/sequel'
+require 'luna_park/repositories/sequel'
 
 module LunaPark
   RSpec.describe Repositories::Sequel do

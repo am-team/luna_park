@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../errors'
-require_relative '../extensions/attributable'
-require_relative '../extensions/callable'
+require 'luna_park/errors'
+require 'luna_park/extensions/attributable'
+require 'luna_park/extensions/callable'
 
 module LunaPark
   module Interactors

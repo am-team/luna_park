@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../extensions/data_mapper'
+require 'luna_park/extensions/data_mapper'
 
 module LunaPark
   module Repositories

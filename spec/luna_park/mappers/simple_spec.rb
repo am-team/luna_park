@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../lib/luna_park/mappers/simple'
+require 'luna_park/mappers/simple'
 
 module MappersSimpleSpec
   class TransactionMapper < LunaPark::Mappers::Simple

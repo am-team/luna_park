@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'attributable'
+require 'luna_park/entities/attributable'
 
 module LunaPark
   module Entities

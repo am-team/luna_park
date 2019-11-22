@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../../../lib/luna_park/interactors/sequence'
+require 'luna_park/interactors/sequence'
 
-require_relative '../../../lib/luna_park/entities/simple'
+require 'luna_park/entities/simple'
 
 class Pie < LunaPark::Entities::Simple
   attr_accessor :filler

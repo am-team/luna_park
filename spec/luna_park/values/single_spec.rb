@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../lib/luna_park/values/single'
+require 'luna_park/values/single'
 
 class CardRank < LunaPark::Values::Single
   LIST = %w[6 7 8 9 10 J Q K A].freeze

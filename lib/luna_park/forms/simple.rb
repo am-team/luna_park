@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../extensions/validatable'
-require_relative '../errors'
+require 'luna_park/extensions/validatable'
+require 'luna_park/errors'
 
 module LunaPark
   module Forms

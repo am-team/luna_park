@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../lib/luna_park/extensions/data_mapper'
+require 'luna_park/extensions/data_mapper'
 
 module ExtensionsDataMapperSpec
   Account = Struct.new(:uid, :type, keyword_init: true) do

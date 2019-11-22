@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../extensions/attributable'
-require_relative '../errors'
+require 'luna_park/extensions/attributable'
+require 'luna_park/errors'
 
 module LunaPark
   module Values

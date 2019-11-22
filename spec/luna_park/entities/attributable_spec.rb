@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../lib/luna_park/entities/attributable'
+require 'luna_park/entities/attributable'
 
 module EntitiesAttributableSpec
   class Example < LunaPark::Entities::Attributable

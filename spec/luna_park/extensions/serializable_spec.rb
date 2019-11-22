@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../lib/luna_park/extensions/serializable'
+require 'luna_park/extensions/serializable'
 
 module ExtensionsSerializableSpec
   class Book

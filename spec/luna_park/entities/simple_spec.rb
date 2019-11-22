@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../lib/luna_park/entities/simple'
+require 'luna_park/entities/simple'
 
 module EntitiesSimpleCpec
   class User < LunaPark::Entities::Simple

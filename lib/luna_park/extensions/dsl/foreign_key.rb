@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../comparable'
-require_relative '../serializable'
+require 'luna_park/extensions/comparable'
+require 'luna_park/extensions/serializable'
 
 module LunaPark
   module Extensions
