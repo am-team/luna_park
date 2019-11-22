@@ -4,24 +4,31 @@ module LunaPark
   module Gateways
     module Http
       module Errors
-        module Rest
-          class Diagnostic < RestClient::Exception
+        module Default
+          class Diagnostic < StandardError
             attr_reader :title, :request, :response
 
             def initialize(title, request:, response:)
-              super(response)
-              @title   = title
-              @request = request
+              @response = response
+              @title    = title
+              @request  = request
+            end
+
+            def message
+              "RequestError (code: #{request.status}) on request #{title}"
             end
           end
 
-          class Timeout < RestClient::Exceptions::Timeout
+          class Timeout < StandardError
             attr_reader :title, :request
 
             def initialize(title, request:)
-              super
               @title   = title
               @request = request
+            end
+
+            def message
+              "TimeoutError on request #{title}"
             end
           end
         end

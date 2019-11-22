@@ -20,7 +20,7 @@ module LunaPark
           end
 
           describe '.to_h' do
-            subject { request.to_h }
+            subject(:hash) { request.to_h }
 
             it 'should has described structure' do
               is_expected.to eq(

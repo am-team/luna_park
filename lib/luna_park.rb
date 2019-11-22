@@ -34,19 +34,19 @@ require_relative 'luna_park/entities/nested'
 require_relative 'luna_park/forms/simple'
 require_relative 'luna_park/forms/single_item'
 
+require_relative 'luna_park/gateways/http/errors/default'
+require_relative 'luna_park/gateways/http/handlers/default'
+require_relative 'luna_park/gateways/http/requests/base'
+require_relative 'luna_park/gateways/http/requests/json'
+
 if defined?(::RestClient) && defined?(::Bugsnag)
   require_relative 'luna_park/gateways/http/errors/rest_bugsnag'
   require_relative 'luna_park/gateways/http/handlers/rest_bugsnag'
 end
 
 if defined?(::RestClient)
-  require_relative 'luna_park/gateways/http/errors/rest'
-  require_relative 'luna_park/gateways/http/handlers/rest'
   require_relative 'luna_park/gateways/http/rest_client'
 end
-
-require_relative 'luna_park/gateways/http/requests/base'
-require_relative 'luna_park/gateways/http/requests/json'
 
 require_relative 'luna_park/handlers/simple'
 require_relative 'luna_park/interactors/sequence'

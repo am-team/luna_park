@@ -6,7 +6,7 @@ module LunaPark
       class RestClient
         attr_reader :default_handler
 
-        def initialize(handler: Handlers::Rest)
+        def initialize(handler: Handlers::Default)
           @handler_klass = handler
         end
 
@@ -24,7 +24,7 @@ module LunaPark
 
         # @param title [String] custom message
         # @param request [Requests::Base, Requests::Json] request object
-        # @param handler [Handlers::Rest] handler of http exceptions
+        # @param handler [Handlers::Default] handler of http exceptions
         # @return [::RestClient::Response]
         # @example
         # # Gemfile

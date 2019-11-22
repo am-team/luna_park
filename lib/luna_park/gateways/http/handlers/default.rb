@@ -4,7 +4,7 @@ module LunaPark
   module Gateways
     module Http
       module Handlers
-        class Rest
+        class Default
           attr_reader :skip_errors
 
           def initialize(skip_errors: [])
@@ -13,12 +13,12 @@ module LunaPark
 
           def error(title, request:, response:)
             unless skip_errors.include? response.code # rubocop:disable Style/GuardClause
-              raise Errors::Rest::Diagnostic.new(title, request: request, response: response)
+              raise Errors::Default::Diagnostic.new(title, request: request, response: response)
             end
           end
 
           def timeout_error(title, request:)
-            raise Errors::Rest::Timeout.new(title, request: request) unless skip_errors.include?(:timeout)
+            raise Errors::Default::Timeout.new(title, request: request) unless skip_errors.include?(:timeout)
           end
         end
       end
