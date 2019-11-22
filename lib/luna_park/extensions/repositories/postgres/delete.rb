@@ -3,7 +3,7 @@
 module LunaPark
   module Extensions
     module Repositories
-      module Sequel
+      module Postgres
         module Delete
           def delete(uid)
             dataset.returning.where(primary_key => uid).delete

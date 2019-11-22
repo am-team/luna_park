@@ -3,12 +3,13 @@
 module LunaPark
   module Extensions
     module Repositories
-      module Sequel
-        module Create
-          def create(input)
+      module Postgres
+        module Update
+          def save(input)
             entity = wrap(input)
-            row    = to_row(entity)
-            new_row = dataset.returning.insert(row).first
+            entity.updated_at = Time.now.utc
+            row = to_row(entity)
+            new_row   = dataset.returning.where(primary_key => row[primary_key]).update(row).first
             new_attrs = from_row(new_row)
             entity.set_attributes(new_attrs)
             entity

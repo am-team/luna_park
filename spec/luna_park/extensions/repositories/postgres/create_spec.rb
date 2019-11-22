@@ -2,12 +2,12 @@
 
 require 'securerandom'
 
-RSpec.describe LunaPark::Extensions::Repositories::Sequel::Create do
+RSpec.describe LunaPark::Extensions::Repositories::Postgres::Create do
   let(:fake_repo_klass) do
     fake_entity_klass_ = fake_entity_klass
 
     Class.new(LunaPark::Repositories::Sequel) do
-      include LunaPark::Extensions::Repositories::Sequel::Create
+      include LunaPark::Extensions::Repositories::Postgres::Create
 
       attr_accessor :dataset
 

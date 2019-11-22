@@ -3,7 +3,7 @@
 module LunaPark
   module Extensions
     module Repositories
-      module Sequel
+      module Postgres
         module Read
           def find!(pk_value, for_update: false)
             ds = dataset.where(primary_key => pk_value)
