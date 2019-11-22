@@ -9,16 +9,10 @@ RSpec::Core::RakeTask.new(:spec)
 
 task default: [:spec, :rubocop]
 
-namespace :test do
-  desc 'Refresh all VCR cassette fixtures and run VCR specs to create new'
+namespace :rspec do
+  desc 'Run each file separatly for find out where `require` is missed'
   task :separated do
     specfiles = Dir[File.expand_path('../spec/**/*_spec.rb', __FILE__)]
-    count = 0
-    specfiles.reduce do |result, specfile|
-      count += 1
-      result && system("bundle exec rspec #{specfile}")
-    end
-
-    puts "Finished #{count} from #{specfiles.size} spec files"
+    specfiles.all? { |specfile| system("bundle exec rspec #{specfile}") }
   end
 end
