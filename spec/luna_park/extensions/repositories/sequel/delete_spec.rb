@@ -8,6 +8,8 @@ RSpec.describe LunaPark::Extensions::Repositories::Sequel::Delete do
       include LunaPark::Extensions::Repositories::Sequel::Delete
 
       attr_accessor :dataset
+
+      primary_key :uid
     end
   end
   let(:fake_repo) { fake_repo_klass.new }

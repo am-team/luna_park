@@ -51,6 +51,16 @@ module LunaPark
         def mapper(mapper_class = nil)
           @mapper_class = mapper_class
         end
+
+        DEFAULT_PRIMARY_KEY = :id
+
+        def primary_key(pk = nil)
+          @db_primary_key = pk
+        end
+
+        def db_primary_key
+          @db_primary_key || DEFAULT_PRIMARY_KEY
+        end
       end
 
       module InstanceMethods
@@ -88,7 +98,7 @@ module LunaPark
         #     database.insert_many(rows)
         #   end
         def to_rows(input_array)
-          mapper_class ? mapper_class.to_rows(input_array) : input_array
+          mapper_class ? mapper_class.to_rows(input_array) : input_array.map(&:to_h)
         end
 
         # @example
@@ -97,7 +107,7 @@ module LunaPark
         #     database.insert(row)
         #   end
         def to_row(input)
-          mapper_class ? mapper_class.to_row(input) : input
+          mapper_class ? mapper_class.to_row(input) : input.to_h
         end
 
         # @example
@@ -165,6 +175,10 @@ module LunaPark
 
         def entity_class
           self.class.entity_class
+        end
+
+        def primary_key
+          self.class.db_primary_key
         end
 
         # Factory Methods

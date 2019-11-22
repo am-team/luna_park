@@ -12,6 +12,7 @@ RSpec.describe LunaPark::Extensions::Repositories::Sequel::Read do
       attr_accessor :dataset
 
       entity fake_entity_klass_
+      primary_key :uid
 
       def self.wrap(input)
         input

@@ -5,24 +5,24 @@ module LunaPark
     module Repositories
       module Sequel
         module Read
-          def find!(uid, for_update: false)
-            ds = dataset.where(uid: uid)
-            read_one!(ds, for_update: for_update, not_found_meta: uid)
+          def find!(pk_value, for_update: false)
+            ds = dataset.where(primary_key => pk_value)
+            read_one!(ds, for_update: for_update, not_found_meta: pk_value)
           end
 
-          def find(uid, for_update: false)
-            ds = dataset.where(uid: uid)
+          def find(pk_value, for_update: false)
+            ds = dataset.where(primary_key => pk_value)
             read_one(ds, for_update: for_update)
           end
 
-          def lock(uid)
-            dataset.for_update.select(:uid).where(uid: uid).first ? true : false
+          def lock(pk_value)
+            dataset.for_update.select(primary_key).where(primary_key => pk_value).first ? true : false
           end
 
-          def lock!(uid)
-            return true if dataset.for_update.select(:uid).where(uid: uid).first
+          def lock!(pk_value)
+            return true if dataset.for_update.select(primary_key).where(primary_key => pk_value).first
 
-            raise Errors::NotFound, "#{short_class_name} (#{uid})"
+            raise Errors::NotFound, "#{short_class_name} (#{pk_value})"
           end
 
           def count

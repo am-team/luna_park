@@ -6,7 +6,7 @@ module LunaPark
       module Sequel
         module Delete
           def delete(uid)
-            dataset.returning.where(uid: uid).delete
+            dataset.returning.where(primary_key => uid).delete
           end
         end
       end

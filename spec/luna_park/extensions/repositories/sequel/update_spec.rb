@@ -10,6 +10,7 @@ RSpec.describe LunaPark::Extensions::Repositories::Sequel::Update do
       attr_accessor :dataset
 
       entity fake_entity_klass_
+      primary_key :uid
 
       def self.wrap(input)
         input
