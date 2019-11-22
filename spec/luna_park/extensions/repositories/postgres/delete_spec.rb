@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 require 'securerandom'
+require 'luna_park/extensions/repositories/postgres/delete'
+require 'luna_park/repository'
 
 RSpec.describe LunaPark::Extensions::Repositories::Postgres::Delete do
   let(:fake_repo_klass) do
-    Class.new(LunaPark::Repositories::Sequel) do
+    Class.new(LunaPark::Repository) do
       include LunaPark::Extensions::Repositories::Postgres::Delete
 
       attr_accessor :dataset

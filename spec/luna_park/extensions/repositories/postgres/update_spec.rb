@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
+require 'luna_park/extensions/repositories/postgres/update'
+require 'luna_park/repository'
+require 'luna_park/entities/attributable'
+
 RSpec.describe LunaPark::Extensions::Repositories::Postgres::Update do
   let(:fake_repo_klass) do
     fake_entity_klass_ = fake_entity_klass
 
-    Class.new(LunaPark::Repositories::Sequel) do
+    Class.new(LunaPark::Repository) do
       include LunaPark::Extensions::Repositories::Postgres::Update
 
       attr_accessor :dataset

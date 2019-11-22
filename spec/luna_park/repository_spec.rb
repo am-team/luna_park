@@ -3,7 +3,7 @@
 require 'luna_park/repositories/sequel'
 
 module LunaPark
-  RSpec.describe Repositories::Sequel do
+  RSpec.describe Repository do
     subject(:repo) { described_class.new }
 
     it 'extended with extendion DataMapper' do
