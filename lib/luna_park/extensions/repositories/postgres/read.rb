@@ -15,14 +15,12 @@ module LunaPark
             read_one(ds, for_update: for_update)
           end
 
-          def lock(pk_value)
-            dataset.for_update.select(primary_key).where(primary_key => pk_value).first ? true : false
+          def lock!(pk_value)
+            lock(pk_value) || raise(Errors::NotFound, "#{short_class_name} (#{pk_value})")
           end
 
-          def lock!(pk_value)
-            return true if dataset.for_update.select(primary_key).where(primary_key => pk_value).first
-
-            raise Errors::NotFound, "#{short_class_name} (#{pk_value})"
+          def lock(pk_value)
+            dataset.for_update.select(primary_key).where(primary_key => pk_value).first ? true : false
           end
 
           def count
