@@ -33,12 +33,30 @@ require 'luna_park/entities/attributable'
 require 'luna_park/entities/nested'
 require 'luna_park/forms/simple'
 require 'luna_park/forms/single_item'
+
+require 'luna_park/gateways/http/requests/base'
+require 'luna_park/gateways/http/requests/json'
+
+require 'luna_park/gateways/http/errors/default'
+require 'luna_park/gateways/http/handlers/default'
+
+if defined?(::Bugsnag)
+  require 'luna_park/gateways/http/errors/bugsnag'
+  require 'luna_park/gateways/http/handlers/bugsnag'
+end
+
+require 'luna_park/gateways/http/rest_client' if defined?(::RestClient)
+
 require 'luna_park/handlers/simple'
 require 'luna_park/interactors/sequence'
 require 'luna_park/serializers/simple'
 require 'luna_park/callable'
-require 'luna_park/validators/dry'
-require 'luna_park/extensions/validatable/dry'
+
+if defined?(::Dry::Validation)
+  require 'luna_park/validators/dry'
+  require 'luna_park/extensions/validatable/dry'
+end
+
 require 'luna_park/values/compound'
 require 'luna_park/values/single'
 require 'luna_park/values/attributable'
