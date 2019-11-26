@@ -15,7 +15,7 @@ module LunaPark
             end
 
             def message
-              "RequestError (code: #{request.status}) on request #{title}"
+              "RequestError (code: #{response.code}) on request #{title}"
             end
           end
 
