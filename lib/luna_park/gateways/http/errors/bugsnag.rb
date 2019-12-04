@@ -26,7 +26,7 @@ module LunaPark
                 client_response: {
                   code: response&.code,
                   headers: response&.headers,
-                  body: try_parse(response&.message)
+                  body: try_parse(response&.body)
                 }
               }
             end

@@ -15,7 +15,7 @@ module LunaPark
           describe '#error' do
             subject(:error) { handler.error(title, response: response, request: request) }
 
-            let(:response) { double(code: 403, headers: nil, message: '') }
+            let(:response) { double(code: 403, headers: nil, body: '') }
 
             it { expect { error }.to raise_error Http::Errors::Bugsnag::Diagnostic }
 
