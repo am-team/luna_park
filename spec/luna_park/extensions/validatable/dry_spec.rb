@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'luna_park/extensions/validatable'
+require 'luna_park/extensions/validatable/dry'
+
 module ExtensionsValidatableDrySpec
   class MyForm
     include LunaPark::Extensions::Validatable::Dry

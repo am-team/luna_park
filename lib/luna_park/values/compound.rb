@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require 'luna_park/extensions/attributable'
+require 'luna_park/extensions/wrappable'
+require 'luna_park/errors'
+
 module LunaPark
   module Values
     class Compound

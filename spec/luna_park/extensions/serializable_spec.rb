@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'luna_park/extensions/serializable'
+
 module ExtensionsSerializableSpec
   class Book
     include LunaPark::Extensions::Serializable

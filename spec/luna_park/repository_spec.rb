@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
+require 'luna_park/repositories/sequel'
+
 module LunaPark
-  RSpec.describe Repositories::Sequel do
+  RSpec.describe Repository do
     subject(:repo) { described_class.new }
 
-    it 'extended with extendion DataMapper' do
+    it 'extended with extension DataMapper' do
       is_expected.to be_a Extensions::DataMapper
     end
   end

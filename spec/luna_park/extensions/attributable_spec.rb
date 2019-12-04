@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'luna_park/extensions/attributable'
+
 RSpec.describe LunaPark::Extensions::Attributable do
   let(:klass) do
     Class.new do

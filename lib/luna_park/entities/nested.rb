@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'luna_park/entities/attributable'
+
 module LunaPark
   module Entities
     # add description

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'luna_park/extensions/exceptions/substitutive'
+
 module ExtensionsExceptionsSubstitutiveSpec
   class RegularError < StandardError; end
 

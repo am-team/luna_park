@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+require 'luna_park/extensions/comparable'
+require 'luna_park/extensions/serializable'
+require 'luna_park/extensions/predicate_attr_accessor'
+require 'luna_park/extensions/typed_attr_accessor'
+
 module LunaPark
   module Extensions
     module Dsl
@@ -106,7 +111,7 @@ module LunaPark
         #
         # @param name [Symbol]
         # @param type [Object] any object that responds to method described in next param. Skip if you dont need stypification
-        # @param method [Symbol] (call)
+        # @param type_meth [Symbol] (call)
         # @option options [Bool] comparable (true)
         # @option options [Bool] array (false)
         # @option options [Bool] private_setter (false)

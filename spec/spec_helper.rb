@@ -7,6 +7,10 @@ require 'simplecov'
 
 require_relative 'support/shared'
 
+require 'bugsnag'
+require 'dry-validation'
+require 'rest-client'
+
 if ENV['CODECOV_TOKEN']
   require 'codecov'
   SimpleCov.formatter = SimpleCov::Formatter::Codecov
@@ -44,7 +48,7 @@ SimpleCov.start do
   end
 end
 
-require 'luna_park'
+# require 'luna_park'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

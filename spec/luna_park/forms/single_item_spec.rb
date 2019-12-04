@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
+require 'luna_park/forms/single_item'
+
 require 'singleton'
+require 'luna_park/validators/dry'
 
 module FormsSingleItemSpec
   module Reception

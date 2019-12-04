@@ -1,9 +1,15 @@
 # frozen_string_literal: true
 
+require 'luna_park/errors'
+require 'luna_park/extensions/attributable'
+require 'luna_park/extensions/callable'
+
 module LunaPark
   module Interactors
-    # @example
+    # Interactor for describe UseCase as scenario (or sequence of actions)
+    #   Implementation should provide high-level description of buisnes-logic and buisnes-logic failures
     #
+    # @example
     #  module Errors
     #    class Processing << LunaPark::Errors::Processing; end
     #    class NotEnoughMoney < Processing

@@ -8,3 +8,11 @@ RuboCop::RakeTask.new(:rubocop)
 RSpec::Core::RakeTask.new(:spec)
 
 task default: [:spec, :rubocop]
+
+namespace :rspec do
+  desc 'Run each file separatly for find out where `require` is missed'
+  task :separated do
+    specfiles = Dir[File.expand_path('../spec/**/*_spec.rb', __FILE__)]
+    specfiles.all? { |specfile| system("bundle exec rspec #{specfile}") }
+  end
+end
