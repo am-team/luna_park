@@ -37,6 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'byebug', '~> 10.0'
   spec.add_development_dependency 'codecov', '~> 0.1'
   spec.add_development_dependency 'dry-validation', '~> 1.1'
+  spec.add_development_dependency 'i18n', '~> 1.7'
   spec.add_development_dependency 'overcommit', '~> 0.46'
   spec.add_development_dependency 'pry', '~> 0.11'
   spec.add_development_dependency 'pry-byebug', '~> 3.6'

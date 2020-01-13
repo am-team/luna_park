@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    luna_park (0.8.6)
+    luna_park (0.9.1)
 
 GEM
   remote: https://rubygems.org/
@@ -66,6 +66,8 @@ GEM
     http-accept (1.7.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
+    i18n (1.7.0)
+      concurrent-ruby (~> 1.0)
     iniparse (1.4.4)
     jaro_winkler (1.5.4)
     json (2.2.0)
@@ -141,6 +143,7 @@ DEPENDENCIES
   byebug (~> 10.0)
   codecov (~> 0.1)
   dry-validation (~> 1.1)
+  i18n (~> 1.7)
   luna_park!
   overcommit (~> 0.46)
   pry (~> 0.11)
