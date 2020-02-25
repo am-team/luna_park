@@ -18,9 +18,9 @@ module LunaPark
     class Adaptive < StandardError
       extend Extensions::Exceptions::Substitutive
 
-      ACTION_VALUES           = %i(stop catch raise).freeze
+      ACTION_VALUES           = %i[stop catch raise].freeze
       NOTIFY_VALUES           = [true, false, :info, :warning, :error].freeze
-      NOTIFY_LEVELS           = %i(info warning error).freeze
+      NOTIFY_LEVELS           = %i[info warning error].freeze
       DEFAULT_ACTION          = :raise
       DEFAULT_NOTIFY_LEVEL    = :error
 
@@ -110,7 +110,7 @@ module LunaPark
       #   error = ExampleError.new nil, notify: false
       #   error.notify? #=> false
       def notify?
-        (@notify || self.class.default_notify) ? true : false
+        @notify || self.class.default_notify ? true : false
       end
 
       # The expected behavior of the error handler which level of notify expected
@@ -134,6 +134,7 @@ module LunaPark
       def notify_lvl
         return @notify                   if NOTIFY_LEVELS.include? @notify
         return self.class.default_notify if NOTIFY_LEVELS.include? self.class.default_notify
+
         DEFAULT_NOTIFY_LEVEL
       end
 
@@ -200,6 +201,7 @@ module LunaPark
         def on_error(action: self::DEFAULT_ACTION, notify: false)
           raise ArgumentError, "Unexpected action #{action}"       unless ACTION_VALUES.include? action
           raise ArgumentError, "Unexpected notify value #{notify}" unless NOTIFY_VALUES.include? notify
+
           @default_action = action
           @default_notify = notify
           nil

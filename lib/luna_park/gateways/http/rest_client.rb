@@ -6,21 +6,27 @@ module LunaPark
       class RestClient
         attr_reader :default_handler
 
-        def initialize(handler: Handlers::Default)
+        def initialize
           @handler_klass = handler
         end
 
-        def request(title, options: {}, **request_params)
+        def request(title, **request_params)
           self.class.send_request title: title,
-                                  request: Requests::Base.new(request_params),
-                                  handler: handler(options)
+                                  request: Requests::Base.new(request_params)
         end
 
-        def json_request(title, options: {}, **request_params)
+        def json_request(title, **request_params)
           self.class.send_request title: title,
-                                  request: Requests::Json.new(request_params),
-                                  handler: handler(options)
+                                  request: Requests::Json.new(request_params)
         end
+
+        def timeout_error(title, request:)
+          raise Errors::Timeout.new(title, request: request, action: :raise)
+        end
+
+        # def request_error(title, request: request, response: e.response)
+        #   raise Errors::Timeout.new(title, request: request, action: :raise)
+        # end
 
         # @example
         #   # Gemfile
@@ -39,12 +45,12 @@ module LunaPark
         # @param request [Requests::Base, Requests::Json] request object
         # @param handler [Handlers::Default] handler of http exceptions
         # @return [::RestClient::Response]
-        def self.send_request(title:, request:, handler:)
+        def self.send_request(title:, request:)
           ::RestClient::Request.execute(request.to_h)
         rescue ::RestClient::Exceptions::Timeout
-          handler.timeout_error(title, request: request)
+          timeout_error(title, request: request)
         rescue ::RestClient::Exception => e
-          handler.error(title, request: request, response: e.response)
+          request_error(title, request: request, response: e.response)
         end
 
         private
