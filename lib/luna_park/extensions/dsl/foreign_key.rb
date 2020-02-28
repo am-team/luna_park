@@ -11,11 +11,15 @@ module LunaPark
       #    # ...
       #    include LunaPark::Extensions::Dsl::ForeignKey
       #
+      #    # Basic variant:
       #    foreign_key :user_uid, :user, primary_key: :uid # `primary_key:` default is `:id`
       #                                                    # foreign_key points to primary_key
       #
-      #    # OR alias:
+      #    # Alias:
       #    fk :user_uid, :user, pk: :uid
+      #
+      #    # Short variant:
+      #    fk :user_uid, user: :uid
       #
       #    # ...
       #  end
@@ -50,8 +54,14 @@ module LunaPark
         end
 
         module ClassMethods
-          def fk(fk_name, assoc_name, pk: :id)
-            foreign_key(fk_name, assoc_name, primary_key: pk)
+          def fk(fk_name, arg, pk: :id)
+            if arg.is_a?(Hash)
+              assoc_name, primary_key = arg.first
+            else
+              assoc_name  = arg
+              primary_key = pk
+            end
+            foreign_key(fk_name, assoc_name, primary_key: primary_key)
           end
 
           def foreign_key(fk_name, assoc_name, primary_key: :id) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
