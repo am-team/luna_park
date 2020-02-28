@@ -5,6 +5,7 @@ module LunaPark
   module Entities;   end
   module Errors;     end
   module Extensions; end
+  module Utils; end
   module Forms; end
   module Handlers; end
   module Http; end
@@ -18,6 +19,7 @@ module LunaPark
 end
 
 require 'luna_park/tools'
+require 'luna_park/utils/uri'
 require 'luna_park/errors'
 require 'luna_park/errors/adaptive'
 require 'luna_park/errors/processing'
