@@ -18,6 +18,7 @@ module LunaPark
 end
 
 require 'luna_park/tools'
+require 'luna_park/utils/environment'
 require 'luna_park/errors'
 require 'luna_park/errors/adaptive'
 require 'luna_park/errors/processing'
