@@ -36,11 +36,19 @@ module LunaPark
       end
     end
 
-    context 'when given unknown type,' do
+    context 'when given nil,' do
       let(:input) { nil }
 
+      it 'returns nil' do
+        expect(wrap).to be nil
+      end
+    end
+
+    context 'when given unknown type,' do
+      let(:input) { true }
+
       it 'raises meaningfull exception' do
-        expect { wrap }.to raise_error Errors::Unwrapable, 'ExtensionsWrappableSpec::Account can not wrap NilClass'
+        expect { wrap }.to raise_error Errors::Unwrapable, 'ExtensionsWrappableSpec::Account can not wrap TrueClass'
       end
     end
   end

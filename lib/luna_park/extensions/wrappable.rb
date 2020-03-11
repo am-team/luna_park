@@ -23,7 +23,8 @@ module LunaPark
     #  Account.new(acccount)  # => raise ArgumentError
     #  Account.wrap(hash)     # => #<Account type='user', id=42>
     #  Account.wrap(acccount) # => #<Account type='user', id=42>
-    #  Account.wrap(nil)      # raise 'Account can not wrap NilClass'
+    #  Account.wrap(nil)      # => nil
+    #  Account.wrap(true)     # => raise 'Account can not wrap TrueClass'
     #
     #  Account.wrap(account).eql?(account) # => true
     module Wrappable
@@ -31,6 +32,7 @@ module LunaPark
         case input
         when self then input
         when Hash then new(input)
+        when nil  then nil
         else raise Errors::Unwrapable, "#{self} can not wrap #{input.class}"
         end
       end
