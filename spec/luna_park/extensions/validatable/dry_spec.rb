@@ -7,7 +7,7 @@ module ExtensionsValidatableDrySpec
   class MyForm
     include LunaPark::Extensions::Validatable::Dry
 
-    validator do
+    dry_validator do
       params do
         required(:foo) { filled? & str? & eql?('Foo') }
         required(:bar) { filled? & str? & eql?('Bar') }
