@@ -12,10 +12,8 @@ module LunaPark
         end
 
         def validator(klass = nil, &block)
-          return super unless block_given?
+          return super(Validators::Dry.build(&block)) if block_given? && klass.nil?
 
-          klass = Class.new(Validators::Dry)
-          klass.validation_schema(&block)
           super(klass)
         end
       end

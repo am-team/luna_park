@@ -42,6 +42,12 @@ module LunaPark
       end
 
       class << self
+        def build(&block)
+          klass = Class.new(self)
+          klass.validation_schema(&block)
+          klass
+        end
+
         def schema
           @_schema
         end
