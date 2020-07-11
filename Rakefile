@@ -3,6 +3,8 @@
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
 require 'rubocop/rake_task'
+require 'irb'
+require 'irb/completion'
 
 RuboCop::RakeTask.new(:rubocop)
 RSpec::Core::RakeTask.new(:spec)
@@ -16,3 +18,13 @@ namespace :rspec do
     specfiles.all? { |specfile| system("bundle exec rspec #{specfile}") }
   end
 end
+
+desc 'IRB console with required LunaPark (alias c)'
+task :console do
+  require 'luna_park'
+  require 'irb'
+  ARGV.clear
+  IRB.start
+end
+
+task :c, [] => :console

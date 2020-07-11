@@ -12,12 +12,14 @@ module ExtensionsValidatableSpec
       @params = params
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity:
     def errors_tree
       @errors_tree ||= {}.tap do |errors|
         errors[:foo] ||= 'is missing' unless @params.key?(:foo) || @params.key?('foo')
         errors[:bar] ||= 'is missing' unless @params.key?(:bar) || @params.key?('bar')
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity:
 
     alias errors errors_tree
 

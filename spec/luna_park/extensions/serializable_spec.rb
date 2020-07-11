@@ -8,7 +8,7 @@ module ExtensionsSerializableSpec
 
     attr_accessor :title, :author, :comment, :in_sale
 
-    protected(:in_sale) # rubocop:disable Style/AccessModifierDeclarations
+    protected(:in_sale)
 
     def in_sale?
       @in_sale

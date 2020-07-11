@@ -3,7 +3,7 @@
 require 'i18n'
 I18n.load_path << Dir['spec/locales/*.yml']
 
-require 'luna_park/errors'
+require 'luna_park/errors/adaptive'
 
 module LunaPark
   RSpec.describe Errors::Adaptive do
@@ -368,17 +368,6 @@ module LunaPark
         it 'is eq error class name' do
           is_expected.to eq :catch
         end
-      end
-    end
-  end
-
-  RSpec.describe Errors::Processing do
-    describe '#action' do
-      subject(:action) { error.action }
-      context 'action is undefined' do
-        let(:error) { described_class.new }
-
-        it { is_expected.to eq :catch }
       end
     end
   end

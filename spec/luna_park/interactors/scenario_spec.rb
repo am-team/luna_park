@@ -3,6 +3,8 @@
 require 'i18n'
 I18n.load_path << Dir['spec/locales/*.yml']
 
+require 'luna_park/errors/adaptive'
+require 'luna_park/errors/processing'
 require 'luna_park/interactors/scenario'
 
 class YouDie < LunaPark::Errors::Adaptive
@@ -363,23 +365,20 @@ module LunaPark
         end
 
         context 'when scenario - fail' do
-          let(:scenario) { gunshot.new lucky_mode: false, action: action }
-
           context 'when error action is stop' do
-            let(:action) { :stop }
+            let(:scenario) { gunshot.new lucky_mode: false, action: :stop }
             it { is_expected.to be_nil }
           end
 
           context 'when action is catch' do
             context 'on default locale' do
-              let(:action) { :catch }
+              let(:scenario) { gunshot.new lucky_mode: false, action: :catch }
+
               it { is_expected.to eq 'You die' }
             end
 
             context 'on defined locale' do
-              let(:action) { :catch }
-              let(:scenario) { gunshot.new lucky_mode: false, action: action, locale: :ru }
-
+              let(:scenario) { gunshot.new lucky_mode: false, action: :catch, locale: :ru }
               it { is_expected.to eq 'Всего лишь царапина' }
             end
           end
@@ -391,7 +390,7 @@ module LunaPark
       subject(:notifier) { gunshot.default_notifier }
 
       context 'when notifier does not set in class' do
-        it { is_expected.to eq Notifiers::Stdout }
+        it { is_expected.to be_an_instance_of Notifiers::Log }
       end
 
       context 'when notifier defined in class' do

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 require 'luna_park/errors'
-require 'luna_park/notifiers/bugsnag'
-require 'luna_park/notifiers/stdout'
+require 'luna_park/tools'
+require 'luna_park/notifiers/log'
+LunaPark::Tools.if_gem_installed('bugsnag') { require 'luna_park/notifiers/bugsnag' }
 require 'luna_park/extensions/attributable'
 require 'luna_park/extensions/callable'
 
@@ -24,7 +25,6 @@ module LunaPark
     #   end
     #
     #   class CreateUser < Scenario
-    #     notify_with   Notifier::Bugsnag
     #     attr_accessor :email, :password
     #
     #     def call!
@@ -42,7 +42,7 @@ module LunaPark
       include Extensions::Attributable
       extend  Extensions::Callable
 
-      DEFAULT_NOTIFIER = Notifiers::Stdout
+      DEFAULT_NOTIFIER = Notifiers::Log.new
 
       private_constant :DEFAULT_NOTIFIER
 
@@ -116,11 +116,14 @@ module LunaPark
       #   scenario.data # => :result
       attr_reader :data
 
+      # Current locale
+      attr_reader :locale
+
       # Initialize new scenario
       #
       # @param notifier - custom notifier for the current instance of scenario
       # @param locale   - custom locale for the current instance of scenario
-      # @param **attrs  - the parameters that are needed to implement the scenario, usually the request model
+      # @param attrs    - the parameters that are needed to implement the scenario, usually the request model
       #
       # @example without parameters
       #   class SayHello < Scenario
@@ -132,7 +135,7 @@ module LunaPark
       #   end
       #
       #   hello = Scenario.new first_name: 'John', last_name: 'Doe'
-      #   hello.notifier    # => Notifiers::Stdout
+      #   hello.notifier    # => Notifiers::Log
       #   hello.locale      # => nil
       #   hello.first_name  # => 'John'
       #   hello.last_name   # => 'Doe'
@@ -145,9 +148,6 @@ module LunaPark
       #   hello.first_name  # => 'John'
       #   hello.last_name   # => 'Doe'
       #   hello.call!       # => 'Добрый день, меня зовут John Doe'
-
-      attr_reader :locale
-
       def initialize(notifier: nil, locale: nil, **attrs)
         set_attributes attrs
         @data     = nil
@@ -256,6 +256,7 @@ module LunaPark
 
       # @return [String] fail message
       def failure_message
+        puts "locale #{locale}"
         failure&.message(locale: locale)
       end
 

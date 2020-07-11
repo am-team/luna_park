@@ -33,7 +33,7 @@ module LunaPark
         raise Errors::AbstractMethod
       end
 
-      public :set_attributes # rubocop:disable Style/AccessModifierDeclarations
+      public :set_attributes
     end
   end
 end

@@ -1,46 +1,41 @@
 # frozen_string_literal: true
 
-module Notifier
-  class Bugsnag
-    class << self
-      def error(msg, details = {})
-        notify msg, details: details, lvl: :error
+require 'luna_park/extensions/severity_levels'
+require 'bugsnag'
+
+module LunaPark
+  module Notifiers
+    class Bugsnag
+      include Extensions::SeverityLevels
+
+      def initialize(min_lvl: :debug)
+        self.min_lvl = min_lvl
       end
 
-      def warning(msg, details = {})
-        notify msg, details: details, lvl: :warning
-      end
+      def post(msg, lvl: :error, **details)
+        raise ArgumentError, "Undefined severity level `#{lvl}`" unless LEVELS.include? lvl
 
-      def info(msg, details = {})
-        notify msg, details: details, lvl: :info
-      end
-
-      def debug(msg, details = {})
-        notify msg, details: details, lvl: :debug
+        message = wrap msg
+        details = extend details, with: msg
+        ::Bugsnag.notify(message) do |report|
+          report.add_tab(:details, details)
+          report.severity = lvl
+        end
       end
 
       private
 
-      def notify(msg, details:, lvl:)
-        exception = wrap msg
-        tabs      = warning details, exception
-
-        Bugsnag.notify(exception) do |report|
-          tabs.each { |tab, value| report.add_tab(tab, value) }
-          report.severity = lvl unless lvl.empty?
-        end
+      def wrap(msg)
+        msg.is_a?(Exception) ? msg : String(msg)
       end
 
-      def wrap(exception)
-        case exception
-        when String    then StandardError.new(exception)
-        when Exception then exception
-        else error "Unknown error type `#{exception.class.name}`"
-        end
-      end
+      def extend(details, with:)
+        msg = with
+        return details unless msg.respond_to?(:details)
 
-      def widening(tabs, exception)
-        exception.is_a?(LunaPark::Errors::Adaptive) ? tabs.merge(exception.details) : tabs
+        msg.details.merge(details) do |_, msg_value, post_value|
+          { message: msg_value, post: post_value }
+        end
       end
     end
   end

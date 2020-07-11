@@ -7,15 +7,21 @@ module LunaPark
   module Extensions; end
   module Forms; end
   module Handlers; end
+  module Http; end
   module Interactors; end
+  module Notifiers; end
   module Serializers; end
+  module Tools; end
   module UseCases; end
   module Validators; end
   module Values; end
 end
 
-require 'luna_park/extensions/exceptions/substitutive'
+require 'luna_park/tools'
 require 'luna_park/errors'
+require 'luna_park/errors/adaptive'
+require 'luna_park/errors/processing'
+LunaPark::Tools.if_gem_installed('rest-client', '~> 2.1') { require 'luna_park/errors/http' }
 require 'luna_park/extensions/attributable'
 require 'luna_park/extensions/wrappable'
 require 'luna_park/extensions/callable'
@@ -32,34 +38,25 @@ require 'luna_park/extensions/repositories/postgres/create'
 require 'luna_park/extensions/repositories/postgres/read'
 require 'luna_park/extensions/repositories/postgres/update'
 require 'luna_park/extensions/repositories/postgres/delete'
+LunaPark::Tools.if_gem_installed('dry-validations', '~> 1.1') { require 'luna_park/extensions/validatable/dry' }
 require 'luna_park/entities/simple'
 require 'luna_park/entities/attributable'
 require 'luna_park/entities/nested'
 require 'luna_park/forms/simple'
 require 'luna_park/forms/single_item'
 
-require 'luna_park/gateways/http/requests/base'
-require 'luna_park/gateways/http/requests/json'
+LunaPark::Tools.if_gem_installed('rest-client', '~> 2.1') { require 'luna_park/http/client' }
+LunaPark::Tools.if_gem_installed('bugsnag', '~> 6') { require 'luna_park/notifiers/bugsnag' }
 
-require 'luna_park/gateways/http/errors/default'
-require 'luna_park/gateways/http/handlers/default'
-
-if defined?(::Bugsnag)
-  require 'luna_park/gateways/http/errors/bugsnag'
-  require 'luna_park/gateways/http/handlers/bugsnag'
-end
-
-require 'luna_park/gateways/http/rest_client' if defined?(::RestClient)
+require 'luna_park/notifiers/log'
 
 require 'luna_park/handlers/simple'
 require 'luna_park/interactors/sequence'
+require 'luna_park/interactors/scenario'
 require 'luna_park/serializers/simple'
 require 'luna_park/callable'
 
-if defined?(::Dry::Validation)
-  require 'luna_park/validators/dry'
-  require 'luna_park/extensions/validatable/dry'
-end
+LunaPark::Tools.if_gem_installed('dry-validations', '~> 1.1') { require 'luna_park/validators/dry' }
 
 require 'luna_park/values/compound'
 require 'luna_park/values/single'

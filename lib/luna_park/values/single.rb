@@ -6,8 +6,6 @@ require 'luna_park/errors'
 module LunaPark
   module Values
     class Single
-      include Extensions::Attributable
-
       def self.wrap(input)
         return input if input.is_a?(self)
 

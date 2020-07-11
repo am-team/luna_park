@@ -16,6 +16,7 @@ module LunaPark
 
         anonym_mixin = Module.new do
           attr_reader(name)
+
           define_method(:"#{name}=") do |input|
             instance_variable_set(:"@#{name}", namespace_class.wrap(input))
           end
