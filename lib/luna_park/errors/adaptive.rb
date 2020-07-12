@@ -1,12 +1,16 @@
 # frozen_string_literal: true
 
 require 'i18n'
-require 'luna_park/extensions/exceptions/substitutive'
+# require 'luna_park/extensions/exceptions/substitutive'
 
 module LunaPark
   module Errors
-    # This error class defines a specification that defines the behavior of
-    # an error handler. To whom should he report an error and in what form.
+    # This class extends standard exception with a few things:
+    # - define custom message with internalization key, if necessary
+    # - setup handler behavior - raise or catch
+    # - determine whether this error should be notified
+    # - and if it should, define severity level
+    # - send to handler not only message but also details
     #
     # @example Fatalism class
     #   module Errors
@@ -16,8 +20,13 @@ module LunaPark
     #     end
     #   end
     #
+    #   error = Error::Fatalism.new(choose: 'The first one')
+    #   error.message # => 'You cannot change your destiny'
+    #   error.message(lang: :ru) # => 'Вы не можете выбрать свою судьбу'
+    #   error.details # => { :choose => "The first one" }
+    #
     class Adaptive < StandardError
-      extend Extensions::Exceptions::Substitutive
+      # extend Extensions::Exceptions::Substitutive
 
       ACTION_VALUES           = %i[stop catch raise].freeze
       NOTIFY_VALUES           = [true, false, :info, :warning, :error].freeze
@@ -27,7 +36,7 @@ module LunaPark
 
       private_constant :ACTION_VALUES, :NOTIFY_VALUES, :NOTIFY_LEVELS, :DEFAULT_NOTIFY_LEVEL
 
-      # Additional information that I wanted to convey in the notification message
+      # It is additional information which extends the notification message
       #
       # @example
       #   error = Fatalism.new('Message text', custom: 'Some important', foo: Foo.new )
@@ -37,8 +46,8 @@ module LunaPark
       # Create new error
       #
       # @param msg - Message text
-      # @param action - custom action for the current instance of error (see #action)
-      # @param notify - custom notify behaviour for the current instance of error (see #self.on_error)
+      # @param action - defines handler behavior (see #action)
+      # @param notify - defines notifier behaviour (see #self.on_error)
       # @param details - additional information to notifier
       #
       # @example without parameters
@@ -65,13 +74,12 @@ module LunaPark
         super(message)
       end
 
-      # The expected behavior of the error handler if an error
-      # instance of this class is raised
+      # Defined behavior for the error handler.
       #
       # - :stop - stop the application and don't give any feedback (
-      #   Something happened, but the user doesn't know what it is )
-      # - :catch - send a fail message to end-user
-      # - :raise - work like StandardError, and it was handled on application level
+      #   Something has happened, but the user doesn't know what it is )
+      # - :catch - send a fail message to end-user, handler should catch it (usually it is used in business layer)
+      # - :raise - works like StandardError, and it is handled on application layer
       #
       # @return [Symbol] action
       #
@@ -93,7 +101,7 @@ module LunaPark
         @action ||= self.class.default_action
       end
 
-      # The expected behavior of the error handler does it need to send notify
+      # Should the handler send this notification ?
       #
       # @return [Boolean] it should be notified?
       #
@@ -115,7 +123,7 @@ module LunaPark
         @notify || self.class.default_notify ? true : false
       end
 
-      # The expected behavior of the error handler which level of notify expected
+      # Severity level for notificator
       #
       # @return [Symbol] expected notification level
       #
@@ -140,12 +148,12 @@ module LunaPark
         DEFAULT_NOTIFY_LEVEL
       end
 
-      # Message of error
+      # Error message
       #
-      # Message returned on this order:
-      # 1. From instance initializer
-      # 2. Translated message if defined 18n_key (see #self.on_error)
-      # 3. Defined default class message (see #self.on_error)
+      # The message text is defined in the following order:
+      # 1. In the `initialize` method
+      # 2. Translated message, if i18n key was set (see #self.on_error)
+      # 3. In the class method (see #self.on_error)
       #
       # @param locale [Symbol,String]
       # @return [String] message text
@@ -166,7 +174,7 @@ module LunaPark
       #     message 'Forgive Kuzma, my feet froze', i18n_key: 'errors.temperature'
       #   end
       #   error = TemperatureError.new
-      #   error.message(locale: ru) # => 'Прости Кузьма, замерзли ноги'
+      #   error.message(locale: ru) # => 'Прости Кузьма, замерзли ноги!'
       #
       # @example action defined in an instance
       #   error = TemperatureError.new 'Please do not use fahrenheits'
@@ -177,13 +185,11 @@ module LunaPark
 
       class << self
         # Explains how this error class will be notified
-        # can be `false`, `:info`, `:warning`, `:error`, you
-        # can wrote just `true` it is alias for `error`
         #
         # @return [Boolean, Symbol] the behavior of the notification
         attr_reader :default_notify
 
-        # What is the key of the translation was selected for this error
+        # What the key of the translation was selected for this error
         #
         # @return [NilClass, String] internationalization key
         attr_reader :i18n_key
@@ -193,9 +199,9 @@ module LunaPark
         #
         # @param action [Symbol] action:
         #   - :stop - stop the application and don't give any feedback (
-        #     Something happened, but the user doesn't know what it is )
-        #   - :catch - send a fail message to end-user
-        #   - :raise - work like StandardError, and it was handled on application level
+        #     Something has happened, but the user doesn't know what it is )
+        #   - :catch - send a fail message to end-user, handler should catch it (usually it is used in business layer)
+        #   - :raise - works like StandardError, and it is handled on application layer
         #
         # @param notify [Symbol] - set behavior of the notification (see #default_notify)
         #
@@ -220,7 +226,7 @@ module LunaPark
           nil
         end
 
-        # Return translation of error message if 18n_key is defined
+        # Return translation of an error message if 18n_key is defined
         #
         # @param locale [Symbol] - specified locale
         # @return [String] - Translated text

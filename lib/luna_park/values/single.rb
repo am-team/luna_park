@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'luna_park/extensions/attributable'
 require 'luna_park/errors'
 
 module LunaPark

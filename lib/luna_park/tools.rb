@@ -8,7 +8,7 @@ module LunaPark
     rescue Gem::MissingSpecError
       false
     else
-      yield
+      yield if block_given?
       true
     end
   end
