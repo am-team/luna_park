@@ -7,6 +7,8 @@ module LunaPark
       # In main idea it based on rfc5424 https://tools.ietf.org/html/rfc5424, but
       # in fact default ruby logger does not define all severities, and we use only
       # most important:
+      #  - unknown: an unknown message that should always be logged
+      #  - fatal: An unhandleable error that results in a program crash
       #  - error: system work incorrectly, and maintainer should know about that immediately
       #  - warning: warning conditions, and maintainer should know about that, but not immediately
       #  - info: informational messages, maintainer should know about that, if they want to analyse logs
@@ -20,15 +22,17 @@ module LunaPark
       #   end
       #
       #   logger = ChattyLogger.new min_lvl: :warning
+      #   logger.unknown 'Do not do that.' # => 'UNKNOWN: Do not do that.'
+      #   logger.fatal 'Do not do that.'   # => 'FATAL: Do not do that.'
       #   logger.error 'Do not do that.'   # => 'ERROR: Do not do that.'
       #   logger.warning 'Do not do that.' # => 'WARNING: Do not do that.'
       #   logger.info 'Do not do that.'    # => nil
       #   logger.debug 'Do not do that.'   # => nil
-      LEVELS = %i[debug info warning error].freeze
+      LEVELS = %i[debug info warning error fatal unknown].freeze
 
       # Defined minimum severity level
       def min_lvl
-        @min_lvl ||= :warning
+        @min_lvl ||= :debug
       end
 
       def min_lvl=(value)
@@ -39,16 +43,38 @@ module LunaPark
 
       # rubocop:disable Style/GuardClause
 
-      # Send to message with ERROR lvl
+      # Post message with UNKNOWN severity level
+      #
+      # @param msg [String,Exception]
+      # @param details [Hash]
+      def unknown(msg = '', **details)
+        message = block_given? ? yield : msg
+        post message, lvl: :unknown, **details
+      end
+
+      # Post message with FATAL severity level
+      #
+      # @param msg [String,Exception]
+      # @param details [Hash]
+      def fatal(msg = '', **details)
+        if %i[debug info warning error fatal].include? min_lvl
+          message = block_given? ? yield : msg
+          post message, lvl: :fatal, **details
+        end
+      end
+
+      # Post message with ERROR severity level
       #
       # @param msg [String,Exception]
       # @param details [Hash]
       def error(msg = '', **details)
-        message = block_given? ? yield : msg
-        post message, lvl: :error, **details
+        if %i[debug info warning error].include? min_lvl
+          message = block_given? ? yield : msg
+          post message, lvl: :error, **details
+        end
       end
 
-      # Send to stdout message with WARNING lvl
+      # Post stdout message with WARNING severity level
       #
       # @param msg [String,Exception]
       # @param details [Hash]
@@ -59,7 +85,7 @@ module LunaPark
         end
       end
 
-      # Send to stdout message with INFO lvl
+      # Post message with INFO  severity level
       #
       # @example
       #
@@ -72,7 +98,7 @@ module LunaPark
         end
       end
 
-      # Send to stdout message with DEBUG lvl
+      # Post message with DEBUG severity level
       #
       # @param msg [String,Exception]
       # @param details [Hash]

@@ -111,7 +111,7 @@ module LunaPark
       # Send a notification to the log.
       #
       # @param  msg - Message object, usual String or Exception
-      # @param [Symbol] lvl - Level of current message, can be :debug, :info, :warning or :error
+      # @param [Symbol] lvl - Level of current message, can be :debug, :info, :warning, :error, :fatal or :unknown
       # @param [Hash] details - Any another details for current message
       def post(msg, lvl: :error, **details)
         severity = severity(lvl)
@@ -132,6 +132,8 @@ module LunaPark
       private
 
       SEVERITY_LEVELS = {
+        unknown: Logger::Severity::UNKNOWN,
+        fatal: Logger::Severity::FATAL,
         error: Logger::Severity::ERROR,
         warning: Logger::Severity::WARN,
         info: Logger::Severity::INFO,

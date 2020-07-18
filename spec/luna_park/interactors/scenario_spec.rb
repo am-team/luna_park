@@ -196,9 +196,7 @@ module LunaPark
             let(:notify) { nil }
 
             it 'should not notify' do
-              expect(notifier).to_not receive(:error)
-              expect(notifier).to_not receive(:warning)
-              expect(notifier).to_not receive(:info)
+              expect(notifier).to_not receive(:post)
               call
             end
           end
@@ -207,9 +205,7 @@ module LunaPark
             let(:notify) { false }
 
             it 'should not notify' do
-              expect(notifier).to_not receive(:error)
-              expect(notifier).to_not receive(:warning)
-              expect(notifier).to_not receive(:info)
+              expect(notifier).to_not receive(:post)
               call
             end
           end
@@ -218,7 +214,25 @@ module LunaPark
             let(:notify) { true }
 
             it 'should notify error lvl message' do
-              expect(notifier).to receive(:error)
+              expect(notifier).to receive(:post).with(instance_of(YouDie), lvl: :error)
+              call
+            end
+          end
+
+          context 'when it set to unknown lvl' do
+            let(:notify) { :unknown }
+
+            it 'should notify error lvl message' do
+              expect(notifier).to receive(:post).with(instance_of(YouDie), lvl: :unknown)
+              call
+            end
+          end
+
+          context 'when it set to fatal lvl' do
+            let(:notify) { :fatal }
+
+            it 'should notify error lvl message' do
+              expect(notifier).to receive(:post).with(instance_of(YouDie), lvl: :fatal)
               call
             end
           end
@@ -227,7 +241,7 @@ module LunaPark
             let(:notify) { :error }
 
             it 'should notify error lvl message' do
-              expect(notifier).to receive(:error)
+              expect(notifier).to receive(:post).with(instance_of(YouDie), lvl: :error)
               call
             end
           end
@@ -236,7 +250,7 @@ module LunaPark
             let(:notify) { :warning }
 
             it 'should notify error lvl message' do
-              expect(notifier).to receive(:warning)
+              expect(notifier).to receive(:post).with(instance_of(YouDie), lvl: :warning)
               call
             end
           end
@@ -245,7 +259,16 @@ module LunaPark
             let(:notify) { :info }
 
             it 'should notify info lvl message' do
-              expect(notifier).to receive(:info)
+              expect(notifier).to receive(:post).with(instance_of(YouDie), lvl: :info)
+              call
+            end
+          end
+
+          context 'when it set to debug lvl' do
+            let(:notify) { :debug }
+
+            it 'should notify debug lvl message' do
+              expect(notifier).to receive(:post).with(instance_of(YouDie), lvl: :debug)
               call
             end
           end

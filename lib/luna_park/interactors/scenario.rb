@@ -297,12 +297,7 @@ module LunaPark
       end
 
       def notify_error(error)
-        case error.notify_lvl
-        when :error   then notifier.error(error)
-        when :warning then notifier.warning(error)
-        when :info    then notifier.info(error)
-        else raise ArgumentError, "Unknown error notify level #{error.action}"
-        end
+        notifier.post error, lvl: error.notify_lvl
       end
 
       def handle_error(error)

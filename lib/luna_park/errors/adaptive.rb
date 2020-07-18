@@ -29,8 +29,8 @@ module LunaPark
       # extend Extensions::Exceptions::Substitutive
 
       ACTION_VALUES           = %i[stop catch raise].freeze
-      NOTIFY_VALUES           = [true, false, :info, :warning, :error].freeze
-      NOTIFY_LEVELS           = %i[info warning error].freeze
+      NOTIFY_VALUES           = [true, false, :debug, :info, :warning, :error, :fatal, :unknown].freeze
+      NOTIFY_LEVELS           = %i[debug info warning error fatal unknown].freeze
       DEFAULT_ACTION          = :raise
       DEFAULT_NOTIFY_LEVEL    = :error
 

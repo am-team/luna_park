@@ -18,14 +18,14 @@ module LunaPark
       subject { notifier.min_lvl }
 
       context 'when undefined' do
-        it { is_expected.to eq :warning }
+        it { is_expected.to eq :debug }
       end
 
       context 'when defined' do
-        before { notifier.min_lvl = :debug }
+        before { notifier.min_lvl = :warning }
 
         it 'should to be eq defined level' do
-          is_expected.to eq :debug
+          is_expected.to eq :warning
         end
       end
     end
@@ -37,7 +37,7 @@ module LunaPark
 
       context 'when set undefined value' do
         it 'should to change minimum severity level' do
-          expect { notifier.min_lvl = :debug }.to change { notifier.min_lvl }.from(:warning).to(:debug)
+          expect { notifier.min_lvl = :warning }.to change { notifier.min_lvl }.from(:debug).to(:warning)
         end
       end
     end
@@ -88,6 +88,8 @@ module LunaPark
     context 'when min severity level is debug' do
       before { notifier.min_lvl = :debug }
 
+      it_behaves_like 'can post message with severity level', :unknown
+      it_behaves_like 'can post message with severity level', :fatal
       it_behaves_like 'can post message with severity level', :error
       it_behaves_like 'can post message with severity level', :warning
       it_behaves_like 'can post message with severity level', :info
@@ -97,6 +99,8 @@ module LunaPark
     context 'when min severity level is info' do
       before { notifier.min_lvl = :info }
 
+      it_behaves_like 'can post message with severity level', :unknown
+      it_behaves_like 'can post message with severity level', :fatal
       it_behaves_like 'can post message with severity level', :error
       it_behaves_like 'can post message with severity level', :warning
       it_behaves_like 'can post message with severity level', :info
@@ -106,16 +110,42 @@ module LunaPark
     context 'when min severity level is warning' do
       before { notifier.min_lvl = :warning }
 
+      it_behaves_like 'can post message with severity level', :unknown
+      it_behaves_like 'can post message with severity level', :fatal
       it_behaves_like 'can post message with severity level', :error
       it_behaves_like 'can post message with severity level', :warning
       it_behaves_like 'can not post message with severity level', :info
       it_behaves_like 'can not post message with severity level', :debug
     end
 
-    context 'when min severity level is warning' do
+    context 'when min severity level is error' do
       before { notifier.min_lvl = :error }
 
+      it_behaves_like 'can post message with severity level', :unknown
+      it_behaves_like 'can post message with severity level', :fatal
       it_behaves_like 'can post message with severity level', :error
+      it_behaves_like 'can not post message with severity level', :warning
+      it_behaves_like 'can not post message with severity level', :info
+      it_behaves_like 'can not post message with severity level', :debug
+    end
+
+    context 'when min severity level is fatal' do
+      before { notifier.min_lvl = :fatal }
+
+      it_behaves_like 'can post message with severity level', :unknown
+      it_behaves_like 'can post message with severity level', :fatal
+      it_behaves_like 'can not post message with severity level', :error
+      it_behaves_like 'can not post message with severity level', :warning
+      it_behaves_like 'can not post message with severity level', :info
+      it_behaves_like 'can not post message with severity level', :debug
+    end
+
+    context 'when min severity level is unknown' do
+      before { notifier.min_lvl = :unknown }
+
+      it_behaves_like 'can post message with severity level', :unknown
+      it_behaves_like 'can not post message with severity level', :fatal
+      it_behaves_like 'can not post message with severity level', :error
       it_behaves_like 'can not post message with severity level', :warning
       it_behaves_like 'can not post message with severity level', :info
       it_behaves_like 'can not post message with severity level', :debug
