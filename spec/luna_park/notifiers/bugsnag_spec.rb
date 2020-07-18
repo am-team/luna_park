@@ -27,8 +27,9 @@ module LunaPark
         message     = event.dig('exceptions', 0, 'message')
         severity    = event.dig('severity')
         details     = event.dig('metaData', 'details')
+        custom      = event.dig('metaData', 'custom')
 
-        matcher.call(error_class, message, severity, details)
+        matcher.call(error_class, message, severity, details, custom)
         true
       end
     end
@@ -75,13 +76,70 @@ module LunaPark
         end
       end
 
-      context 'when severity level is defined' do
+      context 'when severity level is debug' do
+        subject(:post_message) { notifier.post('Something went wrong', lvl: :debug) }
+
+        it 'should notify bugsnag with `debug` severity level' do
+          post_message
+          expect(notifier).to have_sent_notification { |_e, _m, severity|
+            expect(severity).to eq 'debug'
+          }
+        end
+      end
+
+      context 'when severity level is info' do
         subject(:post_message) { notifier.post('Something went wrong', lvl: :info) }
+
+        it 'should notify bugsnag with `info` severity level' do
+          post_message
+          expect(notifier).to have_sent_notification { |_e, _m, severity|
+            expect(severity).to eq 'info'
+          }
+        end
+      end
+
+      context 'when severity level is warning' do
+        subject(:post_message) { notifier.post('Something went wrong', lvl: :warning) }
+
+        it 'should notify bugsnag with `warning` severity level' do
+          post_message
+          expect(notifier).to have_sent_notification { |_e, _m, severity|
+            expect(severity).to eq 'warning'
+          }
+        end
+      end
+
+      context 'when severity level is error' do
+        subject(:post_message) { notifier.post('Something went wrong', lvl: :error) }
 
         it 'should notify bugsnag with `error` severity level' do
           post_message
           expect(notifier).to have_sent_notification { |_e, _m, severity|
-            expect(severity).to eq 'info'
+            expect(severity).to eq 'error'
+          }
+        end
+      end
+
+      context 'when severity level is fatal' do
+        subject(:post_message) { notifier.post('Something went wrong', lvl: :fatal) }
+
+        it 'should notify bugsnag with `error` severity level' do
+          post_message
+          expect(notifier).to have_sent_notification { |_e, _m, severity, _d, custom|
+            expect(severity).to eq 'error'
+            expect(custom).to eq('original_message_severity' => 'fatal')
+          }
+        end
+      end
+
+      context 'when severity level is unknown' do
+        subject(:post_message) { notifier.post('Something went wrong', lvl: :unknown) }
+
+        it 'should notify bugsnag with `error` severity level' do
+          post_message
+          expect(notifier).to have_sent_notification { |_e, _m, severity, _d, custom|
+            expect(severity).to eq 'error'
+            expect(custom).to eq('original_message_severity' => 'unknown')
           }
         end
       end

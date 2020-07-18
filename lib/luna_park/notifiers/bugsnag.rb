@@ -12,14 +12,20 @@ module LunaPark
         self.min_lvl = min_lvl
       end
 
-      def post(msg, lvl: :error, **details)
+      def post(msg, lvl: :error, **details) # rubocop:disable Metrics/MethodLength
         raise ArgumentError, "Undefined severity level `#{lvl}`" unless LEVELS.include? lvl
 
         message = wrap msg
         details = extend details, with: msg
         ::Bugsnag.notify(message) do |report|
           report.add_tab(:details, details)
-          report.severity = lvl
+
+          if %i[fatal unknown].include? lvl
+            report.add_tab(:original_message_severity, lvl)
+            report.severity = :error
+          else
+            report.severity = lvl
+          end
         end
       end
 
