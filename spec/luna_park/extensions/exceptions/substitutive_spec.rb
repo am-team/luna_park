@@ -68,7 +68,7 @@ end
 
 module LunaPark
   RSpec.describe Extensions::Exceptions::Substitutive do
-    let(:origin_exception)      { exception { ExtensionsExceptionsSubstitutiveSpec.raise_origin_exception } }
+    let(:origin_exception) { exception { ExtensionsExceptionsSubstitutiveSpec.raise_origin_exception } }
 
     context 'with any args,' do
       let(:substituted_exception) { exception { ExtensionsExceptionsSubstitutiveSpec.raise_substitutive_exception } }
@@ -109,7 +109,6 @@ module LunaPark
         expect(substituted_exception.comment).to eq 'Oy vey!'
       end
     end
-
 
     context 'when substituted with additional named args AND built message,' do
       let(:substituted_exception) { exception { ExtensionsExceptionsSubstitutiveSpec.raise_substitutive_with_opts } }
