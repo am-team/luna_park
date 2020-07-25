@@ -13,7 +13,7 @@ module LunaPark
     #   class Mappers::Transaction < LunaPark::Mappers::Codirectional
     #     map entity: :uid,                 store: :id
     #     map entity: [:charge, :amount],   store: :charge_amount
-    #     map entity: [:charge, :currency], store: :charge_currency
+    #     map attr:   [:charge, :currency], row:   :charge_currency # using aliased args
     #     map :comment
     #   end
     #
@@ -24,7 +24,7 @@ module LunaPark
     #
     #   # Mapper transforms entity attributes to database row and vice-verse
     #   row       = mapper.to_row(transaction)        # => {          charge_amount: 10, charge_currency: 'USD', comment: 'Foobar' }
-    #   new_row   = sequel_database_table.insert(row) # => { id: 42,  charge_amount: 10, charge_currency: 'USD', comment: 'Foobar' }
+    #   new_row   = sequel_database_table.insert(row) # => { id:  42, charge_amount: 10, charge_currency: 'USD', comment: 'Foobar' }
     #   new_attrs = mapper.from_row(new_row)          # => { uid: 42, charge: { amount: 10, currency: 'USD' },   comment: 'Foobar' }
     #
     #   transaction.set_attributes(new_attrs)

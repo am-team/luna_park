@@ -9,19 +9,23 @@ module LunaPark
         class Abstract
           private
 
-          class Undefined; end
-
-          private_constant :Undefined
-
-          def copy_nested(from:, to:, from_path:, to_path:) # rubocop:disable Metrics/MethodLength
-            value = if from_path.is_a?(Array) # when given `%i[key path]` - not just `:key`
-                      read_nested(from, path: from_path)
-                    else # when given just `:key`
-                      read_plain(from, key: from_path)
-                    end
+          def copy_nested(from:, to:, from_path:, to_path:)
+            value = read(from, from_path)
 
             return if value == Undefined # omit undefined keys
 
+            write(to, to_path, value)
+          end
+
+          def read(from, from_path)
+            if from_path.is_a?(Array) # when given `%i[key path]` - not just `:key`
+              read_nested(from, path: from_path)
+            else # when given just `:key`
+              read_plain(from, key: from_path)
+            end
+          end
+
+          def write(to, to_path, value)
             if to_path.is_a?(Array) # when given `%i[key path]` - not just `:key`
               write_nested(to, to_path, value)
             else # when given just `:key`
@@ -65,6 +69,10 @@ module LunaPark
           def build_nested_hash(nested_hash, path)
             path.inject(nested_hash) { |output, key| output[key] ||= {} }
           end
+
+          class Undefined; end
+
+          private_constant :Undefined
         end
       end
     end

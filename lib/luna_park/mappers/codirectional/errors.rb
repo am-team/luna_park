@@ -18,7 +18,7 @@ module LunaPark
           end
 
           def build_message
-            "At path #{path.map(&:inspect).join(', ')} MUST be a Hash, but is a #{object.class}: #{object.inspect}"
+            "Value at path #{path} MUST be a Hash when the root is a Hash, but is a #{object.class}: #{object.inspect}"
           end
         end
       end
