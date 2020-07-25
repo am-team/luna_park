@@ -104,7 +104,9 @@ module LunaPark
         it { expect { to_row }.to raise_error Mappers::Codirectional::Errors::NotHashGiven }
 
         it 'raised exception has description' do
-          expect(exception { to_row }.message).to start_with 'At path :funds, :charge MUST be a Hash, but is a MappersCodirectionalSpec::Money: #<MappersCodirectionalSpec::Money:'
+          expect(exception { to_row }.message).to start_with(
+            'At path :funds, :charge MUST be a Hash, but is a MappersCodirectionalSpec::Money: #<MappersCodirectionalSpec::Money:'
+          )
         end
       end
     end
