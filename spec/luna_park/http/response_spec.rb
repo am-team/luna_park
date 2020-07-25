@@ -15,7 +15,7 @@ module LunaPark
       }
     end
 
-    let(:response) { described_class.new(params) }
+    let(:response) { described_class.new(**params) }
 
     describe '#body' do
       subject { response.body }
@@ -49,7 +49,7 @@ module LunaPark
       context 'when undefined in initialize method' do
         before { params.delete :code }
 
-        it { expect { described_class.new(params) }.to raise_error ArgumentError }
+        it { expect { described_class.new(**params) }.to raise_error ArgumentError }
       end
     end
 
@@ -104,7 +104,7 @@ module LunaPark
       context 'when undefined in initialize method' do
         before { params.delete :request }
 
-        it { expect { described_class.new(params) }.to raise_error ArgumentError }
+        it { expect { described_class.new(**params) }.to raise_error ArgumentError }
       end
     end
 
