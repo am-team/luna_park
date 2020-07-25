@@ -13,9 +13,14 @@ module LunaPark
 
           private_constant :Undefined
 
-          def copy_nested(from:, to:, from_path:, to_path:)
-            value = read_nested(from, from_path)
-            return if value.equal? Undefined # omit undefined keys
+          def copy_nested(from:, to:, from_path:, to_path:) # rubocop:disable Metrics/MethodLength
+            value = if from_path.is_a?(Array) # when given `%i[key path]` - not just `:key`
+                      read_nested(from, path: from_path)
+                    else # when given just `:key`
+                      read_plain(from, key: from_path)
+                    end
+
+            return if value == Undefined # omit undefined keys
 
             if to_path.is_a?(Array) # when given `%i[key path]` - not just `:key`
               write_nested(to, to_path, value)
@@ -24,22 +29,20 @@ module LunaPark
             end
           end
 
-          def read_nested(from_hash, path)
-            if path.is_a?(Array) # when given `%i[key path]` - not just `:key`
-              *head_path, head_key = path           # split `[:a, :b, :c, :d]` to `[:a, :b, :c]` and `:d`
-              head_hash = from_hash.dig(*head_path) # from `{a: {b: {c: {d: 'value'}}}}` get `{d: 'value'}`
-              return Undefined unless head_hash&.key?(head_key) # when there are no key at the path `[:a, :b, :c, :d]`
+          def read_nested(from, path:)
+            *path_to_head, head_key = path      # split `[:a, :b, :c, :d]` to `[:a, :b, :c]` and `:d`
+            head_hash = from.dig(*path_to_head) # from `{a: {b: {c: {d: 'value'}}}}` get `{d: 'value'}`
+            return Undefined unless head_hash&.key?(head_key) # when there are no key at the path `[:a, :b, :c, :d]`
 
-              head_hash.fetch(head_key) # from `{a: {b: {c: {d: 'value'}}}}` get 'value'
-            else # when given just `:key` as path
-              return Undefined unless from_hash.key?(path) # when there are no key at the path `:a`
-
-              from_hash.fetch(path) # from `{a: 'value'}` get 'value'
-            end
+            head_hash[head_key] # get 'value' from from `{d: 'value'}` stored at `{a: {b: {c: {d: 'value'}}}}`
           rescue NoMethodError => e
             raise unless e.message.start_with?("undefined method `key?' for")
 
-            raise Errors::NotHashGiven.substitute(e, path: head_path, object: head_hash)
+            raise Errors::NotHashGiven.substitute(e, path: path_to_head, object: head_hash)
+          end
+
+          def read_plain(from, key:)
+            from.key?(key) ? from[key] : Undefined
           end
 
           def write_nested(hash, full_path, value)

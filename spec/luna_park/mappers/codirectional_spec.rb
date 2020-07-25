@@ -133,7 +133,7 @@ module LunaPark
     def exception
       yield
       nil
-    rescue Exception => e
+    rescue Exception => e # rubocop:disable Lint/RescueException
       e
     end
   end
