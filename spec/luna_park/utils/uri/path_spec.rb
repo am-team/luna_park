@@ -97,6 +97,40 @@ RSpec.describe LunaPark::Utils::URI::Path do
     end
   end
 
+  describe '#to_subpath' do
+    subject(:to_subpath) { path.to_subpath }
+
+    context 'when given non-root string' do
+      let(:path_string) { 'api/v1/users' }
+
+      it { is_expected.to eq path_string }
+    end
+
+    context 'when given root string' do
+      let(:path_string) { '/api/v1/users' }
+
+      it { is_expected.to eq 'api/v1/users' }
+      it { expect { to_subpath }.not_to change { path } }
+    end
+  end
+
+  describe '#to_subpath!' do
+    subject(:to_subpath!) { path.to_subpath! }
+
+    context 'when given non-root string' do
+      let(:path_string) { 'api/v1/users' }
+
+      it { is_expected.to eq path_string }
+    end
+
+    context 'when given root string' do
+      let(:path_string) { '/api/v1/users' }
+
+      it { is_expected.to eq 'api/v1/users' }
+      it { expect { to_subpath! }.to change { path }.to('api/v1/users') }
+    end
+  end
+
   describe '#root?' do
     subject(:root?) { path.root? }
 
@@ -110,6 +144,22 @@ RSpec.describe LunaPark::Utils::URI::Path do
       let(:path_string) { '/api/v1/users' }
 
       it { is_expected.to be true }
+    end
+  end
+
+  describe '#subpath?' do
+    subject(:subpath?) { path.subpath? }
+
+    context 'when given non-root string' do
+      let(:path_string) { 'api/v1/users' }
+
+      it { is_expected.to be true }
+    end
+
+    context 'when given root string' do
+      let(:path_string) { '/api/v1/users' }
+
+      it { is_expected.to be false }
     end
   end
 

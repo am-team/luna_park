@@ -66,6 +66,21 @@ module LunaPark
           root? ? self : self.class.new("/#{self}")
         end
 
+        def to_subpath!
+          return self if subpath?
+
+          self.pathname = self[1..-1]
+          replace(pathname.to_s)
+        end
+
+        def to_subpath
+          subpath? ? self : self.class.new(self[1..-1])
+        end
+
+        def subpath?
+          !root?
+        end
+
         def root?
           start_with?('/')
         end
