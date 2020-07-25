@@ -5,6 +5,7 @@ module LunaPark
   module Entities;   end
   module Errors;     end
   module Extensions; end
+  module Utils; end
   module Forms; end
   module Handlers; end
   module Http; end
