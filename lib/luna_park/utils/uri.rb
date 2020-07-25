@@ -8,7 +8,7 @@ require 'luna_park/errors'
 
 module LunaPark
   module Utils
-    # URI representatnion ()
+    # URI representation, Wrapper for URI from Ruby stdlib
     #   [http://example.com/foo/bar&baz=bat#42] - URI
     #   |http://example.com/foo/bar|            - URL
     #                     [/foo/bar]            - Path
