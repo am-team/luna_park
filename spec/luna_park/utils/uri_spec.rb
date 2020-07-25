@@ -103,6 +103,12 @@ RSpec.describe LunaPark::Utils::URI do
 
       it { is_expected.to eq 'http://example.com/users/orders?foo=42#6' }
     end
+
+    context 'when given root additional path' do
+      let(:input) { '/orders' }
+
+      it { is_expected.to eq 'http://example.com/users/orders?foo=42#6' }
+    end
   end
 
   describe '#to_h' do

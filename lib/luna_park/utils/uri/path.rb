@@ -14,12 +14,14 @@ module LunaPark
       # path + 'orders'  # => "/users/42/orders" # add
       # path + '/orders' # => "/orders"          # (it's logic of Ruby Pathname stdlib: adding root path replaces old path)
       #
-      # # "Root" feature
-      # path.root?                    # => true        # (because paths starts with "/")
-      # Path.new('/users/42').root?   # => true        # (because path started with "/")
-      # Path.new('users/42').root?    # => false       # (because path not started with "/")
-      # Path.new('/users/42').to_root # => '/users/42' # (already root)
-      # Path.new('users/42').to_root  # => '/users/42' # (became root)
+      # # "Root/Subpath" feature
+      # path.root?                       # => true        # (because paths starts with "/")
+      # path.subpath?                    # => false       # (because paths starts with "/")
+      # Path.new('/users/42').root?      # => true        # (because path started with "/")
+      # Path.new('users/42').root?       # => false       # (because path not started with "/")
+      # Path.new('/users/42').to_root    # => '/users/42' # (already root)
+      # Path.new('users/42').to_root     # => '/users/42' # (became root)
+      # Path.new('/users/42').to_subpath # => 'users/42'  # (became subpath)
       #
       # # Is still a String
       # path = LunaPark::Utils::Path.new('api/v1/users/42').to_root
@@ -27,8 +29,9 @@ module LunaPark
       # path.tr('/api/v1/', '/api/v2/') # => "/api/v2/users/42"
       #
       # # Mutations:
-      # path << 'additional_path' # same as `#+`,       but will mutate path object
-      # path.to_root!             # same as `#to_root`, but will mutate path object
+      # path << 'additional_path' # same as `#+`,          but will mutate path object
+      # path.to_root!             # same as `#to_root`,    but will mutate path object
+      # path.to_subpath!          # same as `#to_subpath`, but will mutate path object
       class Path < String
         attr_reader :pathname
 

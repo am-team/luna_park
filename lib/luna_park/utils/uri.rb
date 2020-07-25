@@ -55,9 +55,9 @@ module LunaPark
       end
 
       # Syntax sugar Instead of `uri.dub.tap { |u| u.path += additional_path }``
-      def +(additional_path) # rubocop:disable Naming/BinaryOperatorParameterName
+      def +(subpath) # rubocop:disable Naming/BinaryOperatorParameterName
         new = dup
-        new.path += Path.wrap(additional_path)
+        new.path += Path.wrap(subpath).to_subpath!
         new
       end
 
