@@ -2,23 +2,30 @@
 
 require 'forwardable'
 require 'luna_park/extensions/attributable'
+require 'luna_park/utils/uri/path'
 require 'luna_park/utils/uri/query'
+require 'luna_park/errors'
 
 module LunaPark
   module Utils
+    # URI representatnion ()
+    #   [http://example.com/foo/bar&baz=bat#42] - URI
+    #   |http://example.com/foo/bar|            - URL
+    #                     [/foo/bar]            - Path
+    #
     # @example
-    #   uri = LunaPark::Utils::URI.new('http://example.com/api/v1/users', query: { vip: true }, port: 5000)
-    #   uri.to_s # => "http://example.com:5000/api/v1/users?vip=true"
+    #   uri = Utils::URI.new('http://example.com/api/v1/users', query: { vip: true }, port: 3000)
+    #   uri.to_s # => "http://example.com:3000/api/v1/users?vip=true"
     class URI
       extend Forwardable
-      include LunaPark::Extensions::Attributable
+      include Extensions::Attributable
 
-      # rubocop:disable Layout/AlignParameters
+      # rubocop:disable Layout/ArgumentAlignment, Layout/ExtraSpacing
       def_delegators :uri, :scheme, :host,  :port,  :path, :query, :fragment,
-                          :scheme=, :host=, :port=, :path=,        :fragment=
+                          :scheme=, :host=, :port=,                :fragment=
       def_delegators :uri, :userinfo, :user,  :password,
                           :userinfo=, :user=, :password=
-      # rubocop:enable Layout/AlignParameters
+      # rubocop:enable Layout/ArgumentAlignment, Layout/ExtraSpacing
 
       def self.wrap(input)
         case input
@@ -26,17 +33,29 @@ module LunaPark
         when String         then new(input)
         when ::URI::Generic then new(input)
         when Hash           then new(**input)
+        when nil            then nil
         else raise Errors::Unwrapable, "#{self} can not wrap #{input.class}"
         end
       end
 
       def initialize(path = nil, **attrs)
         @uri = URI(path || '')
-        set_attributes(attrs)
+        set_attributes(to_h.merge(attrs))
       end
 
       def new(**attrs)
-        self.class.new(to_h.merge!(attrs))
+        self.class.new(**to_h.merge!(attrs))
+      end
+
+      # Syntax sugar Instead of `uri.dub.tap { |u| u.path += additional_path }``
+      def +(additional_path) # rubocop:disable Naming/BinaryOperatorParameterName
+        new = dup
+        new.path += Path.wrap(additional_path)
+        new
+      end
+
+      def path=(input)
+        uri.path = input && Path.wrap(input).to_root!
       end
 
       def query=(input)
@@ -46,11 +65,7 @@ module LunaPark
       COMPONENTS = %i[scheme user password host port path query fragment].freeze
 
       def ==(other)
-        case other
-        when self.class then to_h == other.to_h
-        when Hash       then to_h == other
-        else                 to_s == other.to_s
-        end
+        other.is_a?(Hash) ? to_h == other : to_s == other.to_s
       end
 
       def to_h
@@ -78,9 +93,13 @@ module LunaPark
         "#<#{self.class} #{uri}>"
       end
 
-      private
+      def dup
+        self.class.new(to_s)
+      end
 
-      attr_reader :uri
+      protected
+
+      attr_accessor :uri
     end
   end
 end

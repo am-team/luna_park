@@ -19,10 +19,10 @@ module LunaPark
 end
 
 require 'luna_park/tools'
-require 'luna_park/utils/uri'
 require 'luna_park/errors'
 require 'luna_park/errors/adaptive'
 require 'luna_park/errors/processing'
+require 'luna_park/utils/uri'
 LunaPark::Tools.if_gem_installed('rest-client', '~> 2.1') { require 'luna_park/errors/http' }
 require 'luna_park/extensions/attributable'
 require 'luna_park/extensions/wrappable'
