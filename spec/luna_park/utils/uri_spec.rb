@@ -34,6 +34,19 @@ RSpec.describe LunaPark::Utils::URI do
       it { is_expected.to eq 'http://example.com/users' }
     end
 
+    context 'when given URI' do
+      let(:input) { URI('http://example.com/users') }
+
+      it { is_expected.to be_a described_class }
+      it { is_expected.to eq 'http://example.com/users' }
+    end
+
+    context 'when given nil' do
+      let(:input) { nil }
+
+      it { is_expected.to be nil }
+    end
+
     context 'when given unknown' do
       let(:input) { double }
 
@@ -82,16 +95,32 @@ RSpec.describe LunaPark::Utils::URI do
     end
   end
 
+  describe '#+' do
+    subject(:add) { uri + input }
+
+    context 'when given non-root additional path' do
+      let(:input) { 'orders' }
+
+      it { is_expected.to eq 'http://example.com/users/orders?foo=42#6' }
+    end
+  end
+
   describe '#to_h' do
     subject(:to_h) { uri.to_h }
 
-    it { is_expected.to eq(scheme: 'http', host: 'example.com', path: '/users', query: 'foo=42', fragment: '6') }
+    it { is_expected.to eq({ scheme: 'http', host: 'example.com', path: '/users', query: 'foo=42', fragment: '6' }) }
   end
 
   describe '#to_s' do
     subject(:to_s) { uri.to_s }
 
     it { is_expected.to eq 'http://example.com/users?foo=42#6' }
+  end
+
+  describe '#inspect' do
+    subject(:to_s) { uri.inspect }
+
+    it { is_expected.to eq "#<#{described_class} http://example.com/users?foo=42#6>" }
   end
 
   describe '#to_str' do
