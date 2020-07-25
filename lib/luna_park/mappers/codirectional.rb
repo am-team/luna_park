@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require 'luna_park/mappers/simple'
+require 'luna_park/mappers/codirectional/copiysts/symmetric'
+require 'luna_park/mappers/codirectional/copiysts/asymmetric'
+
 module LunaPark
   module Mappers
     ##
@@ -19,9 +23,9 @@ module LunaPark
     #   mapper = Mappers::Transaction
     #
     #   # Mapper transforms entity attributes to database row and vice-verse
-    #   row       = mapper.to_row(transaction)        # => { charge_amount: 10, charge_currency: 'USD', comment: 'Foobar' }
-    #   new_row   = sequel_database_table.insert(row) # => { id: 42, charge_amount: 10, charge_currency: 'USD', comment: 'Foobar' }
-    #   new_attrs = mapper.from_row(new_row)          # => { uid: 42, charge: { amount: 10, currency: 'USD' }, comment: 'Foobar' }
+    #   row       = mapper.to_row(transaction)        # => {          charge_amount: 10, charge_currency: 'USD', comment: 'Foobar' }
+    #   new_row   = sequel_database_table.insert(row) # => { id: 42,  charge_amount: 10, charge_currency: 'USD', comment: 'Foobar' }
+    #   new_attrs = mapper.from_row(new_row)          # => { uid: 42, charge: { amount: 10, currency: 'USD' },   comment: 'Foobar' }
     #
     #   transaction.set_attributes(new_attrs)
     #   transaction.to_h # => { uid: 42, charge: { amount: 10, currency: 'USD' }, comment: 'Foobar' }
@@ -59,75 +63,6 @@ module LunaPark
           row = {}
           @copyists&.each { |copyist| copyist.to_row(row: row, attrs: attrs) }
           row
-        end
-      end
-
-      module Copyists
-        class Abstract
-          private
-
-          def copy_nested(from:, to:, from_path:, to_path:) # rubocop:disable Metrics/MethodLength:
-            value = if from_path.is_a?(Array) # when given `%i[key path]` - not just `:key`
-                      *path, head_key = from_path
-                      hash = from.dig(*path)
-                      return unless hash&.key?(head_key) # omit undefined keys
-
-                      hash.fetch(head_key)
-                    else
-                      return unless from.key?(from_path)
-
-                      from.fetch(from_path)
-                    end
-
-            if to_path.is_a?(Array) # when given `%i[key path]` - not just `:key`
-              write_nested(to, to_path, value)
-            else # when given just `:key`
-              to[to_path] = value
-            end
-          end
-
-          def write_nested(hash, full_path, value)
-            *path, key = full_path
-            prepare_nested(hash, path)[key] = value
-          end
-
-          def prepare_nested(nested_hash, path)
-            path.inject(nested_hash) { |hash, key| hash[key] ||= {} }
-          end
-        end
-
-        class Symmetric < Abstract
-          def initialize(keys)
-            @paths, @keys = keys.partition { |key| key.is_a?(Array) }
-          end
-
-          def from_row(row:, attrs:)
-            attrs.merge! row.slice(*@keys)
-            @paths.each { |path| copy_nested(from: row, to: attrs, from_path: path, to_path: path) }
-          end
-
-          def to_row(row:, attrs:)
-            row.merge! attrs.slice(*@keys)
-            @paths.each { |path| copy_nested(from: attrs, to: row, from_path: path, to_path: path) }
-          end
-        end
-
-        class Asymmetric < Abstract
-          def initialize(store_path:, attr_path:)
-            @store_path = store_path
-            @attr_path = attr_path
-
-            raise 'store path can not be nil' if store_path.nil?
-            raise 'attr path can not be nil' if attr_path.nil?
-          end
-
-          def from_row(row:, attrs:)
-            copy_nested(from: row, to: attrs, from_path: @store_path, to_path: @attr_path)
-          end
-
-          def to_row(row:, attrs:)
-            copy_nested(from: attrs, to: row, from_path: @attr_path, to_path: @store_path)
-          end
         end
       end
     end

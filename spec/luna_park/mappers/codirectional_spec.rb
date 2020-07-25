@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'luna_park/mappers/codirectional'
+require 'luna_park/serializers/simple'
+
 module MappersCodirectionalSpec
   class TransactionMapper < LunaPark::Mappers::Codirectional
     map entity: :uid,                      store: :id
@@ -53,7 +56,7 @@ module MappersCodirectionalSpec
 end
 
 module LunaPark
-  RSpec.describe Serializers::Simple do
+  RSpec.describe Mappers::Codirectional do
     subject(:mapper) { MappersCodirectionalSpec::TransactionMapper }
 
     let(:sizes) { { waist: 42, length: 176 } }
@@ -71,32 +74,37 @@ module LunaPark
       end
 
       context 'when given object,' do
-        let(:input) { MappersCodirectionalSpec::Transaction.new(attrs) }
+        let(:input) { MappersCodirectionalSpec::Transaction.new(**attrs) }
 
-        it 'works fine' do
+        it 'converts object to attributes before mapping' do
           is_expected.to eq row
+        end
+
+        it 'uses `#to_h` for converts object to attributes' do
+          expect(input).to receive(:to_h).and_call_original
+          to_row
         end
       end
 
       context 'when given not full Hash of attributes,' do
-        let(:input)  { { funds: { charge: { currency: 'USD' } }, comment: 'Foobar' } }
-        let(:output) { { funds_charge_currency: 'USD', comment: 'Foobar' } }
+        let(:input)           { { funds: { charge: { currency: 'USD' } }, comment: 'Foobar' } }
+        let(:expected_output) { { funds_charge_currency: 'USD', comment: 'Foobar' } }
 
-        it 'transforms all that given' do
-          is_expected.to eq(funds_charge_currency: 'USD', comment: 'Foobar')
+        it 'transforms values at given key paths' do
+          is_expected.to eq expected_output
         end
       end
 
       context 'when given not only primitive attributes,' do
-        let(:input)  { { funds: { charge: charge_object }, comment: 'Foobar' } }
-        let(:output) { { funds_charge_amount: 42, funds_charge_currency: 'USD', comment: 'Foobar' } }
+        let(:input)           { { funds: { charge: charge_object }, comment: 'Foobar' } }
+        let(:expected_output) { { funds_charge_amount: 42, funds_charge_currency: 'USD', comment: 'Foobar' } }
 
         let(:charge_object) { MappersCodirectionalSpec::Money.new(amount: 42, currency: 'USD') }
 
         before { skip 'TODO' }
 
-        it 'transforms all that given' do
-          is_expected.to eq output
+        it 'transforms values at given key paths' do
+          is_expected.to eq expected_output
         end
       end
     end
@@ -111,11 +119,11 @@ module LunaPark
       end
 
       context 'when given not full row,' do
-        let(:input)  { { funds_charge_currency: 'USD', comment: 'Foobar' } }
-        let(:output) { { funds: { charge: { currency: 'USD' } }, comment: 'Foobar' } }
+        let(:input)           { { funds_charge_currency: 'USD', comment: 'Foobar' } }
+        let(:expected_output) { { funds: { charge: { currency: 'USD' } }, comment: 'Foobar' } }
 
-        it 'transforms all that given' do
-          is_expected.to eq output
+        it 'transforms values at given key paths' do
+          is_expected.to eq expected_output
         end
       end
     end
