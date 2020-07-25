@@ -321,7 +321,7 @@ module LunaPark
       end
 
       def on_raise(error)
-        raise error.cover_up_backtrace
+        raise error
       end
     end
   end
