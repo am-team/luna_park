@@ -3,10 +3,10 @@
 require 'luna_park/utils/uri'
 
 RSpec.describe LunaPark::Utils::URI do
-  subject(:uri) { described_class.new(input_str, **input_hash) }
+  subject(:uri) { described_class.new(input_uri_str, **input_uri_hash) }
 
-  let(:input_str)  { '/users' }
-  let(:input_hash) { { scheme: 'http', host: 'example.com', query: { foo: 42 }, fragment: '6' } }
+  let(:input_uri_str)  { '/users' }
+  let(:input_uri_hash) { { scheme: 'http', host: 'example.com', query: { foo: 42 }, fragment: '6' } }
 
   describe '.wrap' do
     subject(:wrap) { described_class.wrap(input) }
@@ -24,6 +24,7 @@ RSpec.describe LunaPark::Utils::URI do
 
       it { is_expected.to be_a described_class }
       it { is_expected.to eq(path: '/users') }
+      it { is_expected.to eq '/users' }
     end
 
     context 'when given Hash' do
@@ -72,7 +73,7 @@ RSpec.describe LunaPark::Utils::URI do
 
     context 'when other is a String' do
       it { expect(uri == 'http://example.com/users?foo=42#6').to be true }
-      it { expect(uri == 'http://example.com/users').to be false }
+      it { expect(uri == 'http://example.com/users').to          be false }
     end
 
     context 'when other is a Hash' do

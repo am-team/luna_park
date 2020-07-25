@@ -43,6 +43,13 @@ module LunaPark
         set_attributes(to_h.merge(attrs))
       end
 
+      # Instrument for dublicate with new parameters
+      #
+      # @example
+      #   uri1 = Utils::URI.new('http://example.com/api/v1/users', query: { vip: false })
+      #   uri2 = uri1.new(query: { vip: true }, fragment: 10)
+      #   uri1 # => #<LunaPark::Utils::URI http://example.com/api/v1/users&vip=false>
+      #   uri2 # => #<LunaPark::Utils::URI http://example.com/api/v1/users&vip=true#10>
       def new(**attrs)
         self.class.new(**to_h.merge!(attrs))
       end
