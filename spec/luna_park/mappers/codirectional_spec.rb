@@ -95,16 +95,16 @@ module LunaPark
         end
       end
 
-      context 'when given not only primitive attributes,' do
+      context 'when given hash with non-primitives,' do
         let(:input)           { { funds: { charge: charge_object }, comment: 'Foobar' } }
         let(:expected_output) { { funds_charge_amount: 42, funds_charge_currency: 'USD', comment: 'Foobar' } }
 
         let(:charge_object) { MappersCodirectionalSpec::Money.new(amount: 42, currency: 'USD') }
 
-        before { skip 'TODO' }
+        it { expect { to_row }.to raise_error Mappers::Codirectional::Errors::NotHashGiven }
 
-        it 'transforms values at given key paths' do
-          is_expected.to eq expected_output
+        it 'raised exception has description' do
+          expect(exception { to_row }.message).to start_with 'At path :funds, :charge MUST be a Hash, but is a MappersCodirectionalSpec::Money: #<MappersCodirectionalSpec::Money:'
         end
       end
     end
@@ -126,6 +126,13 @@ module LunaPark
           is_expected.to eq expected_output
         end
       end
+    end
+
+    def exception
+      yield
+      nil
+    rescue Exception => e
+      e
     end
   end
 end

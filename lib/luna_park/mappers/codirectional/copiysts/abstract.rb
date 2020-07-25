@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'luna_park/mappers/codirectional/errors'
+
 module LunaPark
   module Mappers
     class Codirectional < Simple
@@ -24,8 +26,8 @@ module LunaPark
 
           def read_nested(from_hash, path)
             if path.is_a?(Array) # when given `%i[key path]` - not just `:key`
-              *tail_path, head_key = path           # split `[:a, :b, :c, :d]` to `[:a, :b, :c]` and `:d`
-              head_hash = from_hash.dig(*tail_path) # from `{a: {b: {c: {d: 'value'}}}}` get `{d: 'value'}`
+              *head_path, head_key = path           # split `[:a, :b, :c, :d]` to `[:a, :b, :c]` and `:d`
+              head_hash = from_hash.dig(*head_path) # from `{a: {b: {c: {d: 'value'}}}}` get `{d: 'value'}`
               return Undefined unless head_hash&.key?(head_key) # when there are no key at the path `[:a, :b, :c, :d]`
 
               head_hash.fetch(head_key) # from `{a: {b: {c: {d: 'value'}}}}` get 'value'
@@ -34,6 +36,10 @@ module LunaPark
 
               from_hash.fetch(path) # from `{a: 'value'}` get 'value'
             end
+          rescue NoMethodError => e
+            raise unless e.message.start_with?("undefined method `key?' for")
+
+            raise Errors::NotHashGiven.substitute(e, path: head_path, object: head_hash)
           end
 
           def write_nested(hash, full_path, value)
