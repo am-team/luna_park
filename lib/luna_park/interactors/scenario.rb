@@ -282,6 +282,37 @@ module LunaPark
         def notify_with(notifier)
           @default_notifier = notifier
         end
+
+        # @example Describe exceptions
+        #   class Foobar < Scenario
+        #     # ...
+        #
+        #     exception Errors::EmailInUse,   :fail,   notify: true
+        #     exception Errors::NotImportant, :ignore, notify: :warning
+        #
+        #     # ...
+        #   end
+        #
+        #   # When raised exception that marked as :fail (`Errors::EmailInUse`)
+        #   scenario = Foobar.call
+        #   scenario.success? # => false
+        #   scenario.failure # => #<Errors::EmailInUse ...>
+        #
+        #   # When raised exception that was not described OR marked as :raise
+        #   Foobar.call # => raised
+        #
+        #   # When raised exception that marked as :ignore (`Errors::NotImportant`)
+        #   scenario = Foobar.call
+        #   scenario.success? # => true
+        #   scenario.failure  # => nil
+        def exception(type, action = :raise, notify: false)
+          # TODO: Guard
+          exceptions[type] = { action: action, notify: notify }
+        end
+
+        def exceptions
+          @exceptions ||= {}
+        end
       end
 
       private
@@ -290,7 +321,7 @@ module LunaPark
         yield
       rescue Errors::Adaptive => e
         @state = FAIL
-        notify_error e if e.notify?
+        notify_error e if exceptions.dig(e.class, :notify)
         handle_error e
       else
         @state = SUCCESS
@@ -307,6 +338,24 @@ module LunaPark
         when :raise then on_raise(error)
         else raise ArgumentError, "Unknown error action #{error.action}"
         end
+      end
+
+      def handle_error(error)
+        case exceptions.dig(e.class, :action)
+        when nil     then on_raise(error)
+        when :raise  then on_raise(error)
+        when :fail   then on_fail(error)
+        when :ignore then on_ignore(error)
+        else raise ArgumentError, "Unknown error action #{error.action}"
+        end
+      end
+
+      def on_ignore(error)
+        nil
+      end
+
+      def on_fail(error)
+        @failure = error
       end
 
       def on_stop
