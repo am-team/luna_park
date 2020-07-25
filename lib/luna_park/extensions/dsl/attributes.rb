@@ -129,13 +129,6 @@ module LunaPark
 
           { getter: name, setter: :"#{name}=" }
         end
-
-        def attributes_list
-          return @attributes_list if @attributes_list
-
-          raise Errors::NotConfigured,
-                "You must set at least one attribute using #{self}.attr(name, type = nil, type_method = :call)"
-        end
       end
     end
   end
