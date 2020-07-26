@@ -3,6 +3,7 @@
 require 'luna_park/http/request'
 require 'luna_park/http/response'
 require 'luna_park/errors/http'
+require 'luna_park/http/send'
 
 I18n.load_path << Dir['spec/locales/*.yml']
 
@@ -51,7 +52,8 @@ module LunaPark
           http_method: :post,
           url: 'http://example.com/api/ping',
           body: JSON.generate(message: 'ping'),
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type' => 'application/json' },
+          driver: LunaPark::Http::Send
         )
       end
 
@@ -59,8 +61,8 @@ module LunaPark
         Http::Response.new(
           body: '{"message":"pong"}',
           code: 200,
-          headers: { 'Content-Type': 'application/json' },
-          cookies: { 'Secret': 'dkmvc9saudj3cndsaosp' },
+          headers: { 'Content-Type' => 'application/json' },
+          cookies: { 'Secret' => 'dkmvc9saudj3cndsaosp' },
           request: request
         )
       end
@@ -75,18 +77,18 @@ module LunaPark
           status: 'OK',
           request: {
             body: '{"message":"ping"}',
-            http_method: :post,
-            headers: { 'Content-Type': 'application/json' },
-            open_timeout: 10,
-            read_timeout: 10,
+            method: :post,
+            headers: { 'Content-Type' => 'application/json' },
+            open_timeout: nil,
+            read_timeout: nil,
             sent_at: nil,
             url: 'http://example.com/api/ping'
           },
           response: {
             body: '{"message":"pong"}',
             code: 200,
-            headers: { 'Content-Type': 'application/json' },
-            cookies: { 'Secret': 'dkmvc9saudj3cndsaosp' }
+            headers: { 'Content-Type' => 'application/json' },
+            cookies: { 'Secret' => 'dkmvc9saudj3cndsaosp' }
           },
           error_details: { something: 'important' }
         )

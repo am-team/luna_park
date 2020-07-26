@@ -93,10 +93,10 @@ module LunaPark
     #   checkout.success?     # => false
     #   checkout.fail_message # => "Not enough funds in your account"
     class Client
-      PLAIN_HEADERS = { 'Content-Type' => 'text/plain' }.freeze
-      FORM_HEADERS  = { 'Content-Type' => 'application/x-www-form-urlencoded' }.freeze
-      JSON_HEADERS  = { 'Content-Type' => 'application/json' }.freeze
-
+      DEFAULT_OPEN_TIMEOUT = 10
+      DEFAULT_READ_TIMEOUT = 10
+      DEFAULT_DRIVER       = LunaPark::Http::Send
+      DEFAULT_METHOD       = :get
       # Build plain request
       #
       # @param [String] title business description for request
@@ -118,16 +118,17 @@ module LunaPark
       #
       # @return [LunaPark::Http::Request]
       # rubocop:disable Metrics/ParameterLists
-      def form_request(title:, url:, method: :get, body: nil, data: nil, headers: {})
-        form_headers = FORM_HEADERS.merge(headers)
-        form_body    = body || data # we have no a good generator for `x-www-form-urlencoded`, but Driver has
+      def form_request(title:, url:, method: nil, body: nil, data: nil, headers: nil, **opts)
+        form_body = body || data # we have no a good generator for `x-www-form-urlencoded`, but Driver has
 
-        Request.new(
+        build_request(
           title: title,
           url: url,
           http_method: method,
           body: form_body,
-          headers: form_headers
+          headers: headers,
+          content_type: 'application/x-www-form-urlencoded',
+          **opts
         )
       end
       # rubocop:enable Metrics/ParameterLists
@@ -144,7 +145,7 @@ module LunaPark
       #   request = json_request(
       #     title: 'Ping pong',
       #     url: 'http://api.example.com/ping',
-      #     body: {message: 'ping'}
+      #     data: { message: 'ping' }
       #   )
       #
       #   request # => <LunaPark::Http::Request @title="Ping pong"
@@ -154,19 +155,24 @@ module LunaPark
       #
       # @return [LunaPark::Http::Request]
       # rubocop:disable Metrics/ParameterLists
-      def json_request(title:, url:, method: :get, body: nil, data: nil, headers: {})
-        json_headers = JSON_HEADERS.merge(headers)
-        json_body    = body || data && JSON.generate(data)
+      def json_request(title:, url:, method: nil, body: nil, data: nil, headers: nil, **opts)
+        json_body = body || data && JSON.generate(data)
 
-        Request.new(
+        build_request(
           title: title,
           url: url,
           http_method: method,
           body: json_body,
-          headers: json_headers
+          headers: headers,
+          content_type: 'application/json',
+          **opts
         )
       end
       # rubocop:enable Metrics/ParameterLists
+
+      def request(title:, url:, method: nil, body: nil, headers: nil, **opts)
+        build_request(title: title, url: url, body: body, headers: headers, **opts)
+      end
 
       # Send GET request. Always return response even if the response is not successful.
       #
@@ -260,6 +266,63 @@ module LunaPark
       def delete!(request)
         request.http_method = :delete
         request.call!
+      end
+
+      def build_request(title:, url:, method: nil, body: nil, headers: nil, content_type: nil, open_timeout: nil, read_timeout: nil, driver: nil)
+        # url_ = Utils::URI.wrap(url)
+        # url_&.query = query
+
+        headers ||= {}
+        headers['Content-Type'] = content_type || 'text/plain'
+
+        Request.new(
+          title:        title,
+          url:          url.to_s,
+          method:       method || DEFAULT_METHOD,
+          body:         body,
+          headers:      headers,
+          open_timeout: open_timeout || DEFAULT_OPEN_TIMEOUT,
+          read_timeout: read_timeout || DEFAULT_READ_TIMEOUT,
+          driver:       driver       || DEFAULT_DRIVER
+        )
+      end
+
+      class << self
+        # Set diver for this class
+        #
+        # @example set driver
+        #   class Users < Client
+        #     driver URI::Send
+        #   end
+        #
+        #   Foobar.default_driver # => URI::Send
+        #   Foobar.new.driver     # => URI::Send
+        def driver(driver)
+          @default_driver = driver
+        end
+
+        def open_timeout(timeout)
+          @default_open_timeout = timeout
+        end
+
+        def read_timeout(timeout)
+          @default_read_timeout = timeout
+        end
+
+        # @return Default driver
+        def default_driver
+          @default_driver ||= DEFAULT_DRIVER
+        end
+
+        # @return Default open timeout
+        def default_open_timeout
+          @default_open_timeout ||= DEFAULT_OPEN_TIMEOUT
+        end
+
+        # @return Default read timeout
+        def default_read_timeout
+          @default_read_timeout ||= DEFAULT_READ_TIMEOUT
+        end
       end
     end
   end
