@@ -9,9 +9,10 @@ require 'luna_park/errors'
 module LunaPark
   module Utils
     # URI representation, Wrapper for URI from Ruby stdlib
-    #   [http://example.com/foo/bar&baz=bat#42] - URI
-    #   |http://example.com/foo/bar|            - URL
-    #                     [/foo/bar]            - Path
+    #   [http://example.com/foo/bar?baz=bat&quux=quux#42] - URI
+    #   |http://example.com/foo/bar|                      - URL
+    #                     [/foo/bar]                      - Path
+    #                              [baz=bat&quux=quux]    - Query
     #
     # @example
     #   uri = Utils::URI.new('http://example.com/api/v1/users', query: { vip: true }, port: 3000)

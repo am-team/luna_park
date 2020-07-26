@@ -5,6 +5,9 @@ require 'uri'
 module LunaPark
   module Utils
     class URI
+      # `Query` part of `URI`
+      #   [http://example.com/foo/bar?baz=bat&quux=quux#42] - URI
+      #                              [baz=bat&quux=quux]    - Query
       # @example
       #   query = LunaPark::Utils::URI::Query.wrap('foo=bar&baz=42')
       #   query['foo'] # => 'bar'
