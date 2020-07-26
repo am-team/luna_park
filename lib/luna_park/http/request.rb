@@ -191,13 +191,13 @@ module LunaPark
       #                   #  @url=\"http://localhost:8080/get_200\" @method=\"get\"
       #                   #  @headers=\"{}\" @body=\"\" @sent_at=\"\">"
       def inspect
-        "<#{self.class.name} "       \
-          "@title=\"#{title}\" "     \
-          "@url=\"#{url}\" "         \
-          "@method=\"#{method}\" "   \
-          "@headers=\"#{headers}\" " \
-          "@body=\"#{body}\" "       \
-          "@sent_at=\"#{sent_at}\">"
+        "<#{self.class.name} "           \
+          "@title=#{title.inspect} "     \
+          "@url=#{url.inspect} "         \
+          "@method=#{method.inspect} "   \
+          "@headers=#{headers.inspect} " \
+          "@body=#{body.inspect} "       \
+          "@sent_at=#{sent_at.inspect}>"
       end
 
       # @example
