@@ -371,8 +371,7 @@ module LunaPark
 
       # Two response should be equal, if their attributes (request, code, body, headers, cookies) match.
       def ==(other)
-        request == other.request   &&
-          code    == other.code    &&
+        code      == other.code    &&
           body    == other.body    &&
           headers == other.headers &&
           cookies == other.cookies

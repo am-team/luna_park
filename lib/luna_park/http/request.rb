@@ -5,8 +5,9 @@ require 'luna_park/http/send'
 module LunaPark
   module Http
     class Request
-      TIMEOUT        = 10
-      DEFAULT_DRIVER = LunaPark::Http::Send
+      DEFAULT_OPEN_TIMEOUT = 10
+      DEFAULT_READ_TIMEOUT = 10
+      DEFAULT_DRIVER       = LunaPark::Http::Send
 
       private_constant :DEFAULT_DRIVER
 
@@ -46,7 +47,7 @@ module LunaPark
       #     title: 'Get users list',
       #     method: :get,
       #     url: 'http://example.com/users',
-      #     message: JSON.generate({message: 'Hello!'})
+      #     body: JSON.generate({message: 'Hello!'})
       #   )
       #   request.body # => "{\"message\":\"Hello!\"}"'
       attr_accessor :body
@@ -94,19 +95,19 @@ module LunaPark
       # @param read_timeout (see #read_timeout)
       # @param open_timeout (see #open_timeout)
       # @param driver is HTTP driver which use to send this request
-      # rubocop:disable Layout/LineLength, Metrics/ParameterLists
-      def initialize(title:, method:, url:, body: nil, headers: {}, open_timeout: TIMEOUT, read_timeout: TIMEOUT, driver: nil)
+      # rubocop:disable Metrics/ParameterLists
+      def initialize(title:, method:, url:, body: nil, headers: nil, open_timeout: nil, read_timeout: nil, driver: nil)
         @title        = title
         @method       = method
-        @url          = url
+        @url          = url # TODO: Utils::URI
         @body         = body
-        @headers      = headers
-        @read_timeout = read_timeout
-        @open_timeout = open_timeout
+        @headers      = headers      || {}
+        @read_timeout = read_timeout || DEFAULT_READ_TIMEOUT
+        @open_timeout = open_timeout || DEFAULT_OPEN_TIMEOUT
         @driver       = driver
         @sent_at      = nil
       end
-      # rubocop:enable Layout/LineLength, Metrics/ParameterLists
+      # rubocop:enable Metrics/ParameterLists
 
       # Send current request (we cannot call this method `send` because it
       # reserved word in ruby). It always return Response object, even if

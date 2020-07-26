@@ -41,7 +41,7 @@ module LunaPark
       # @return [LunaPark::Http::Response]
       def call
         rest_request = build_rest_request(original_request)
-        rest_request.payload
+        # rest_request.payload
         rest_response = rest_request.execute
         build_original_response(rest_response)
       rescue Errno::ECONNREFUSED               then build_unavailable_response

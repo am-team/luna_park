@@ -64,7 +64,7 @@ module LunaPark
     #         response = post json_request(
     #           title: 'Make payment for order',
     #           url: 'http://api.transactions.example.com/payments',
-    #           body: {account: account, money: money}
+    #           data: {account: account, money: money}
     #         )
     #         case response.code
     #         when 200 then true
@@ -93,8 +93,9 @@ module LunaPark
     #   checkout.success?     # => false
     #   checkout.fail_message # => "Not enough funds in your account"
     class Client
-      PLAIN_HEADERS = { 'Content-Type': 'application/www-form-urlencoded' }.freeze
-      JSON_HEADERS  = { 'Content-Type': 'application/json' }.freeze
+      PLAIN_HEADERS = { 'Content-Type' => 'text/plain' }.freeze
+      FORM_HEADERS  = { 'Content-Type' => 'application/x-www-form-urlencoded' }.freeze
+      JSON_HEADERS  = { 'Content-Type' => 'application/json' }.freeze
 
       # Build plain request
       #
@@ -105,30 +106,33 @@ module LunaPark
       # @param [Hash] headers http headers
       #
       # @example
-      #   request = plain_request(
+      #   request = form_request(
       #     title: 'get users list',
       #     url: 'http://api.example.com/users'
       #   )
       #
       #   request # => <LunaPark::Http::Request @title="get users list"
       #     # @url="http://api.example.com/users" @method="get"
-      #     # @headers="{:"Content-Type"=>"application/www-form-urlencoded"}"
+      #     # @headers={ 'Content-Type' => 'application/x-www-form-urlencoded' }
       #     # @body="" @sent_at="">
       #
       # @return [LunaPark::Http::Request]
-      def plain_request(title:, url:, method: :get, body: nil, headers: {})
-        plain_headers = PLAIN_HEADERS.dup.merge(headers)
+      # rubocop:disable Metrics/ParameterLists
+      def form_request(title:, url:, method: :get, body: nil, data: nil, headers: {})
+        form_headers = FORM_HEADERS.merge(headers)
+        form_body    = body || data # we have no a good generator for `x-www-form-urlencoded`, but Driver has
 
         Request.new(
           title: title,
           url: url,
           method: method,
-          body: body,
-          headers: plain_headers
+          body: form_body,
+          headers: form_headers
         )
       end
+      # rubocop:enable Metrics/ParameterLists
 
-      # Build plain request. Body will convert to json format automatically.
+      # Build form request. Body will convert to json format automatically.
       #
       # @param [String] title business description for request
       # @param [String] url request url
@@ -145,13 +149,14 @@ module LunaPark
       #
       #   request # => <LunaPark::Http::Request @title="Ping pong"
       #     # @url="http://api.example.com/ping" @method="get"
-      #     # @headers="{:"Content-Type"=>"application/json"}"
+      #     # @headers={ 'Content-Type' => 'application/json' }
       #     # @body="{"message":"ping"}" @sent_at="">
       #
       # @return [LunaPark::Http::Request]
-      def json_request(title:, url:, method: :get, body: nil, headers: {})
-        json_headers = JSON_HEADERS.dup.merge(headers)
-        json_body    = body ? JSON.generate(body) : nil
+      # rubocop:disable Metrics/ParameterLists
+      def json_request(title:, url:, method: :get, body: nil, data: nil, headers: {})
+        json_headers = JSON_HEADERS.merge(headers)
+        json_body    = body || data && JSON.generate(data)
 
         Request.new(
           title: title,
@@ -161,6 +166,7 @@ module LunaPark
           headers: json_headers
         )
       end
+      # rubocop:enable Metrics/ParameterLists
 
       # Send GET request. Always return response even if the response is not successful.
       #

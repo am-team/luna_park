@@ -7,7 +7,7 @@ require 'luna_park/errors/adaptive'
 require 'luna_park/errors/processing'
 require 'luna_park/interactors/scenario'
 
-class YouDie < LunaPark::Errors::Adaptive
+class YouDied < LunaPark::Errors::Adaptive
   message 'Always something went wrong', i18n_key: 'errors.you_die'
 end
 
@@ -18,7 +18,7 @@ module LunaPark
         attr_accessor :lucky_mode, :action, :notify
 
         def call!
-          raise YouDie.new(action: action, notify: notify) unless lucky_mode
+          raise YouDied.new(action: action, notify: notify) unless lucky_mode
 
           'Good day for you'
         end
@@ -81,7 +81,7 @@ module LunaPark
 
           context 'when action is catch' do
             let(:action) { :catch }
-            it { is_expected.to be_an_instance_of YouDie }
+            it { is_expected.to be_an_instance_of YouDied }
           end
         end
       end
@@ -144,7 +144,7 @@ module LunaPark
       context 'when scenario - fail' do
         let(:scenario) { gunshot.new lucky_mode: false }
 
-        it { expect { call! }.to raise_error YouDie }
+        it { expect { call! }.to raise_error YouDied }
       end
     end
 
@@ -183,7 +183,7 @@ module LunaPark
             let(:action) { :raise }
 
             it 'is expected to raise defined error' do
-              expect { call }.to raise_error YouDie
+              expect { call }.to raise_error YouDied
             end
           end
         end
@@ -214,7 +214,7 @@ module LunaPark
             let(:notify) { true }
 
             it 'should notify error lvl message' do
-              expect(notifier).to receive(:post).with(instance_of(YouDie), lvl: :error)
+              expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :error)
               call
             end
           end
@@ -223,7 +223,7 @@ module LunaPark
             let(:notify) { :unknown }
 
             it 'should notify error lvl message' do
-              expect(notifier).to receive(:post).with(instance_of(YouDie), lvl: :unknown)
+              expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :unknown)
               call
             end
           end
@@ -232,7 +232,7 @@ module LunaPark
             let(:notify) { :fatal }
 
             it 'should notify error lvl message' do
-              expect(notifier).to receive(:post).with(instance_of(YouDie), lvl: :fatal)
+              expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :fatal)
               call
             end
           end
@@ -241,7 +241,7 @@ module LunaPark
             let(:notify) { :error }
 
             it 'should notify error lvl message' do
-              expect(notifier).to receive(:post).with(instance_of(YouDie), lvl: :error)
+              expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :error)
               call
             end
           end
@@ -250,7 +250,7 @@ module LunaPark
             let(:notify) { :warning }
 
             it 'should notify error lvl message' do
-              expect(notifier).to receive(:post).with(instance_of(YouDie), lvl: :warning)
+              expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :warning)
               call
             end
           end
@@ -259,7 +259,7 @@ module LunaPark
             let(:notify) { :info }
 
             it 'should notify info lvl message' do
-              expect(notifier).to receive(:post).with(instance_of(YouDie), lvl: :info)
+              expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :info)
               call
             end
           end
@@ -268,7 +268,7 @@ module LunaPark
             let(:notify) { :debug }
 
             it 'should notify debug lvl message' do
-              expect(notifier).to receive(:post).with(instance_of(YouDie), lvl: :debug)
+              expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :debug)
               call
             end
           end

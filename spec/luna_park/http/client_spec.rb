@@ -6,9 +6,9 @@ module LunaPark
   RSpec.describe Http::Client do
     let(:client) { described_class.new }
 
-    describe 'plain request' do
+    describe '#form_request' do
       subject(:request) do
-        client.plain_request(
+        client.form_request(
           title: 'Get users list',
           url: 'http://api.example.com/users'
         )
@@ -19,19 +19,19 @@ module LunaPark
       it 'should has expected structure' do
         expect(request.title).to eq 'Get users list'
         expect(request.url).to eq 'http://api.example.com/users'
-        expect(request.method).to eq(:get)
+        expect(request.method).to be :get
         expect(request.body).to be_nil
-        expect(request.headers).to eq('Content-Type': 'application/www-form-urlencoded')
+        expect(request.headers).to eq('Content-Type' => 'application/x-www-form-urlencoded')
       end
     end
 
-    describe 'json request' do
+    describe '#json_request' do
       subject(:request) do
         client.json_request(
           title: 'Add user',
           url: 'http://api.example.com/users',
           method: :post,
-          body: { name: 'John Doe', email: 'john.doe@example.com' }
+          data: { name: 'John Doe', email: 'john.doe@example.com' }
         )
       end
 
@@ -40,9 +40,9 @@ module LunaPark
       it 'should has expected structure' do
         expect(request.title).to eq 'Add user'
         expect(request.url).to eq 'http://api.example.com/users'
-        expect(request.method).to eq(:post)
+        expect(request.method).to be :post
         expect(request.body).to eq '{"name":"John Doe","email":"john.doe@example.com"}'
-        expect(request.headers).to eq('Content-Type': 'application/json')
+        expect(request.headers).to eq('Content-Type' => 'application/json')
       end
     end
 
@@ -64,63 +64,63 @@ module LunaPark
       end
     end
 
-    describe 'get' do
+    describe '#get' do
       it_behaves_like 'send request', :get do
         let(:request)  { Http::Request.new(title: 'Test request', method: :post, url: 'example.com', driver: driver) }
         subject { client.get request }
       end
     end
 
-    describe 'post' do
+    describe '#post' do
       it_behaves_like 'send request', :post do
         subject { client.post request }
       end
     end
 
-    describe 'put' do
+    describe '#put' do
       it_behaves_like 'send request', :put do
         subject { client.put request }
       end
     end
 
-    describe 'patch' do
+    describe '#patch' do
       it_behaves_like 'send request', :patch do
         subject { client.patch request }
       end
     end
 
-    describe 'delete' do
+    describe '#delete' do
       it_behaves_like 'send request', :delete do
         subject { client.delete request }
       end
     end
 
-    describe 'get!' do
+    describe '#get!' do
       it_behaves_like 'send request', :get do
         let(:request) { Http::Request.new(title: 'Test request', method: :post, url: 'example.com', driver: driver) }
         subject { client.get! request }
       end
     end
 
-    describe 'post!' do
+    describe '#post!' do
       it_behaves_like 'send request', :post do
         subject { client.post! request }
       end
     end
 
-    describe 'put!' do
+    describe '#put!' do
       it_behaves_like 'send request', :put do
         subject { client.put! request }
       end
     end
 
-    describe 'patch!' do
+    describe '#patch!' do
       it_behaves_like 'send request', :patch do
         subject { client.patch! request }
       end
     end
 
-    describe 'delete!' do
+    describe '#delete!' do
       it_behaves_like 'send request', :delete do
         subject { client.delete! request }
       end
