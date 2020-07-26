@@ -44,12 +44,9 @@ module LunaPark
         end
 
         module ClassMethods
-          def substitute(origin, message = nil, *args, **opts)
-            if __initializer_has_named_args?
-              new(message, *args, **opts).substitute!(origin)
-            else
-              new(message, *args).substitute!(origin)
-            end
+          def substitute(origin, *args, **opts)
+            instance = __initializer_has_named_args? ? new(*args, **opts) : new(*args)
+            instance.substitute!(origin)
           end
 
           private
@@ -66,17 +63,12 @@ module LunaPark
         end
 
         module InstanceMethods
-          attr_accessor :origin
-          attr_writer :backtrace
+          attr_accessor :origin, :backtrace
 
           def substitute!(origin)
             self.backtrace = origin.backtrace
             self.origin    = origin
             self
-          end
-
-          def backtrace
-            super || @backtrace
           end
         end
       end
