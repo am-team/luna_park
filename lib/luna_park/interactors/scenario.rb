@@ -167,7 +167,7 @@ module LunaPark
       #     attr_accessor :lucky_mode
       #
       #     def call!
-      #       raise YouDie, 'Always something went wrong' unless lucky_mode
+      #       raise YouDied, 'Always something went wrong' unless lucky_mode
       #       'All good'
       #     end
       #   end
@@ -200,13 +200,13 @@ module LunaPark
       # @abstract
       #
       # @example fail way
-      #   class YouDie < Errors::Processing; end
+      #   class YouDied < Errors::Processing; end
       #
       #   class Shot < Scenario
       #     attr_accessor :lucky_mode
       #
       #     def call!
-      #       raise YouDie, 'Always something went wrong' unless lucky_mode
+      #       raise YouDied, 'Always something went wrong' unless lucky_mode
       #       'All good'
       #     end
       #   end
@@ -217,7 +217,7 @@ module LunaPark
       #   bad_day.fail?        # => true
       #   bad_day.data         # => nil
       #   bad_day.state        # => :failure
-      #   bad_day.fail         # => #<YouDie:0x000055cbee4bc071...>
+      #   bad_day.fail         # => #<YouDied:0x000055cbee4bc071...>
       #   bad_day.fail_message # => ''
       #
       #   @example main way
