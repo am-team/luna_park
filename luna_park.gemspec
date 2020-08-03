@@ -39,7 +39,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'codecov', '~> 0.2'
   spec.add_development_dependency 'dry-validation', '~> 1.1'
   spec.add_development_dependency 'i18n', '~> 1.8'
-  spec.add_development_dependency 'overcommit', '~> 0.54'
+  spec.add_development_dependency 'overcommit', '~> 0.55'
   spec.add_development_dependency 'pry', '~> 0.13'
   spec.add_development_dependency 'pry-byebug', '~> 3.9'
   spec.add_development_dependency 'rake', '~> 13.0'
