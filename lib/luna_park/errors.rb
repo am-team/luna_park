@@ -8,7 +8,5 @@ module LunaPark
 
     class RepositoryError < StandardError; end
     class NotFound        < RepositoryError; end
-
-    class JsonParse       < StandardError; end
   end
 end

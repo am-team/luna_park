@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'luna_park/errors'
+require 'luna_park/errors/json_parse'
 
 module LunaPark
   module Http
@@ -309,8 +309,8 @@ module LunaPark
 
         payload_key = stringify_keys ? payload_key.to_s : payload_key.to_sym
         data.fetch(payload_key)
-      rescue KeyError, JSON::ParserError
-        raise Errors::JsonParse
+      rescue KeyError, JSON::ParserError => e
+        raise Errors::JsonParse.substitute(e)
       end
 
       # Try to parse this response body from JSON format. If body
@@ -371,8 +371,7 @@ module LunaPark
 
       # Two response should be equal, if their attributes (request, code, body, headers, cookies) match.
       def ==(other)
-        request == other.request   &&
-          code    == other.code    &&
+        code == other.code &&
           body    == other.body    &&
           headers == other.headers &&
           cookies == other.cookies

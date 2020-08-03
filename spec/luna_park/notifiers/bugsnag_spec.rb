@@ -38,14 +38,14 @@ module LunaPark
 
     describe '#post' do
       context 'when message is not exception' do
-        let(:msg) { double(to_s: 'Something went wrong') }
+        let(:msg) { double(inspect: 'Something went wrong') }
 
         subject(:post_message) { notifier.post(msg) }
 
         it 'should notify bugsnag with RuntimeError and defined message' do
           post_message
           expect(notifier).to have_sent_notification { |error, message|
-            expect(error).to   eq 'RuntimeError'
+            expect(error).to eq 'RuntimeError'
             expect(message).to eq 'Something went wrong'
           }
         end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'i18n'
-# require 'luna_park/extensions/exceptions/substitutive'
+require 'luna_park/extensions/exceptions/substitutive'
 
 module LunaPark
   module Errors
@@ -26,7 +26,7 @@ module LunaPark
     #   error.details # => { :choose => "The first one" }
     #
     class Adaptive < StandardError
-      # extend Extensions::Exceptions::Substitutive
+      extend Extensions::Exceptions::Substitutive
 
       ACTION_VALUES           = %i[stop catch raise].freeze
       NOTIFY_VALUES           = [true, false, :debug, :info, :warning, :error, :fatal, :unknown].freeze

@@ -21,6 +21,7 @@ require 'luna_park/tools'
 require 'luna_park/errors'
 require 'luna_park/errors/adaptive'
 require 'luna_park/errors/processing'
+require 'luna_park/errors/json_parse'
 LunaPark::Tools.if_gem_installed('rest-client', '~> 2.1') { require 'luna_park/errors/http' }
 require 'luna_park/extensions/attributable'
 require 'luna_park/extensions/wrappable'

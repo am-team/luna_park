@@ -158,7 +158,7 @@ module LunaPark
         end
       end
 
-      def serialize(obj, details)
+      def serialize(obj, **details)
         details = extend(details, with: obj)
         hash    = { message: String(obj), details: details }
 

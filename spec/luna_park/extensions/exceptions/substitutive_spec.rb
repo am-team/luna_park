@@ -64,6 +64,19 @@ module LunaPark
       end
     end
 
+    describe '#cover_up_backtrace' do
+      it 'should get original backtrace' do
+        begin
+          original_error = ExtensionsExceptionsSubstitutiveSpec::SubstitutiveError.new('Something went wrong')
+          raise original_error
+        rescue StandardError => e
+          raise e.cover_up_backtrace
+        end
+      rescue StandardError => e
+        expect(e.backtrace).to eq original_error.backtrace
+      end
+    end
+
     def catch
       yield
     rescue => e # rubocop:disable Style/RescueStandardError:
