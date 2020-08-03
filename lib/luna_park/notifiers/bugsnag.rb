@@ -32,7 +32,7 @@ module LunaPark
       private
 
       def wrap(msg)
-        msg.is_a?(Exception) ? msg : String(msg)
+        msg.is_a?(Exception) ? msg : msg.inspect
       end
 
       def extend(details, with:)

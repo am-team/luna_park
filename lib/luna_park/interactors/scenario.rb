@@ -249,15 +249,18 @@ module LunaPark
         state == FAIL
       end
 
+      alias failure? fail?
+
       # @return [Boolean] true if the scenario runs successfully
       def success?
         state == SUCCESS
       end
 
+      alias succeed? success?
+
       # @return [String] fail message
-      def failure_message
-        puts "locale #{locale}"
-        failure&.message(locale: locale)
+      def failure_message(locale: nil)
+        failure&.message(locale: locale || self.locale)
       end
 
       class << self
@@ -318,7 +321,7 @@ module LunaPark
       end
 
       def on_raise(error)
-        raise error, error.message(locale: locale)
+        raise error.cover_up_backtrace
       end
     end
   end

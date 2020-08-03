@@ -22,7 +22,7 @@ module LunaPark
 
     describe '#post' do
       context 'when message is not exception' do
-        let(:msg) { double(to_s: 'Something went wrong') }
+        let(:msg) { double(inspect: 'Something went wrong') }
 
         subject(:post_message) { notifier.post(msg) }
 

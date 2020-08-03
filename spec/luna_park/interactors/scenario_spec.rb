@@ -397,12 +397,25 @@ module LunaPark
             context 'on default locale' do
               let(:scenario) { gunshot.new lucky_mode: false, action: :catch }
 
-              it { is_expected.to eq 'You die' }
+              it 'should use default locale' do
+                is_expected.to eq 'You die'
+              end
             end
 
-            context 'on defined locale' do
+            context 'on defined locale in object' do
               let(:scenario) { gunshot.new lucky_mode: false, action: :catch, locale: :ru }
-              it { is_expected.to eq 'Всего лишь царапина' }
+              it 'should use object locale' do
+                is_expected.to eq 'Всего лишь царапина'
+              end
+            end
+
+            context 'on defined locale in object and defined locale in method' do
+              let(:scenario) { gunshot.new lucky_mode: false, action: :catch, locale: :ru }
+              subject(:failure_message) { scenario.failure_message locale: :fr }
+
+              it 'should use method locale' do
+                is_expected.to eq 'Tu merus'
+              end
             end
           end
         end
