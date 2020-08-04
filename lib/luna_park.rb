@@ -5,7 +5,6 @@ module LunaPark
   module Entities;   end
   module Errors;     end
   module Extensions; end
-  module Utils; end
   module Forms; end
   module Handlers; end
   module Http; end
@@ -23,7 +22,7 @@ require 'luna_park/errors'
 require 'luna_park/errors/adaptive'
 require 'luna_park/errors/processing'
 require 'luna_park/errors/json_parse'
-require 'luna_park/utils/environment'
+require 'luna_park/tools/environment'
 LunaPark::Tools.if_gem_installed('rest-client', '~> 2.1') { require 'luna_park/errors/http' }
 require 'luna_park/extensions/attributable'
 require 'luna_park/extensions/wrappable'

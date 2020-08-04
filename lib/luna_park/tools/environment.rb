@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module LunaPark
-  module Utils
+  module Tools
     class Environment < String
       def initialize(environment, allowed:)
         super(environment.to_s)

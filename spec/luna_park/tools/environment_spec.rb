@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'luna_park/utils/environment'
+require 'luna_park/tools/environment'
 
 module LunaPark
-  RSpec.describe Utils::Environment do
+  RSpec.describe Tools::Environment do
     subject(:app_env) { described_class.new(env, allowed: allowed_envs) }
 
     let(:env)          { 'test' }
@@ -11,7 +11,7 @@ module LunaPark
 
     describe '.new' do
       it { is_expected.to be_a String }
-      it { is_expected.to be_a Utils::Environment }
+      it { is_expected.to be_a Tools::Environment }
       it { is_expected.to eq   'test' }
 
       context 'when given not allowed environment name' do
@@ -23,7 +23,7 @@ module LunaPark
     describe '#inspect' do
       subject(:inspect) { app_env.inspect }
 
-      it { is_expected.to eq '#<LunaPark::Utils::Environment test>' }
+      it { is_expected.to eq '#<LunaPark::Tools::Environment test>' }
     end
 
     describe '#env?' do
