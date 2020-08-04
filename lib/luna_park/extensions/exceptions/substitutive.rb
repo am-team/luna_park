@@ -4,11 +4,8 @@ module LunaPark
   module Extensions
     module Exceptions
       # class-level mixin
-      # @example
-      #   ##############################
-      #   # BAD (without Substitutive) #
-      #   ##############################
       #
+      # @example Bad case (without Substitutive)
       #   class CustomException < StandardError; end
       #
       #   begin
@@ -20,11 +17,7 @@ module LunaPark
       #   # Raised exception has backtrace started from `raise CustomException`
       #   # So it's not containing the origin backtrace, that can be very painfull for debug
       #
-      # @example
-      #   ############################
-      #   # GOOD (with Substitutive) #
-      #   ############################
-      #
+      # @example Good case (with Substitutive)
       #   class CustomException < StandardError
       #     extend LunaPark::Extensions::Exceptions::Substitutive
       #   end
@@ -63,12 +56,15 @@ module LunaPark
         end
 
         module InstanceMethods
-          attr_accessor :origin, :backtrace
+          attr_reader :origin
 
           def substitute!(origin)
-            self.backtrace = origin.backtrace
-            self.origin    = origin
+            @origin = origin
             self
+          end
+
+          def backtrace
+            super || origin&.backtrace
           end
         end
       end
