@@ -55,8 +55,8 @@ module LunaPark
         415 => 'Unsupported Media Type',
         416 => 'Request Range Not Satisfiable',
         417 => 'Expectation Failed',
-        418 => 'I\'m a teapot',            # RFC '232'4
-        422 => 'Unprocessable Entity',     # RFC '251'8 (WebDAV)
+        418 => 'I\'m a teapot',            # RFC '232'4;          RFC 7168 section 2.3.3
+        422 => 'Unprocessable Entity',     # RFC '251'8 (WebDAV); RFC 4918 section 11.2
         423 => 'Locked',                   # RFC '251'8 (WebDAV)
         424 => 'Failed Dependency',        # RFC '251'8 (WebDAV)
         425 => 'No code',                  # WebDAV Advanced Collections
