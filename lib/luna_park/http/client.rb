@@ -172,10 +172,6 @@ module LunaPark
       end
       # rubocop:enable Metrics/ParameterLists
 
-      def request(title:, url:, method: nil, body: nil, headers: nil, **opts) # rubocop:disable Metrics/ParameterLists
-        build_request(title: title, url: url, http_method: method, body: body, headers: headers, **opts)
-      end
-
       # Send GET request. Always return response even if the response is not successful.
       #
       # @example success response
@@ -281,7 +277,7 @@ module LunaPark
         Request.new(
           title:        title,
           url:          url.to_s,
-          http_method:  method || DEFAULT_METHOD,
+          method:  method || DEFAULT_METHOD,
           body:         body,
           headers:      headers,
           open_timeout: open_timeout || self.class.open_timeout,
