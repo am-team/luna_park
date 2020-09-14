@@ -19,7 +19,7 @@ module LunaPark
       it 'should has expected structure' do
         expect(request.title).to eq 'Get users list'
         expect(request.url).to eq 'http://api.example.com/users'
-        expect(request.method).to be :get
+        expect(request.http_method).to be :get
         expect(request.body).to be_nil
         expect(request.headers).to eq('Content-Type' => 'application/x-www-form-urlencoded')
       end
@@ -40,7 +40,7 @@ module LunaPark
       it 'should has expected structure' do
         expect(request.title).to eq 'Add user'
         expect(request.url).to eq 'http://api.example.com/users'
-        expect(request.method).to be :post
+        expect(request.http_method).to be :post
         expect(request.body).to eq '{"name":"John Doe","email":"john.doe@example.com"}'
         expect(request.headers).to eq('Content-Type' => 'application/json')
       end
@@ -49,14 +49,14 @@ module LunaPark
     shared_examples 'send request' do |request_type|
       let(:response) { double }
       let(:driver)   { double(call: response, call!: response) }
-      let(:request)  { Http::Request.new(title: 'Test request', method: :get, url: 'example.com', driver: driver) }
+      let(:request)  { Http::Request.new(title: 'Test request', http_method: :get, url: 'example.com', driver: driver) }
 
       it 'should send request' do
         expect { subject }.to change(request, :sent?).from(false).to(true)
       end
 
       it 'should change request method to get' do
-        expect { subject }.to change(request, :method).to(request_type)
+        expect { subject }.to change(request, :http_method).to(request_type)
       end
 
       it 'should get response' do
@@ -66,7 +66,7 @@ module LunaPark
 
     describe '#get' do
       it_behaves_like 'send request', :get do
-        let(:request)  { Http::Request.new(title: 'Test request', method: :post, url: 'example.com', driver: driver) }
+        let(:request)  { Http::Request.new(title: 'Test request', http_method: :post, url: 'example.com', driver: driver) }
         subject { client.get request }
       end
     end
@@ -97,7 +97,7 @@ module LunaPark
 
     describe '#get!' do
       it_behaves_like 'send request', :get do
-        let(:request) { Http::Request.new(title: 'Test request', method: :post, url: 'example.com', driver: driver) }
+        let(:request) { Http::Request.new(title: 'Test request', http_method: :post, url: 'example.com', driver: driver) }
         subject { client.get! request }
       end
     end
