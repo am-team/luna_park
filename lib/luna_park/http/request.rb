@@ -18,7 +18,7 @@ module LunaPark
       #   request.title # => 'Get users list'
       attr_accessor :title
 
-      # Http method of current request, defines a set of
+      # Http http_method of current request, defines a set of
       # request methods to indicate the desired action to
       # be performed for a given resource
       #
@@ -82,17 +82,17 @@ module LunaPark
       # Create new request
       #
       # @param title business description (see #title)
-      # @param method Http method of current request (see #method)
+      # @param http_method Http http_method of current request (see #http_method)
       # @param url (see #url)
       # @param body (see #body)
       # @param headers (see #headers)
       # @param read_timeout (see #read_timeout)
       # @param open_timeout (see #open_timeout)
       # @param driver is HTTP driver which use to send this request
-      # rubocop:disable Metrics/ParameterLists
-      def initialize(title:, method: nil, url: nil, body: nil, headers: nil, open_timeout: nil, read_timeout: nil, driver:)
+      # rubocop:disable Metrics/ParameterLists, Layout/LineLength
+      def initialize(title:, http_method: nil, url: nil, body: nil, headers: nil, open_timeout: nil, read_timeout: nil, driver:)
         @title        = title
-        @method       = method
+        @http_method  = http_method
         @url          = url
         @body         = body
         @headers      = headers
@@ -103,14 +103,14 @@ module LunaPark
       end
       # rubocop:enable Metrics/ParameterLists, Layout/LineLength
 
-      # Send current request (we cannot call this method `send` because it
+      # Send current request (we cannot call this http_method `send` because it
       # reserved word in ruby). It always return Response object, even if
       # the server returned an error such as 404 or 502.
       #
       # @example correct answer
       #  request = Http::Request.new(
       #     title: 'Get users list',
-      #     method: :get,
+      #     http_method: :get,
       #     url: 'http:://yandex.ru'
       #   )
       #   request.call # => <LunaPark::Http::Response @code=200 @body="Hello World!" @headers={}>
@@ -120,7 +120,7 @@ module LunaPark
       #
       # After sending the request, the object is frozen. You should dup object to resend request.
       #
-      # @note This method implements a facade pattern. And you better use it
+      # @note This http_method implements a facade pattern. And you better use it
       #   than call the Http::Send class directly.
       #
       # @return LunaPark::Http::Response
@@ -130,14 +130,14 @@ module LunaPark
       end
 
       # Send the current request. It returns a Response object only on a successful response.
-      # If the response failed, the call! method should raise an Erros::Http exception.
+      # If the response failed, the call! http_method should raise an Erros::Http exception.
       #
       # After call! request you cannot change request attributes.
       #
       # @example correct answer
       #  request = Http::Request.new(
       #     title: 'Get users list',
-      #     method: :get,
+      #     http_method: :get,
       #     url: 'https://example.com/users'
       #   )
       #   request.call # => <LunaPark::Http::Response @code=200 @body="Hello World!" @headers={}>
@@ -147,7 +147,7 @@ module LunaPark
       #
       # After sending the request, the object is frozen. You should dup object to resend request.
       #
-      # @note This method implements a facade pattern. And you better use it
+      # @note This http_method implements a facade pattern. And you better use it
       #   than call the Http::Send class directly.
       #
       # @return LunaPark::Http::Response
@@ -162,14 +162,14 @@ module LunaPark
         @sent_at = nil
       end
 
-      # This method shows if this request has been already sent.
+      # This http_method shows if this request has been already sent.
       #
       # @return Boolean
       def sent?
         !@sent_at.nil?
       end
 
-      # This method return which driver are use, to send current request.
+      # This http_method return which driver are use, to send current request.
       def driver
         @driver ||= self.class.default_driver
       end
@@ -177,12 +177,12 @@ module LunaPark
       # @example inspect get users index request
       #   request = LunaPark::Http::Request.new(
       #     title: 'Get users',
-      #     method: :get,
+      #     http_method: :get,
       #     url: 'https://example.com/users'
       #   )
       #
       #   request.inspect # => "<LunaPark::Http::Request @title=\"Get users\"
-      #                   #  @url=\"http://localhost:8080/get_200\" @method=\"get\"
+      #                   #  @url=\"http://localhost:8080/get_200\" @http_method=\"get\"
       #                   #  @headers=\"{}\" @body=\"\" @sent_at=\"\">"
       def inspect
         "<#{self.class.name} "           \
@@ -196,7 +196,7 @@ module LunaPark
 
       # @example
       #   request.to_h # => {:title=>"Get users",
-      #                      :method=>:get,
+      #                      :http_method=>:get,
       #                      :url=>"http://localhost:8080/get_200",
       #                      :body=>nil,
       #                      :headers=>{},

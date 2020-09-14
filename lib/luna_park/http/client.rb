@@ -92,7 +92,7 @@ module LunaPark
     #   checkout.call
     #   checkout.success?     # => false
     #   checkout.fail_message # => "Not enough funds in your account"
-    class Client
+    class Client # rubocop:disable Metrics/ClassLength
       DEFAULT_OPEN_TIMEOUT = 10
       DEFAULT_READ_TIMEOUT = 10
       DEFAULT_DRIVER       = LunaPark::Http::Send
@@ -148,10 +148,12 @@ module LunaPark
       #     data: { message: 'ping' }
       #   )
       #
-      #   request # => <LunaPark::Http::Request @title="Ping pong"
-      #     # @url="http://api.example.com/ping" @method="get"
-      #     # @headers={ 'Content-Type' => 'application/json' }
-      #     # @body="{"message":"ping"}" @sent_at="">
+      #   request # => <LunaPark::Http::Request
+      #           #     @title="Ping pong"
+      #           #     @url="http://api.example.com/ping" @method="get"
+      #           #     @headers={ 'Content-Type' => 'application/json' }
+      #           #     @body="{"message":"ping"}" @sent_at=""
+      #           #    >
       #
       # @return [LunaPark::Http::Request]
       # rubocop:disable Metrics/ParameterLists
@@ -170,8 +172,8 @@ module LunaPark
       end
       # rubocop:enable Metrics/ParameterLists
 
-      def request(title:, url:, method: nil, body: nil, headers: nil, **opts)
-        build_request(title: title, url: url, body: body, headers: headers, **opts)
+      def request(title:, url:, method: nil, body: nil, headers: nil, **opts) # rubocop:disable Metrics/ParameterLists
+        build_request(title: title, url: url, http_method: method, body: body, headers: headers, **opts)
       end
 
       # Send GET request. Always return response even if the response is not successful.
@@ -268,23 +270,25 @@ module LunaPark
         request.call!
       end
 
-      def build_request(title:, url:, method: nil, body: nil, headers: nil, content_type: nil, open_timeout: nil, read_timeout: nil, driver: nil)
+      def build_request(title:, url:, method: nil, body: nil, headers: nil, content_type: nil, open_timeout: nil, read_timeout: nil, driver: nil) # rubocop:disable Metrics/ParameterLists, Metrics/MethodLength
         # url_ = Utils::URI.wrap(url)
         # url_&.query = query
 
         headers ||= {}
         headers['Content-Type'] = content_type || 'text/plain'
 
+        # rubocop:disable Layout/HashAlignment
         Request.new(
           title:        title,
           url:          url.to_s,
-          method:       method || DEFAULT_METHOD,
+          http_method:  method || DEFAULT_METHOD,
           body:         body,
           headers:      headers,
-          open_timeout: open_timeout || DEFAULT_OPEN_TIMEOUT,
-          read_timeout: read_timeout || DEFAULT_READ_TIMEOUT,
-          driver:       driver       || DEFAULT_DRIVER
+          open_timeout: open_timeout || self.class.open_timeout,
+          read_timeout: read_timeout || self.class.read_timeout,
+          driver:       driver       || self.class.driver
         )
+        # rubocop:enable Layout/HashAlignment
       end
 
       class << self
@@ -295,33 +299,18 @@ module LunaPark
         #     driver URI::Send
         #   end
         #
-        #   Foobar.default_driver # => URI::Send
+        #   Foobar.driver # => URI::Send
         #   Foobar.new.driver     # => URI::Send
-        def driver(driver)
-          @default_driver = driver
+        def driver(driver = :undefined)
+          driver == :undefined ? @driver || DEFAULT_DRIVER : @driver = driver
         end
 
-        def open_timeout(timeout)
-          @default_open_timeout = timeout
+        def open_timeout(timeout = :undefined)
+          timeout == :undefined ? @open_timeout || DEFAULT_OPEN_TIMEOUT : @open_timeout = timeout
         end
 
-        def read_timeout(timeout)
-          @default_read_timeout = timeout
-        end
-
-        # @return Default driver
-        def default_driver
-          @default_driver ||= DEFAULT_DRIVER
-        end
-
-        # @return Default open timeout
-        def default_open_timeout
-          @default_open_timeout ||= DEFAULT_OPEN_TIMEOUT
-        end
-
-        # @return Default read timeout
-        def default_read_timeout
-          @default_read_timeout ||= DEFAULT_READ_TIMEOUT
+        def read_timeout(timeout = :undefined)
+          timeout == :undefined ? @read_timeout || DEFAULT_READ_TIMEOUT : @read_timeout = timeout
         end
       end
     end
