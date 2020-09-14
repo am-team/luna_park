@@ -125,7 +125,7 @@ module LunaPark
         Request.new(
           title: title,
           url: url,
-          method: method,
+          http_method: method,
           body: form_body,
           headers: form_headers
         )
@@ -161,7 +161,7 @@ module LunaPark
         Request.new(
           title: title,
           url: url,
-          method: method,
+          http_method: method,
           body: json_body,
           headers: json_headers
         )
@@ -183,35 +183,35 @@ module LunaPark
       #
       # @return [LunaPark::Http::Response]
       def get(request)
-        request.method = :get
+        request.http_method = :get
         request.call
       end
 
       # Send POST request. Always return response even if the response is not successful.
       # @see #get
       def post(request)
-        request.method = :post
+        request.http_method = :post
         request.call
       end
 
       # Send PUT request. Always return response even if the response is not successful.
       # @see #get
       def put(request)
-        request.method = :put
+        request.http_method = :put
         request.call
       end
 
       # Send PATCH request. Always return response even if the response is not successful.
       # @see #get
       def patch(request)
-        request.method = :patch
+        request.http_method = :patch
         request.call
       end
 
       # Send DELETE request. Always return response even if the response is not successful.
       # @see #get
       def delete(request)
-        request.method = :delete
+        request.http_method = :delete
         request.call
       end
 
@@ -230,35 +230,35 @@ module LunaPark
       # @raise [LunaPark::Errors::Http] on bad response, timeout or server is unavailable
       # @return [LunaPark::Http::Response]
       def get!(request)
-        request.method = :get
+        request.http_method = :get
         request.call!
       end
 
       # Send POST request. Raise {LunaPark::Errors::Http} on bad response.
       # @see #get!
       def post!(request)
-        request.method = :post
+        request.http_method = :post
         request.call!
       end
 
       # Send PUT request. Raise {LunaPark::Errors::Http} on bad response.
       # @see #get!
       def put!(request)
-        request.method = :put
+        request.http_method = :put
         request.call!
       end
 
       # Send PATCh request. Raise {LunaPark::Errors::Http} on bad response.
       # @see #get!
       def patch!(request)
-        request.method = :patch
+        request.http_method = :patch
         request.call!
       end
 
       # Send DELETE request. Raise {LunaPark::Errors::Http} on bad response.
       # @see #get!
       def delete!(request)
-        request.method = :delete
+        request.http_method = :delete
         request.call!
       end
     end

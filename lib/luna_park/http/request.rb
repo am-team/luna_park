@@ -17,7 +17,7 @@ module LunaPark
       # @example Get users request
       #   request = Request.new(
       #     title: 'Get users list',
-      #     method: :get,
+      #     http_method: :get,
       #     url: 'https://example.com/users'
       #   )
       #
@@ -29,9 +29,9 @@ module LunaPark
       # be performed for a given resource
       #
       # @example Get users request
-      #   request.method # => :get
+      #   request.http_method # => :get
       #
-      attr_accessor :method
+      attr_accessor :http_method
 
       # Http url to send request
       #
@@ -45,7 +45,7 @@ module LunaPark
       #
       #   request = Request.new(
       #     title: 'Get users list',
-      #     method: :get,
+      #     http_method: :get,
       #     url: 'http://example.com/users',
       #     body: JSON.generate({message: 'Hello!'})
       #   )
@@ -95,10 +95,10 @@ module LunaPark
       # @param read_timeout (see #read_timeout)
       # @param open_timeout (see #open_timeout)
       # @param driver is HTTP driver which use to send this request
-      # rubocop:disable Metrics/ParameterLists
-      def initialize(title:, method:, url:, body: nil, headers: nil, open_timeout: nil, read_timeout: nil, driver: nil)
+      # rubocop:disable Metrics/ParameterLists, Layout/LineLength
+      def initialize(title:, http_method:, url:, body: nil, headers: nil, open_timeout: nil, read_timeout: nil, driver: nil)
         @title        = title
-        @method       = method
+        @http_method  = http_method
         @url          = url # TODO: Utils::URI
         @body         = body
         @headers      = headers      || {}
@@ -107,7 +107,7 @@ module LunaPark
         @driver       = driver
         @sent_at      = nil
       end
-      # rubocop:enable Metrics/ParameterLists
+      # rubocop:enable Metrics/ParameterLists, Layout/LineLength
 
       # Send current request (we cannot call this method `send` because it
       # reserved word in ruby). It always return Response object, even if
@@ -194,7 +194,7 @@ module LunaPark
         "<#{self.class.name} "           \
           "@title=#{title.inspect} "     \
           "@url=#{url.inspect} "         \
-          "@method=#{method.inspect} "   \
+          "@http_method=#{http_method.inspect} "   \
           "@headers=#{headers.inspect} " \
           "@body=#{body.inspect} "       \
           "@sent_at=#{sent_at.inspect}>"
@@ -211,7 +211,7 @@ module LunaPark
       def to_h
         {
           title: title,
-          method: method,
+          http_method: http_method,
           url: url,
           body: body,
           headers: headers,

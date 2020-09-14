@@ -11,7 +11,7 @@ module LunaPark
     let(:request) do
       described_class.new(
         title: 'Get users',
-        method: :get,
+        http_method: :get,
         url: 'http://example.com',
         body: JSON.generate(message: 'ping'),
         headers: { 'Content-Type': 'application/json' },
@@ -40,23 +40,23 @@ module LunaPark
 
     describe '#title' do
       it 'should be defined in new request instance' do
-        expect { described_class.new(method: :get, url: 'http://example.com') }.to raise_error ArgumentError
+        expect { described_class.new(http_method: :get, url: 'http://example.com') }.to raise_error ArgumentError
       end
 
       it_behaves_like 'mutable argument before request send', :title
     end
 
-    describe '#method' do
+    describe '#http_method' do
       it 'should be defined in new request instance' do
         expect { described_class.new(title: 'Get users', url: 'http://example.com') }.to raise_error ArgumentError
       end
 
-      it_behaves_like 'mutable argument before request send', :method
+      it_behaves_like 'mutable argument before request send', :http_method
     end
 
     describe '#url' do
       it 'should be defined in new request instance' do
-        expect { described_class.new(title: 'Get users', method: :get) }.to raise_error ArgumentError
+        expect { described_class.new(title: 'Get users', http_method: :get) }.to raise_error ArgumentError
       end
 
       it_behaves_like 'mutable argument before request send', :url
@@ -159,7 +159,7 @@ module LunaPark
       subject { request.driver }
 
       context 'does not specify' do
-        let(:request) { Http::Request.new(title: 'Example', method: :get, url: 'http://yandex.ru') }
+        let(:request) { Http::Request.new(title: 'Example', http_method: :get, url: 'http://yandex.ru') }
 
         it { is_expected.to eq LunaPark::Http::Send }
       end
@@ -171,7 +171,7 @@ module LunaPark
           Class.new(described_class) { driver Driver }
         end
 
-        let(:request) { request_class.new(title: 'Example', method: :get, url: 'http://yandex.ru') }
+        let(:request) { request_class.new(title: 'Example', http_method: :get, url: 'http://yandex.ru') }
 
         it 'should be expected driver' do
           is_expected.to eq Driver
@@ -180,7 +180,7 @@ module LunaPark
 
       context 'specify at initialize' do
         class Driver; end
-        let(:request) { Http::Request.new(title: 'Example', method: :get, url: 'http://yandex.ru', driver: Driver) }
+        let(:request) { Http::Request.new(title: 'Example', http_method: :get, url: 'http://yandex.ru', driver: Driver) }
 
         it 'should be expected driver' do
           is_expected.to eq Driver
@@ -214,7 +214,7 @@ module LunaPark
       it 'should return hash in expected format' do
         is_expected.to eq(
           title: 'Get users',
-          method: :get,
+          http_method: :get,
           url: 'http://example.com',
           body: '{"message":"ping"}',
           headers: { 'Content-Type': 'application/json' },
