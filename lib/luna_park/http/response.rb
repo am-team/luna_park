@@ -65,8 +65,8 @@ module LunaPark
         429 => 'Too Many Requests',
         431 => 'Request Header Fields Too Large',
         449 => 'Retry with',                     # unofficial Microsoft
-        452 => 'Unavailable For Legal Reasons',  # RFC 7225 The code 451 was chosen as a
-        # reference to the novel Fahrenheit 451
+        451 => 'Unavailable For Legal Reasons',  # RFC 7725
+        452 => 'Unavailable For Legal Reasons',  # ! Not confirmed: RFC 7225 The code 451 was chosen as a reference to the novel Fahrenheit 451
         # Server errors
         500 => 'Internal Server Error',
         501 => 'Not Implemented',
