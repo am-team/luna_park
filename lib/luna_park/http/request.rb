@@ -31,6 +31,8 @@ module LunaPark
         name.nil? ? @method : super(name)
       end
 
+      attr_writer :method
+
       # Http url to send request
       #
       # @example Get users request
