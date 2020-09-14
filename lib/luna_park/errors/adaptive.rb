@@ -63,6 +63,8 @@ module LunaPark
       #   error.action      # => :raise
       #   error.notify_lvl  # => :error
       #   error.notify?     # => false
+      #
+      # TODO: make guards safe: remove these raises from exception constructor (from runtime)
       def initialize(msg = nil, action: nil, notify: nil, **details)
         raise ArgumentError, "Unexpected action value: #{action}" unless action.nil? || ACTION_VALUES.include?(action)
         raise ArgumentError, "Unexpected notify value: #{notify}" unless notify.nil? || NOTIFY_VALUES.include?(notify)
