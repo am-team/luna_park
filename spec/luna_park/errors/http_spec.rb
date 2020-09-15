@@ -49,7 +49,7 @@ module LunaPark
       let(:request) do
         Http::Request.new(
           title: 'Ping-pong',
-          http_method: :post,
+          method: :post,
           url: 'http://example.com/api/ping',
           body: JSON.generate(message: 'ping'),
           headers: { 'Content-Type' => 'application/json' },

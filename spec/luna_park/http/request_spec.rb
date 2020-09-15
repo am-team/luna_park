@@ -11,7 +11,7 @@ module LunaPark
     let(:request) do
       described_class.new(
         title: 'Get users',
-        http_method: :get,
+        method: :get,
         url: 'http://example.com',
         body: JSON.generate(message: 'ping'),
         headers: { 'Content-Type': 'application/json' },
@@ -40,23 +40,23 @@ module LunaPark
 
     describe '#title' do
       it 'should be defined in new request instance' do
-        expect { described_class.new(http_method: :get, url: 'http://example.com') }.to raise_error ArgumentError
+        expect { described_class.new(method: :get, url: 'http://example.com') }.to raise_error ArgumentError
       end
 
       it_behaves_like 'mutable argument before request send', :title
     end
 
-    describe '#http_method' do
+    describe '#method' do
       it 'should be defined in new request instance' do
         expect { described_class.new(title: 'Get users', url: 'http://example.com') }.to raise_error ArgumentError
       end
 
-      it_behaves_like 'mutable argument before request send', :http_method
+      it_behaves_like 'mutable argument before request send', :method
     end
 
     describe '#url' do
       it 'should be defined in new request instance' do
-        expect { described_class.new(title: 'Get users', http_method: :get) }.to raise_error ArgumentError
+        expect { described_class.new(title: 'Get users', method: :get) }.to raise_error ArgumentError
       end
 
       it_behaves_like 'mutable argument before request send', :url
@@ -184,7 +184,7 @@ module LunaPark
       it 'should return hash in expected format' do
         is_expected.to eq(
           title: 'Get users',
-          http_method: :get,
+          method: :get,
           url: 'http://example.com',
           body: '{"message":"ping"}',
           headers: { 'Content-Type': 'application/json' },

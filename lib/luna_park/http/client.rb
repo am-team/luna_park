@@ -124,7 +124,7 @@ module LunaPark
         build_request(
           title: title,
           url: url,
-          http_method: method,
+          method: method,
           body: form_body,
           headers: headers,
           content_type: 'application/x-www-form-urlencoded',
@@ -163,7 +163,7 @@ module LunaPark
         build_request(
           title: title,
           url: url,
-          http_method: method,
+          method: method,
           body: json_body,
           headers: headers,
           content_type: 'application/json',
