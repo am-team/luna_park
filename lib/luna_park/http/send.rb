@@ -72,8 +72,8 @@ module LunaPark
 
       def build_rest_request(request)
         RestClient::Request.new(
-          url: request.url,
-          method: request.http_method,
+          url: request.url.to_s,
+          method: request.method,
           payload: request.body,
           headers: request.headers,
           open_timeout: request.open_timeout,

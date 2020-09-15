@@ -8,7 +8,7 @@ module LunaPark
     let(:request) do
       double(
         url: 'http://example.com',
-        http_method: :post,
+        method: :post,
         body: '{"message":"ping"}',
         headers: { 'Content-Type': 'application/json' },
         open_timeout: 5,

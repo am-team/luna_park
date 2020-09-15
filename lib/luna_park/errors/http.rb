@@ -51,7 +51,7 @@ module LunaPark
       #   #  status: 'OK',
       #   #  request: {
       #   #    body: '{"message":"ping"}',
-      #   #    http_method: :post,
+      #   #    method: :post,
       #   #    headers: {'Content-Type': 'application/json'},
       #   #    open_timeout: 10,
       #   #    read_timeout: 10,
@@ -71,7 +71,7 @@ module LunaPark
           title: request.title,
           status: response.status,
           request: {
-            http_method: request.http_method,
+            method: request.method,
             url: request.url,
             body: request.body,
             headers: request.headers,

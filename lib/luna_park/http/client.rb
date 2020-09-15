@@ -93,10 +93,10 @@ module LunaPark
     #   checkout.success?     # => false
     #   checkout.fail_message # => "Not enough funds in your account"
     class Client
-      PLAIN_HEADERS = { 'Content-Type' => 'text/plain' }.freeze
-      FORM_HEADERS  = { 'Content-Type' => 'application/x-www-form-urlencoded' }.freeze
-      JSON_HEADERS  = { 'Content-Type' => 'application/json' }.freeze
-
+      DEFAULT_OPEN_TIMEOUT = 10
+      DEFAULT_READ_TIMEOUT = 10
+      DEFAULT_DRIVER       = LunaPark::Http::Send
+      DEFAULT_METHOD       = :get
       # Build plain request
       #
       # @param [String] title business description for request
@@ -118,16 +118,17 @@ module LunaPark
       #
       # @return [LunaPark::Http::Request]
       # rubocop:disable Metrics/ParameterLists
-      def form_request(title:, url:, method: :get, body: nil, data: nil, headers: {})
-        form_headers = FORM_HEADERS.merge(headers)
-        form_body    = body || data # we have no a good generator for `x-www-form-urlencoded`, but Driver has
+      def form_request(title:, url:, method: nil, body: nil, headers: nil, data: nil, **opts)
+        form_body = body || data # * we have no a good generator for `x-www-form-urlencoded` type, but Driver has
 
-        Request.new(
+        build_request(
           title: title,
           url: url,
-          http_method: method,
+          method: method,
           body: form_body,
-          headers: form_headers
+          headers: headers,
+          content_type: 'application/x-www-form-urlencoded',
+          **opts
         )
       end
       # rubocop:enable Metrics/ParameterLists
@@ -144,26 +145,29 @@ module LunaPark
       #   request = json_request(
       #     title: 'Ping pong',
       #     url: 'http://api.example.com/ping',
-      #     body: {message: 'ping'}
+      #     data: { message: 'ping' }
       #   )
       #
-      #   request # => <LunaPark::Http::Request @title="Ping pong"
-      #     # @url="http://api.example.com/ping" @method="get"
-      #     # @headers={ 'Content-Type' => 'application/json' }
-      #     # @body="{"message":"ping"}" @sent_at="">
+      #   request # => <LunaPark::Http::Request
+      #           #     @title="Ping pong"
+      #           #     @url="http://api.example.com/ping" @method="get"
+      #           #     @headers={ 'Content-Type' => 'application/json' }
+      #           #     @body="{"message":"ping"}" @sent_at=""
+      #           #    >
       #
       # @return [LunaPark::Http::Request]
       # rubocop:disable Metrics/ParameterLists
-      def json_request(title:, url:, method: :get, body: nil, data: nil, headers: {})
-        json_headers = JSON_HEADERS.merge(headers)
-        json_body    = body || data && JSON.generate(data)
+      def json_request(title:, url:, method: nil, body: nil, data: nil, headers: nil, **opts)
+        json_body = body || data && JSON.generate(data)
 
-        Request.new(
+        build_request(
           title: title,
           url: url,
-          http_method: method,
+          method: method,
           body: json_body,
-          headers: json_headers
+          headers: headers,
+          content_type: 'application/json',
+          **opts
         )
       end
       # rubocop:enable Metrics/ParameterLists
@@ -183,35 +187,35 @@ module LunaPark
       #
       # @return [LunaPark::Http::Response]
       def get(request)
-        request.http_method = :get
+        request.method = :get
         request.call
       end
 
       # Send POST request. Always return response even if the response is not successful.
       # @see #get
       def post(request)
-        request.http_method = :post
+        request.method = :post
         request.call
       end
 
       # Send PUT request. Always return response even if the response is not successful.
       # @see #get
       def put(request)
-        request.http_method = :put
+        request.method = :put
         request.call
       end
 
       # Send PATCH request. Always return response even if the response is not successful.
       # @see #get
       def patch(request)
-        request.http_method = :patch
+        request.method = :patch
         request.call
       end
 
       # Send DELETE request. Always return response even if the response is not successful.
       # @see #get
       def delete(request)
-        request.http_method = :delete
+        request.method = :delete
         request.call
       end
 
@@ -230,36 +234,94 @@ module LunaPark
       # @raise [LunaPark::Errors::Http] on bad response, timeout or server is unavailable
       # @return [LunaPark::Http::Response]
       def get!(request)
-        request.http_method = :get
+        request.method = :get
         request.call!
       end
 
       # Send POST request. Raise {LunaPark::Errors::Http} on bad response.
       # @see #get!
       def post!(request)
-        request.http_method = :post
+        request.method = :post
         request.call!
       end
 
       # Send PUT request. Raise {LunaPark::Errors::Http} on bad response.
       # @see #get!
       def put!(request)
-        request.http_method = :put
+        request.method = :put
         request.call!
       end
 
       # Send PATCh request. Raise {LunaPark::Errors::Http} on bad response.
       # @see #get!
       def patch!(request)
-        request.http_method = :patch
+        request.method = :patch
         request.call!
       end
 
       # Send DELETE request. Raise {LunaPark::Errors::Http} on bad response.
       # @see #get!
       def delete!(request)
-        request.http_method = :delete
+        request.method = :delete
         request.call!
+      end
+
+      private
+
+      def build_request(title:, url:, method: nil, body: nil, headers: nil, content_type: nil, open_timeout: nil, read_timeout: nil, driver: nil) # rubocop:disable Metrics/ParameterLists, Metrics/MethodLength
+        headers ||= {}
+        headers['Content-Type'] = content_type || 'text/plain'
+
+        # rubocop:disable Layout/HashAlignment
+        Request.new(
+          title:        title,
+          url:          url.to_s, # TODO: Use {LunaPark::Tools::URI} with @query
+          method:       method || DEFAULT_METHOD,
+          body:         body,
+          headers:      headers,
+          open_timeout: open_timeout || self.class.open_timeout,
+          read_timeout: read_timeout || self.class.read_timeout,
+          driver:       driver       || self.class.driver
+        )
+        # rubocop:enable Layout/HashAlignment
+      end
+
+      class << self
+        # Set default diver for this Client
+        #
+        # @example set driver
+        #   class Users < Client
+        #     driver URI::Send
+        #   end
+        #
+        #   Foobar.driver # => URI::Send
+        def driver(driver = nil)
+          driver.nil? ? @driver || DEFAULT_DRIVER : @driver = driver
+        end
+
+        # Set default open_timeout for this Client
+        #
+        # @example set open_timeout
+        #   class Users < Client
+        #     open_timeout URI::Send
+        #   end
+        #
+        #   Foobar.open_timeout # => URI::Send
+        def open_timeout(timeout = nil)
+          timeout.nil? ? @open_timeout || DEFAULT_OPEN_TIMEOUT : @open_timeout = timeout
+        end
+
+        # Set default read_timeout for this Client
+        #
+        # @example set read_timeout
+        #   class Users < Client
+        #     read_timeout URI::Send
+        #   end
+        #
+        #   Foobar.read_timeout     # => URI::Send
+        def read_timeout(timeout = nil)
+          timeout.nil? ? @read_timeout || DEFAULT_READ_TIMEOUT : @read_timeout = timeout
+        end
       end
     end
   end

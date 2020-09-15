@@ -5,19 +5,13 @@ require 'luna_park/http/send'
 module LunaPark
   module Http
     class Request
-      DEFAULT_OPEN_TIMEOUT = 10
-      DEFAULT_READ_TIMEOUT = 10
-      DEFAULT_DRIVER       = LunaPark::Http::Send
-
-      private_constant :DEFAULT_DRIVER
-
       # Business description for this request, help you
       # make the domain model more expressive
       #
       # @example Get users request
       #   request = Request.new(
       #     title: 'Get users list',
-      #     http_method: :get,
+      #     method: :get,
       #     url: 'https://example.com/users'
       #   )
       #
@@ -29,9 +23,15 @@ module LunaPark
       # be performed for a given resource
       #
       # @example Get users request
-      #   request.http_method # => :get
+      #   request.method # => :get
       #
-      attr_accessor :http_method
+      # @example With argument (delegates `Object.method(name)` to save access to the original Ruby method)
+      #   request.method(:foo) # => #<Method: LunaPark::Http::Request#foo>
+      def method(name = nil)
+        name.nil? ? @method : super(name)
+      end
+
+      attr_writer :method
 
       # Http url to send request
       #
@@ -45,7 +45,7 @@ module LunaPark
       #
       #   request = Request.new(
       #     title: 'Get users list',
-      #     http_method: :get,
+      #     method: :get,
       #     url: 'http://example.com/users',
       #     body: JSON.generate({message: 'Hello!'})
       #   )
@@ -96,14 +96,14 @@ module LunaPark
       # @param open_timeout (see #open_timeout)
       # @param driver is HTTP driver which use to send this request
       # rubocop:disable Metrics/ParameterLists, Layout/LineLength
-      def initialize(title:, http_method:, url:, body: nil, headers: nil, open_timeout: nil, read_timeout: nil, driver: nil)
+      def initialize(title:, method: nil, url: nil, body: nil, headers: nil, open_timeout: nil, read_timeout: nil, driver:)
         @title        = title
-        @http_method  = http_method
-        @url          = url # TODO: Utils::URI
+        @method       = method
+        @url          = url
         @body         = body
-        @headers      = headers      || {}
-        @read_timeout = read_timeout || DEFAULT_READ_TIMEOUT
-        @open_timeout = open_timeout || DEFAULT_OPEN_TIMEOUT
+        @headers      = headers
+        @read_timeout = read_timeout
+        @open_timeout = open_timeout
         @driver       = driver
         @sent_at      = nil
       end
@@ -194,7 +194,7 @@ module LunaPark
         "<#{self.class.name} "           \
           "@title=#{title.inspect} "     \
           "@url=#{url.inspect} "         \
-          "@http_method=#{http_method.inspect} "   \
+          "@method=#{method.inspect} "   \
           "@headers=#{headers.inspect} " \
           "@body=#{body.inspect} "       \
           "@sent_at=#{sent_at.inspect}>"
@@ -211,7 +211,7 @@ module LunaPark
       def to_h
         {
           title: title,
-          http_method: http_method,
+          method: method,
           url: url,
           body: body,
           headers: headers,
@@ -219,26 +219,6 @@ module LunaPark
           open_timeout: open_timeout,
           sent_at: sent_at
         }
-      end
-
-      class << self
-        # @return Default driver
-        def default_driver
-          @default_driver ||= DEFAULT_DRIVER
-        end
-
-        # Set diver for this class
-        #
-        # @example set driver
-        #   class Users < Client
-        #     driver URI::Send
-        #   end
-        #
-        #   Foobar.default_driver # => URI::Send
-        #   Foobar.new.driver     # => URI::Send
-        def driver(driver)
-          @default_driver = driver
-        end
       end
     end
   end
