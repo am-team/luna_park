@@ -295,8 +295,8 @@ module LunaPark
         #   end
         #
         #   Foobar.driver # => URI::Send
-        def driver(driver = :undefined)
-          driver == :undefined ? @driver || DEFAULT_DRIVER : @driver = driver
+        def driver(driver = nil)
+          driver.nil? ? @driver || DEFAULT_DRIVER : @driver = driver
         end
 
         # Set default open_timeout for this Client
@@ -307,8 +307,8 @@ module LunaPark
         #   end
         #
         #   Foobar.open_timeout # => URI::Send
-        def open_timeout(timeout = :undefined)
-          timeout == :undefined ? @open_timeout || DEFAULT_OPEN_TIMEOUT : @open_timeout = timeout
+        def open_timeout(timeout = nil)
+          timeout.nil? ? @open_timeout || DEFAULT_OPEN_TIMEOUT : @open_timeout = timeout
         end
 
         # Set default read_timeout for this Client
@@ -319,8 +319,8 @@ module LunaPark
         #   end
         #
         #   Foobar.read_timeout     # => URI::Send
-        def read_timeout(timeout = :undefined)
-          timeout == :undefined ? @read_timeout || DEFAULT_READ_TIMEOUT : @read_timeout = timeout
+        def read_timeout(timeout = nil)
+          timeout.nil? ? @read_timeout || DEFAULT_READ_TIMEOUT : @read_timeout = timeout
         end
       end
     end
