@@ -48,7 +48,7 @@ module LunaPark
       let(:request) do
         Http::Request.new(
           title: 'Ping-pong',
-          method: :post,
+          http_method: :post,
           url: 'http://example.com/api/ping',
           body: JSON.generate(message: 'ping'),
           headers: { 'Content-Type': 'application/json' }
@@ -75,7 +75,7 @@ module LunaPark
           status: 'OK',
           request: {
             body: '{"message":"ping"}',
-            method: :post,
+            http_method: :post,
             headers: { 'Content-Type': 'application/json' },
             open_timeout: 10,
             read_timeout: 10,
