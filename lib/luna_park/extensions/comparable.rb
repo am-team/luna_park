@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'luna_park/extensions/comparable_debug'
+require 'luna_park/errors'
+
 module LunaPark
   module Extensions
     # @example

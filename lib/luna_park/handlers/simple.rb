@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'luna_park/errors'
+
 module LunaPark
   module Handlers
     class Simple

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'luna_park/extensions/comparable'
+
 module ExtensionsComparableDebugSpec
   class Money
     include LunaPark::Extensions::Comparable
@@ -59,7 +61,7 @@ module LunaPark
       end
     end
 
-    # rubocop:disable Style/HashSyntax, Layout/AlignHash, Layout/MultilineHashBraceLayout, Layout/SpaceAroundOperators, Style/WordArray
+    # rubocop:disable Style/HashSyntax, Layout/MultilineHashBraceLayout, Layout/SpaceAroundOperators, Style/WordArray
     describe '#detailed_comparsion' do
       subject(:detailed_comparsion) { t1.detailed_comparsion(t2) }
 
@@ -74,13 +76,13 @@ module LunaPark
                   { false =>                                    #     (t1.from.charge == t2.from.charge) == false
                     { :currency => { true => ['USD', 'USD'] },  #       (t1.from.charge.currency == t2.from.charge.currency) == ('USD' == 'USD')
                       :amount => { false => [42, 43] } } } } }, #       (t1.from.amount == t2.from.amount) == (42 == 43)
-                :usd =>                                         #   `#from#usd`
+              :usd =>                                         #   `#from#usd`
                   { false =>                                    #     (t1.from.usd == t2.from.usd) == false
                     { :currency => { true => ['USD', 'USD'] },  #       (t1.from.usd.currency == t2.from.usd.currency) == ('USD' == 'USD')
                       :amount => { false => [41, 42] } } } }    #       (t1.from.usd.amount == t2.from.usd.amount) == (41 == 44)
         )
       end
     end
-    # rubocop:enable Style/HashSyntax, Layout/AlignHash, Layout/MultilineHashBraceLayout, Layout/SpaceAroundOperators, Style/WordArray
+    # rubocop:enable Style/HashSyntax, Layout/MultilineHashBraceLayout, Layout/SpaceAroundOperators, Style/WordArray
   end
 end

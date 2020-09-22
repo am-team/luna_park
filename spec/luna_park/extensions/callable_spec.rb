@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'luna_park/extensions/callable'
+
 class SaulGoodman
   extend LunaPark::Extensions::Callable
 

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'luna_park/extensions/dsl/foreign_key'
+
 module ExtensionsDslForeignKeySpec
   class Transaction
     include LunaPark::Extensions::Comparable

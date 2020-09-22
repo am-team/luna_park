@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'luna_park/extensions/validatable'
+require 'luna_park/extensions/validatable/dry'
+
 module ExtensionsValidatableDrySpec
   class MyForm
     include LunaPark::Extensions::Validatable::Dry
@@ -31,6 +34,12 @@ module LunaPark
     subject(:form) { form_class.new(params) }
 
     let(:form_class) { ExtensionsValidatableDrySpec::MyForm }
+
+    describe '.validator()' do
+      subject(:validator) { form_class.validator }
+
+      it { expect(validator).to be_inheritor_of Validators::Dry }
+    end
 
     context 'when invalid params given,' do
       let(:params) { { 'foo' => 'Foo' } }
@@ -69,6 +78,12 @@ module LunaPark
         it 'contains output params' do
           is_expected.to eq foo: 'Foo', bar: 'Bar'
         end
+      end
+    end
+
+    RSpec::Matchers.define :be_inheritor_of do |parent|
+      match do |child|
+        child.ancestors.include? parent
       end
     end
   end

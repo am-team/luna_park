@@ -79,9 +79,11 @@ module Entities
     def height=(height)
         @height = Values::Height.wrap(height)
     end
+
     def weight=(height)
         @height = Values::Weight.wrap(weight)
     end
+
     def birthday=(day)
       @birthday = Date.parse(day)
     end

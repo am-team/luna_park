@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'luna_park/extensions/comparable'
+require 'luna_park/extensions/serializable'
+
 module LunaPark
   module Extensions
     module Dsl

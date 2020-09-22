@@ -2,12 +2,11 @@
 
 module LunaPark
   module Errors
-    class NotConfigured  < StandardError; end
-    class AbstractMethod < StandardError; end
-    class Unwrapable     < TypeError; end
+    class NotConfigured   < StandardError; end
+    class AbstractMethod  < StandardError; end
+    class Unwrapable      < TypeError; end
 
-    class Processing < RuntimeError
-      extend Extensions::Exceptions::Substitutive
-    end
+    class RepositoryError < StandardError; end
+    class NotFound        < RepositoryError; end
   end
 end

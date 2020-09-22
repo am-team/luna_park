@@ -1,4 +1,4 @@
-# Последовательность действий (Sequence)
+# Последовательность действий (Scenario)
 
 Каждый бизнес процесс можно описать при момощи последовательности действий.
 
@@ -12,7 +12,7 @@
 На последней ответственности хотелось бы остановиться подробнее, если у нас имеется какой-то сложный 
 процесс - мы должны описать его так, чтобы было понтяно, что происходит не вдаваясь в технические детали.
 Лучшей практикой будет считаться если вы начнете описывать свой функционал непосредственно с класса 
-_Sequence_. А позже вдаваться в техническую реализацию. Так же как и начинание любого дела лучше начать с его 
+_Scenaio_. А позже вдаваться в техническую реализацию. Так же как и начинание любого дела лучше начать с его 
 плана.
  
 Как мы это сделаем? 
@@ -29,7 +29,7 @@ _Sequence_. А позже вдаваться в техническую реал�
 - Сделать пирог
 - Испечь пирог 
 
-Давайте попробуем описать доменную логику через _Sequence_.
+Давайте попробуем описать доменную логику через _Scenario_.
 
 ## Реализация
 
@@ -37,8 +37,8 @@ _Sequence_. А позже вдаваться в техническую реал�
 # ./app/boundeded_context/services/drink_milk.rb
 
 module Kitchen
-  module Sequences
-    class CookingPieWithСabbage < LunaPark::Sequence
+  module Scenarios
+    class CookingPieWithСabbage < LunaPark::UseCases::Scenario
       TEMPERATURE = Values::Temperature(180, unit: :cel)
          
       def call!
@@ -76,7 +76,7 @@ end
 ### Договоренности
 
 - Метод `call!` является единственным обязательным публичным методом, он описывает порядок действий. 
-- Остальные методы наследуемого от класса `LunaPark::Sequence` должны быть приватными
+- Остальные методы наследуемого от класса `LunaPark::UseCases::Scenario` должны быть приватными
 - Метод `returned_data` является обязательным приватным методом, он описывает возвращаемый результат.
 - Каждый параметр инициализации должен описываться чере сеттер  или `attr_acessor`:
 ```ruby
@@ -108,7 +108,7 @@ filler_ingredients = [
   Entity::Product.new :pepper,  1,   :spoon
 ]
 
-cooking = Kitchen::Sequences::CookingPieWithСabbage.call(
+cooking = Kitchen::Scenarios::CookingPieWithСabbage.call(
   beat_ingredients:   beat_ingredients, 
   filler_ingredients: filler_ingredients
 )
@@ -140,16 +140,16 @@ cooking.data         => nil
 
 module Kitchen
   module Errors
-    class Burned < LunaPark::Errors::Processing; end
+    class Burned < LunaPark::Errors::Processing
+      message 'The pie burned out', i18n: 'errors.kitchen.burn_out' 
+    end
   end
-end
 
-module Kitchen
-  module Services < LunaPark::Service
-    class BakePie    
+  module Services 
+    class BakePie < LunaPark::Callable   
       def call
           # ...
-          rescue Errors::Burned, 'The pie burned out' if pie.burned?
+          raise Errors::Burned, 'The pie burned out' if pie.burned?
           # ...
       end    
     end
@@ -170,7 +170,7 @@ end
 #       класс несколько раз, чтобы понять как он работает.
   
 module Service
-  class CookingPieWithСabbage < LunaPark::Sequence
+  class CookingPieWithСabbage < LunaPark::Scenario
     def call!
       check_products_availability
       make_cabbage_filler
@@ -189,7 +189,7 @@ module Service
 end
 
 # good - используйте вызов действий прямо в класе
-class DrivingStart < LunaPark::Sequence
+class DrivingStart < LunaPark::Scenario
   def call!
     Service::CheckEngine.call
     Service::StartUpTheIgnition.call car, with: key
@@ -204,7 +204,7 @@ end
 ```ruby
 # bad - описывать каждое действие отдельной строкой
 module JesusLife
-  module Sequences
+  module Scenarios
     class FeedingTheApostles
       def call!
         Service::GiveFood.call :fish, to: Repositories::Apostles.get(:pavel)    
@@ -217,7 +217,7 @@ end
 
 # good - действия повторяются, используйте циклы
  module JesusLife 
-    module Sequences
+    module Scenarios
       class FeedingTheApostles
         def call!
           # Iuda dont drink alcohol & he is vegan
@@ -258,12 +258,12 @@ end
 # good - Обычно экземпляр класса _Действия_, редко используется кроме 
 #        того, чтобы писать сделать вызов. Логично использовать сокращенную запись.
  
-Sequence::RingingToPerson.call(params)
+Scenario::RingingToPerson.call(params)
 
 # good - Тем не менее, есть возможность создавать экземпляр объекта _Действия_, 
 #         что может быть полезно, когда нам нужно переиспользовать его, с учетом внутреннего состояния.
 
-ring = Sequence::RingingToPerson.new(person)
+ring = Scenario::RingingToPerson.new(person)
 
 unless ring.success?
   ring.call
@@ -298,8 +298,8 @@ module Services
   end
 end
 
-module Sequences
-  class RegisteringUser < LunaPark::Sequence
+module Scenarios
+  class RegisteringUser < LunaPark::Scenario
     attr_accessor :first_name, :last_name, :phone
 
     def call!
@@ -311,8 +311,8 @@ end
 
 # good - Создание entity,просто в реализации и больше нигде не переиспользуется
 
-module Sequences
-  class RegisteringUser < LunaPark::Sequence
+module Scenarios
+  class RegisteringUser < LunaPark::Scenario
     attr_accessor :first_name, :last_name, :phone
 
     def call!

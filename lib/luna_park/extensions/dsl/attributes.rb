@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+require 'luna_park/extensions/comparable'
+require 'luna_park/extensions/serializable'
+require 'luna_park/extensions/predicate_attr_accessor'
+require 'luna_park/extensions/typed_attr_accessor'
+
 module LunaPark
   module Extensions
     module Dsl
@@ -84,7 +89,7 @@ module LunaPark
         #   attrs name1, name2, name3, Type, :type_method, **attr_options
         #
         # @return [Array of Hash(Symbol => Symbol)] Hash of defined methods
-        def attrs(*args, **options) # rubocop:disable Metrics/MethodLength
+        def attrs(*args, **options) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
           *names, type, type_meth = if args.all? { |arg| arg.is_a?(Symbol) }
                                       [*args, nil, nil]
                                     elsif args[0..-2].all? { |arg| arg.is_a?(Symbol) }
@@ -106,7 +111,7 @@ module LunaPark
         #
         # @param name [Symbol]
         # @param type [Object] any object that responds to method described in next param. Skip if you dont need stypification
-        # @param method [Symbol] (call)
+        # @param type_meth [Symbol] (call)
         # @option options [Bool] comparable (true)
         # @option options [Bool] array (false)
         # @option options [Bool] private_setter (false)
@@ -123,13 +128,6 @@ module LunaPark
           typed_attr_writer(name, type&.method(type_meth), is_array: array)
 
           { getter: name, setter: :"#{name}=" }
-        end
-
-        def attributes_list
-          return @attributes_list if @attributes_list
-
-          raise Errors::NotConfigured,
-                "You must set at least one attribute using #{self}.attr(name, type = nil, type_method = :call)"
         end
       end
     end

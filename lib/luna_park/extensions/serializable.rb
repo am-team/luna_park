@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'luna_park/errors'
+
 module LunaPark
   module Extensions
     # @example
@@ -81,7 +83,7 @@ module LunaPark
         SERIALIZABLE = ->(o) { o.respond_to?(:serialize) }.freeze
         HASHABLE     = ->(o) { o.respond_to?(:to_h) }.freeze
 
-        def serialize_value__(value)
+        def serialize_value__(value) # rubocop:disable Metrics/CyclomaticComplexity
           case value
           when Array then value.map              { |v| serialize_value__(v) } # TODO: work with Array (wrap values)
           when Hash  then value.transform_values { |v| serialize_value__(v) }

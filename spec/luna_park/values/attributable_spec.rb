@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'luna_park/values/attributable'
+
 module ValuesAttributableSpec
   class Money < LunaPark::Values::Attributable
     attr :currency, OpenStruct, :new

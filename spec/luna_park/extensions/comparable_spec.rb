@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'luna_park/extensions/comparable'
+
 module ExtensionsComparableSpec
   Book = Struct.new(:title, :author, :weight) do
     include LunaPark::Extensions::Comparable

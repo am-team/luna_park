@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'luna_park/extensions/exceptions/substitutive'
+
 module ExtensionsExceptionsSubstitutiveSpec
   class RegularError < StandardError; end
 
@@ -59,6 +61,19 @@ module LunaPark
     describe 'replaced exception' do
       it 'not includes backtrace of origin exception' do
         expect(replaced_exception.backtrace).not_to include origin_exception.backtrace.first
+      end
+    end
+
+    describe '#cover_up_backtrace' do
+      it 'should get original backtrace' do
+        begin
+          original_error = ExtensionsExceptionsSubstitutiveSpec::SubstitutiveError.new('Something went wrong')
+          raise original_error
+        rescue StandardError => e
+          raise e.cover_up_backtrace
+        end
+      rescue StandardError => e
+        expect(e.backtrace).to eq original_error.backtrace
       end
     end
 

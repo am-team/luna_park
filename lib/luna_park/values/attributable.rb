@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+require 'luna_park/values/compound'
+require 'luna_park/extensions/comparable'
+require 'luna_park/extensions/serializable'
+require 'luna_park/extensions/dsl/attributes'
+
 module LunaPark
   module Values
     class Attributable < Compound

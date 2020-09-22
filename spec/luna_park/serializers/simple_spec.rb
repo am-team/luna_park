@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'luna_park/serializers/simple'
+
 class MySimpleSerializer < LunaPark::Serializers::Simple
   def to_h
     {
