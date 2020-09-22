@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2020-09-22
+Added
+- Add adaptive errors
+- Add new http client
+- Add new type of interactor - Scenario
+- Add new pattern Notifier, with logger & bugsnag implementation
+- Add new extensions of repositories: CRUD
+- Add `rake console` command
+Fixed
+- Codependent gems can be requested if they are installed with the correct version number
+
+## [0.9.0]
+Was experimental and didn't make it to the master branch
+
 ## [0.8.5] - 2019-07-12
 Added
 - Extensions::Attributable and Extensions::Serializable now can not duplicate attribute names
