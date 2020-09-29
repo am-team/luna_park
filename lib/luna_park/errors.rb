@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'luna_park/errors/processing'
+
 module LunaPark
   module Errors
     class NotConfigured   < StandardError; end
