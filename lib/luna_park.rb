@@ -39,7 +39,7 @@ require 'luna_park/extensions/repositories/postgres/create'
 require 'luna_park/extensions/repositories/postgres/read'
 require 'luna_park/extensions/repositories/postgres/update'
 require 'luna_park/extensions/repositories/postgres/delete'
-LunaPark::Tools.if_gem_installed('dry-validations', '~> 1.1') { require 'luna_park/extensions/validatable/dry' }
+LunaPark::Tools.if_gem_installed('dry-validation', '~> 1.1') { require 'luna_park/extensions/validatable/dry' }
 require 'luna_park/entities/simple'
 require 'luna_park/entities/attributable'
 require 'luna_park/entities/nested'
@@ -57,7 +57,7 @@ require 'luna_park/interactors/scenario'
 require 'luna_park/serializers/simple'
 require 'luna_park/callable'
 
-LunaPark::Tools.if_gem_installed('dry-validations', '~> 1.1') { require 'luna_park/validators/dry' }
+LunaPark::Tools.if_gem_installed('dry-validation', '~> 1.1') { require 'luna_park/validators/dry' }
 
 require 'luna_park/values/compound'
 require 'luna_park/values/single'
