@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-require 'i18n'
+require 'luna_park/tools'
 require 'luna_park/extensions/exceptions/substitutive'
+
+require 'i18n' if LunaPark::Tools.gem_installed?('i18n')
 
 module LunaPark
   module Errors
