@@ -62,7 +62,7 @@ module LunaPark
       # @return [LunaPark::Http::Response]
       def call!
         call.tap do |response|
-          raise Errors::Http.new(response.status, response: response) unless response.success?
+          raise response.exception unless response.success?
         end
       end
 

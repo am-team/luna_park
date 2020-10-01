@@ -279,6 +279,10 @@ module LunaPark
         STATUSES[code] || 'Unknown'
       end
 
+      def exception
+        @exception ||= Errors::Http.new(status, response: self) unless success?
+      end
+
       # Try to parse this response body from JSON format. If body
       # doesn`t consists expected JSON format, you catch {Errors::JsonParse}.
       # Also you can get only payload data if define payload_key.
