@@ -121,7 +121,7 @@ module LunaPark
           dependencies[name] = block
 
           define_method(name) do
-            dependencies.run_with_cache(name)
+            dependencies.call_with_cache(name)
           end
         end
 

@@ -22,7 +22,7 @@ module LunaPark
         expect(engine.dependencies[:fuel]).to be_an_instance_of Proc
       end
 
-      it 'should define dependency geter' do
+      it 'should define dependency getter' do
         expect(engine.fuel).to be_an_instance_of Fuel
       end
     end

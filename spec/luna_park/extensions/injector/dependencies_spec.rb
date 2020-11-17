@@ -24,7 +24,7 @@ module LunaPark
       let(:result) { double call: :result }
       let(:dependencies) { described_class.try_convert(foo: -> { result.call }) }
 
-      subject(:run_dependency) { dependencies.run_with_cache(:foo) }
+      subject(:run_dependency) { dependencies.call_with_cache(:foo) }
 
       it 'should return call result' do
         is_expected.to eq :result
@@ -38,7 +38,7 @@ module LunaPark
       end
 
       context 'when run undefined dependency' do
-        subject(:run_dependency) { dependencies.run_with_cache(:undefined) }
+        subject(:run_dependency) { dependencies.call_with_cache(:undefined) }
 
         it { expect { run_dependency }.to raise_error NoMethodError }
       end
@@ -53,11 +53,11 @@ module LunaPark
     describe '#[]=' do
       let(:result)         { double }
       let(:dependencies)   { described_class.try_convert(foo: -> { nil }) }
-      let(:run_dependency) { dependencies.run_with_cache(:foo) }
+      let(:run_dependency) { dependencies.call_with_cache(:foo) }
 
       it 'should reset memorization' do
         expect { dependencies[:foo] = -> { result } }.to change {
-          dependencies.run_with_cache(:foo)
+          dependencies.call_with_cache(:foo)
         }.from(nil).to(result)
       end
     end
