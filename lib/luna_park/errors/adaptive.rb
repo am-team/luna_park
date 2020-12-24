@@ -184,7 +184,21 @@ module LunaPark
       #   error = TemperatureError.new 'Please do not use fahrenheits'
       #   error.message #=> 'Please do not use fahrenheits'
       def message(locale: nil)
-        @message || self.class.translate(locale: locale) || self.class.default_message
+        @message || localized_message(locale) || default_message
+      end
+
+      # Return translation of an error message if 18n_key is defined
+      #
+      # @param locale [Symbol] - specified locale
+      # @return [String] - Translated text
+      def localized_message(locale = nil)
+        I18n.t(self.class.i18n_key, locale: locale, **details) if self.class.i18n_key
+      end
+
+      # @abstract
+      # @return [String] - Default message
+      def default_message
+        self.class.default_message
       end
 
       class << self
@@ -228,14 +242,6 @@ module LunaPark
           @default_message = txt
           @i18n_key        = i18n_key
           nil
-        end
-
-        # Return translation of an error message if 18n_key is defined
-        #
-        # @param locale [Symbol] - specified locale
-        # @return [String] - Translated text
-        def translate(locale: nil)
-          I18n.t(i18n_key, locale: locale) if i18n_key
         end
 
         # Default error message if it's not specified (see #message) it same class name

@@ -2,4 +2,5 @@
 en:
   errors:
     example: Example
+    variable: Example with "%{variable}" variable
     you_die: You die

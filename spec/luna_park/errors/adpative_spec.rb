@@ -118,7 +118,7 @@ module LunaPark
       context 'message defined in class' do
         let(:error) do
           Class.new(described_class) do
-            message 'Class message'
+            message 'Static message'
           end
         end
 
@@ -126,7 +126,7 @@ module LunaPark
           subject(:message) { error.new.message }
 
           it 'should be eq class name' do
-            is_expected.to eq 'Class message'
+            is_expected.to eq 'Static message'
           end
         end
 
@@ -137,6 +137,94 @@ module LunaPark
           it 'should be eq class name' do
             is_expected.to eq msg
           end
+        end
+      end
+
+      context 'message defined in instance' do
+        subject(:message) { error.new(foo: 'bar').message }
+
+        let(:error) do
+          Class.new(described_class) do
+            def default_message
+              "Dynamic message with variable '#{details[:foo]}'"
+            end
+          end
+        end
+
+        it 'should be expected dynamic message' do
+          is_expected.to eq "Dynamic message with variable 'bar'"
+        end
+      end
+    end
+
+    describe '#default_message' do
+      subject(:default_message) { error.new.default_message }
+
+      let(:error) do
+        Class.new(described_class) do
+          message 'Static message'
+        end
+      end
+
+      it 'is equal to .default_message' do
+        is_expected.to eq error.default_message
+      end
+
+      it 'is equal to expected message' do
+        is_expected.to eq 'Static message'
+      end
+    end
+
+    describe '#localized_message' do
+      subject(:localized_message) { error.new.localized_message(:ru) }
+
+      let(:error) do
+        Class.new(described_class) do
+          message 'Static message', i18n_key: 'errors.example'
+        end
+      end
+
+      it 'is equal to expected message at default locale' do
+        is_expected.to eq 'Пример'
+      end
+
+      context 'when i18n_key is not specified' do
+        subject(:localized_message) { error.new.localized_message(:en) }
+
+        let(:error) do
+          Class.new(described_class) do
+            message 'Static message'
+          end
+        end
+
+        it { is_expected.to be_nil }
+      end
+
+      context 'when locale is not given' do
+        subject(:localized_message) { error.new.localized_message }
+
+        let(:error) do
+          Class.new(described_class) do
+            message 'Static message', i18n_key: 'errors.example'
+          end
+        end
+
+        it 'is equal to expected message at default locale' do
+          is_expected.to eq I18n.t('errors.example', locale: I18n.default_locale)
+        end
+      end
+
+      context 'with details as variables' do
+        subject(:localized_message) { error.new(variable: 'FOO', extra: 'bar').localized_message(:en) }
+
+        let(:error) do
+          Class.new(described_class) do
+            message 'Static message', i18n_key: 'errors.variable'
+          end
+        end
+
+        it 'contains details in translation' do
+          is_expected.to eq 'Example with "FOO" variable'
         end
       end
     end
@@ -307,42 +395,6 @@ module LunaPark
 
         it 'is eq error class name' do
           is_expected.to eq error_class.name
-        end
-      end
-    end
-
-    describe '.translate' do
-      subject(:translate) { error_class.translate }
-
-      context 'when i18n key is not defined' do
-        let(:error_class) { described_class }
-
-        it { is_expected.to eq nil }
-      end
-
-      context 'when i18n_key is defined' do
-        let(:error_class) do
-          Class.new(described_class) do
-            message i18n_key: 'errors.example'
-          end
-        end
-
-        it 'is eq translation of default locale' do
-          is_expected.to eq 'Example'
-        end
-      end
-
-      context 'when i18n_key is defined and selected locale' do
-        subject(:translate) { error_class.translate locale: :ru }
-
-        let(:error_class) do
-          Class.new(described_class) do
-            message i18n_key: 'errors.example'
-          end
-        end
-
-        it 'is eq  translation of selected locale' do
-          is_expected.to eq 'Пример'
         end
       end
     end
