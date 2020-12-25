@@ -195,10 +195,9 @@ module LunaPark
         I18n.t(self.class.i18n_key, locale: locale, **details) if self.class.i18n_key
       end
 
-      # @abstract
       # @return [String] - Default message
       def default_message
-        self.class.default_message
+        self.class.build_message&.call(details) || self.class.name
       end
 
       class << self
@@ -211,6 +210,11 @@ module LunaPark
         #
         # @return [NilClass, String] internationalization key
         attr_reader :i18n_key
+
+        # Proc, that receives details hash: { detail_key => detail_value }
+        #
+        # @private
+        attr_reader :build_message
 
         # Specifies the expected behavior of the error handler if an error
         # instance of this class is raised
@@ -238,17 +242,10 @@ module LunaPark
         # @param txt [String] - text of message
         # @param i18n_key [String] - internationalization key
         # @return [NilClass]
-        def message(txt = nil, i18n_key: nil)
-          @default_message = txt
-          @i18n_key        = i18n_key
+        def message(txt = nil, i18n_key: nil, &build_message)
+          @build_message = block_given? ? build_message : ->(_) { txt }
+          @i18n_key      = i18n_key
           nil
-        end
-
-        # Default error message if it's not specified (see #message) it same class name
-        #
-        # @return [String] - text of default error message
-        def default_message
-          @default_message ||= name
         end
 
         # Default handler action if it's not specified (see #on_error) it is `:raise`

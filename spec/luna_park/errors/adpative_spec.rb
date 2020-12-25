@@ -140,38 +140,18 @@ module LunaPark
         end
       end
 
-      context 'message defined in instance' do
-        subject(:message) { error.new(foo: 'bar').message }
+      context 'message defined with block' do
+        subject(:message) { error.new(foo: 'FOO').message }
 
         let(:error) do
           Class.new(described_class) do
-            def default_message
-              "Dynamic message with variable '#{details[:foo]}'"
-            end
+            message { |d| "Dynamic message with variable '#{d[:foo]}'" }
           end
         end
 
         it 'should be expected dynamic message' do
-          is_expected.to eq "Dynamic message with variable 'bar'"
+          is_expected.to eq "Dynamic message with variable 'FOO'"
         end
-      end
-    end
-
-    describe '#default_message' do
-      subject(:default_message) { error.new.default_message }
-
-      let(:error) do
-        Class.new(described_class) do
-          message 'Static message'
-        end
-      end
-
-      it 'is equal to .default_message' do
-        is_expected.to eq error.default_message
-      end
-
-      it 'is equal to expected message' do
-        is_expected.to eq 'Static message'
       end
     end
 
@@ -330,16 +310,32 @@ module LunaPark
     describe '.message' do
       let(:error_class) do
         Class.new(described_class) do
-          message 'Text', i18n_key: 'errors.example_key'
+          message 'Static message', i18n_key: 'errors.example_key'
         end
       end
 
-      it 'define default action' do
-        expect(error_class.default_message).to eq 'Text'
+      it 'defines build_message' do
+        expect(error_class.build_message).to be_a Proc
       end
 
-      it 'define 118n_key' do
+      it 'defines build_message that builds expected message' do
+        expect(error_class.build_message.call({})).to eq 'Static message'
+      end
+
+      it 'defines 118n_key' do
         expect(error_class.i18n_key).to eq 'errors.example_key'
+      end
+
+      context 'when use default message block' do
+        let(:error_class) do
+          Class.new(described_class) do
+            message(i18n_key: 'errors.example_key') { |d| "Dynamic message #{d[:foo]}" }
+          end
+        end
+
+        it 'defines build_message that builds expected message' do
+          expect(error_class.build_message.call({ foo: 'Foo' })).to eq 'Dynamic message Foo'
+        end
       end
 
       context 'when use undefined action value' do
@@ -363,38 +359,46 @@ module LunaPark
       end
     end
 
-    describe '.default_message' do
-      subject(:default_message) { error_class.default_message }
+    describe '.build_message' do
+      subject(:build_message) { error_class.build_message }
 
       context 'when default message is not defined' do
         let(:error_class) { described_class }
 
-        it 'is eq error class name' do
-          is_expected.to eq error_class.name
+        it 'is nil' do
+          is_expected.to be_nil
         end
       end
 
       context 'when default message is defined' do
         let(:error_class) do
           Class.new(described_class) do
-            message 'Defined message'
+            message 'Static message'
           end
         end
 
-        it 'is eq defined message' do
-          is_expected.to eq 'Defined message'
+        it 'is a Proc' do
+          is_expected.to be_a Proc
+        end
+
+        it 'can build defined message' do
+          expect(build_message.call({})).to eq 'Static message'
         end
       end
 
-      context 'when i18n key is defined' do
+      context 'when default message is defined with block' do
         let(:error_class) do
           Class.new(described_class) do
-            message i18n_key: 'errors.example'
+            message { |d| "Message with detail '#{d[:detail]}'" }
           end
         end
 
-        it 'is eq error class name' do
-          is_expected.to eq error_class.name
+        it 'is a Proc' do
+          is_expected.to be_a Proc
+        end
+
+        it 'can build expected message' do
+          expect(build_message.call({ detail: 'DETAIL' })).to eq "Message with detail 'DETAIL'"
         end
       end
     end
