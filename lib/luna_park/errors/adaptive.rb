@@ -163,7 +163,7 @@ module LunaPark
       # @return [String] message text
       #
       # @example message is undefined
-      #   error = LunaPark::Errors::Adaptive
+      #   error = LunaPark::Errors::Adaptive.new
       #   error.message # => 'LunaPark::Errors::Adaptive'
       #
       # @example message is defined in class
@@ -173,31 +173,49 @@ module LunaPark
       #   error = ExampleError.new
       #   error.message # => 'Answer is 42'
       #
+      # @example message is defined in class with block
+      #   class ExampleError < LunaPark::Errors::Adaptive
+      #     message { |details| "Answer is `#{details[:correct]}` - not `#{details[:wrong]}`" }
+      #   end
+      #   error = ExampleError.new(correct: 42, wrong: 420)
+      #   error.message # => 'Answer is `42` - not `420`'
+      #
       # @example message is in internalization config
       #   class TemperatureError < LunaPark::Errors::Adaptive
       #     message 'Forgive Kuzma, my feet froze', i18n_key: 'errors.temperature'
       #   end
       #   error = TemperatureError.new
-      #   error.message(locale: ru) # => 'Прости Кузьма, замерзли ноги!'
+      #   error.message(locale: :ru) # => 'Прости Кузьма, замерзли ноги!'
+      #
+      # @example message is in internalization config with i18n interpolation
+      #   class TemperatureError < LunaPark::Errors::Adaptive
+      #     message i18n_key: 'errors.max_age'
+      #   end
+      #   error = MinAgeError.new(min_age: 21)
+      #   error.message(locale: :en) # => "Only available for ages 21 and older"
       #
       # @example action defined in an instance
       #   error = TemperatureError.new 'Please do not use fahrenheits'
       #   error.message #=> 'Please do not use fahrenheits'
       def message(locale: nil)
-        @message || localized_message(locale) || default_message
+        @message || localized_message(locale) || build_default_message || self.class.name
       end
+
+      private
 
       # Return translation of an error message if 18n_key is defined
       #
       # @param locale [Symbol] - specified locale
       # @return [String] - Translated text
-      def localized_message(locale = nil)
+      def localized_message(locale = nil, skip_error: true)
+        return unless skip_error || I18n.exists?(self.class.i18n_key)
+
         I18n.t(self.class.i18n_key, locale: locale, **details) if self.class.i18n_key
       end
 
       # @return [String] - Default message
-      def default_message
-        self.class.build_message&.call(details) || self.class.name
+      def build_default_message
+        self.class.default_message_block&.call(details)
       end
 
       class << self
@@ -214,7 +232,7 @@ module LunaPark
         # Proc, that receives details hash: { detail_key => detail_value }
         #
         # @private
-        attr_reader :build_message
+        attr_reader :default_message_block
 
         # Specifies the expected behavior of the error handler if an error
         # instance of this class is raised
@@ -242,9 +260,9 @@ module LunaPark
         # @param txt [String] - text of message
         # @param i18n_key [String] - internationalization key
         # @return [NilClass]
-        def message(txt = nil, i18n_key: nil, &build_message)
-          @build_message = block_given? ? build_message : ->(_) { txt }
-          @i18n_key      = i18n_key
+        def message(txt = nil, i18n_key: nil, &default_message_block)
+          @default_message_block = block_given? ? default_message_block : ->(_) { txt }
+          @i18n_key = i18n_key
           nil
         end
 

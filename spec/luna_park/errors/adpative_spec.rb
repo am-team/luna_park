@@ -106,44 +106,34 @@ module LunaPark
         end
       end
 
-      context 'message is defined on initialization error object' do
-        let(:msg) { 'defined message' }
-        subject(:message) { described_class.new(msg).message }
+      context 'message is given on initialization' do
+        subject(:message) { described_class.new('given message').message }
 
         it 'should be eq class name' do
-          is_expected.to eq msg
+          is_expected.to eq 'given message'
         end
       end
 
-      context 'message defined in class' do
-        let(:error) do
+      context 'message is defined in class by string' do
+        let(:error_class) do
           Class.new(described_class) do
-            message 'Static message'
+            message 'Static default message'
           end
         end
 
         context 'message is not defined on initialization error object' do
-          subject(:message) { error.new.message }
+          subject(:message) { error_class.new.message }
 
           it 'should be eq class name' do
-            is_expected.to eq 'Static message'
-          end
-        end
-
-        context 'message is defined on initialization error object' do
-          let(:msg) { 'defined message' }
-          subject(:message) { error.new(msg).message }
-
-          it 'should be eq class name' do
-            is_expected.to eq msg
+            is_expected.to eq 'Static default message'
           end
         end
       end
 
-      context 'message defined with block' do
-        subject(:message) { error.new(foo: 'FOO').message }
+      context 'message defined in class by block' do
+        subject(:message) { error_class.new(foo: 'FOO').message }
 
-        let(:error) do
+        let(:error_class) do
           Class.new(described_class) do
             message { |d| "Dynamic message with variable '#{d[:foo]}'" }
           end
@@ -153,59 +143,36 @@ module LunaPark
           is_expected.to eq "Dynamic message with variable 'FOO'"
         end
       end
-    end
 
-    describe '#localized_message' do
-      subject(:localized_message) { error.new.localized_message(:ru) }
-
-      let(:error) do
-        Class.new(described_class) do
-          message 'Static message', i18n_key: 'errors.example'
-        end
-      end
-
-      it 'is equal to expected message at default locale' do
-        is_expected.to eq 'Пример'
-      end
-
-      context 'when i18n_key is not specified' do
-        subject(:localized_message) { error.new.localized_message(:en) }
-
-        let(:error) do
+      context 'message is defined with i18n' do
+        let(:error) { error_class.new(foo: 'FOO') }
+        let(:error_class) do
           Class.new(described_class) do
-            message 'Static message'
-          end
-        end
-
-        it { is_expected.to be_nil }
-      end
-
-      context 'when locale is not given' do
-        subject(:localized_message) { error.new.localized_message }
-
-        let(:error) do
-          Class.new(described_class) do
-            message 'Static message', i18n_key: 'errors.example'
+            message 'Static default message', i18n_key: 'errors.example'
           end
         end
 
         it 'is equal to expected message at default locale' do
-          is_expected.to eq I18n.t('errors.example', locale: I18n.default_locale)
+          expect(error.message).to eq 'Example'
+        end
+
+        it 'is equal to expected message at given locale' do
+          expect(error.message(locale: :fr)).to eq 'Exemple'
+        end
+      end
+    end
+
+    context 'message is defined with i18n that has interpolation' do
+      subject(:message) { error_class.new(variable: 'FOO', extra: 'bar').message(locale: :en) }
+
+      let(:error_class) do
+        Class.new(described_class) do
+          message 'Static default message', i18n_key: 'errors.variable'
         end
       end
 
-      context 'with details as variables' do
-        subject(:localized_message) { error.new(variable: 'FOO', extra: 'bar').localized_message(:en) }
-
-        let(:error) do
-          Class.new(described_class) do
-            message 'Static message', i18n_key: 'errors.variable'
-          end
-        end
-
-        it 'contains details in translation' do
-          is_expected.to eq 'Example with "FOO" variable'
-        end
+      it 'contains details in translation' do
+        is_expected.to eq 'Example with "FOO" variable'
       end
     end
 
@@ -310,16 +277,16 @@ module LunaPark
     describe '.message' do
       let(:error_class) do
         Class.new(described_class) do
-          message 'Static message', i18n_key: 'errors.example_key'
+          message 'Static default message', i18n_key: 'errors.example_key'
         end
       end
 
-      it 'defines build_message' do
-        expect(error_class.build_message).to be_a Proc
+      it 'defines default_message_block' do
+        expect(error_class.default_message_block).to be_a Proc
       end
 
-      it 'defines build_message that builds expected message' do
-        expect(error_class.build_message.call({})).to eq 'Static message'
+      it 'defines default_message_block that builds expected message' do
+        expect(error_class.default_message_block.call({})).to eq 'Static default message'
       end
 
       it 'defines 118n_key' do
@@ -333,8 +300,8 @@ module LunaPark
           end
         end
 
-        it 'defines build_message that builds expected message' do
-          expect(error_class.build_message.call({ foo: 'Foo' })).to eq 'Dynamic message Foo'
+        it 'defines default_message_block that builds expected message' do
+          expect(error_class.default_message_block.call({ foo: 'Foo' })).to eq 'Dynamic message Foo'
         end
       end
 
@@ -359,8 +326,8 @@ module LunaPark
       end
     end
 
-    describe '.build_message' do
-      subject(:build_message) { error_class.build_message }
+    describe '.default_message_block' do
+      subject(:default_message_block) { error_class.default_message_block }
 
       context 'when default message is not defined' do
         let(:error_class) { described_class }
@@ -373,7 +340,7 @@ module LunaPark
       context 'when default message is defined' do
         let(:error_class) do
           Class.new(described_class) do
-            message 'Static message'
+            message 'Static default message'
           end
         end
 
@@ -382,7 +349,7 @@ module LunaPark
         end
 
         it 'can build defined message' do
-          expect(build_message.call({})).to eq 'Static message'
+          expect(default_message_block.call({})).to eq 'Static default message'
         end
       end
 
@@ -398,7 +365,7 @@ module LunaPark
         end
 
         it 'can build expected message' do
-          expect(build_message.call({ detail: 'DETAIL' })).to eq "Message with detail 'DETAIL'"
+          expect(default_message_block.call({ detail: 'DETAIL' })).to eq "Message with detail 'DETAIL'"
         end
       end
     end
