@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.10.5] - 2021-01-15
 Added
+- Errors::Adaptive configurations like .message, .on_error will work with inheritance now
+
+## [0.10.5] - 2021-01-15
+Added
 - default message in Errors::Adaptive now can be generated with details usage, when message defined with block
 ```
 class WrongAnswerError < LunaPark::Errors::Adaptive
