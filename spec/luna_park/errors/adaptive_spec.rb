@@ -329,6 +329,25 @@ module LunaPark
         end
       end
 
+      context 'when inherited' do
+        let(:error_superclass) do
+          Class.new(described_class) do
+            message(i18n_key: 'errors.example_key') { 'Default message' }
+          end
+        end
+        let(:error_class) { Class.new(error_superclass) }
+
+        it 'child has same default_message_block' do
+          expect(error_class.default_message_block).to eq error_superclass.default_message_block
+        end
+
+        it 'child has same i18n_key' do
+          expect(error_class.i18n_key).to eq error_superclass.i18n_key
+        end
+      end
+    end
+
+    describe '.on_error' do
       context 'when use undefined action value' do
         let(:error_class) do
           Class.new(described_class) do
@@ -347,6 +366,23 @@ module LunaPark
         end
 
         it { expect { error_class }.to raise_error ArgumentError }
+      end
+
+      context 'when inherited' do
+        let(:error_superclass) do
+          Class.new(described_class) do
+            on_error action: :catch, notify: :info
+          end
+        end
+        let(:error_class) { Class.new(error_superclass) }
+
+        it 'child has same default_action' do
+          expect(error_class.default_action).to eq :catch
+        end
+
+        it 'child has same default_notify' do
+          expect(error_class.default_notify).to eq :info
+        end
       end
     end
 
