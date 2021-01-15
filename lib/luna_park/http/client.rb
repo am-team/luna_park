@@ -93,8 +93,8 @@ module LunaPark
     #   checkout.success?     # => false
     #   checkout.fail_message # => "Not enough funds in your account"
     class Client
-      DEFAULT_OPEN_TIMEOUT = 10
-      DEFAULT_READ_TIMEOUT = 10
+      DEFAULT_OPEN_TIMEOUT = 60
+      DEFAULT_READ_TIMEOUT = 60
       DEFAULT_DRIVER       = LunaPark::Http::Send
       DEFAULT_METHOD       = :get
       # Build plain request

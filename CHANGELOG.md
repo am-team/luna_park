@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.5] - 2021-01-15
+Added
+- default message in Errors::Adaptive now can be generated with details usage, when message defined with block
+```
+class WrongAnswerError < LunaPark::Errors::Adaptive
+  message { |d| "Answer is `#{d[:correct]}` - not `#{d[:wrong]}`" }
+end
+```
+- i18n messages in Errors::Adaptive now can use i18n interpolation
+```
+de:
+  errors:
+    wrong_answer: Die richtige Antwort ist %{correct}, nicht %{wrong}
+```
+
 ## [0.10.4] - 2020-11-16
 Added
 - Add injector method
