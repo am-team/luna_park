@@ -34,6 +34,7 @@ module LunaPark
       NOTIFY_VALUES           = [true, false, :debug, :info, :warning, :error, :fatal, :unknown].freeze
       NOTIFY_LEVELS           = %i[debug info warning error fatal unknown].freeze
       DEFAULT_ACTION          = :raise
+      DEFAULT_NOTIFY          = false
       DEFAULT_NOTIFY_LEVEL    = :error
 
       private_constant :ACTION_VALUES, :NOTIFY_VALUES, :NOTIFY_LEVELS, :DEFAULT_NOTIFY_LEVEL
@@ -264,7 +265,7 @@ module LunaPark
         # @param notify [Symbol] - set behavior of the notification (see #default_notify)
         #
         # @return [NilClass]
-        def on_error(action: self::DEFAULT_ACTION, notify: false)
+        def on_error(action: self::DEFAULT_ACTION, notify: self::DEFAULT_NOTIFY)
           raise ArgumentError, "Unexpected action #{action}"       unless ACTION_VALUES.include? action
           raise ArgumentError, "Unexpected notify value #{notify}" unless NOTIFY_VALUES.include? notify
 
@@ -289,6 +290,20 @@ module LunaPark
         # @return [Symbol]
         def default_action
           @default_action ||= self::DEFAULT_ACTION
+        end
+
+        def inherited(inheritor)
+          if default_message_block
+            inheritor.message(i18n_key: i18n_key, &default_message_block)
+          elsif i18n_key
+            inheritor.message(i18n_key: i18n_key)
+          end
+
+          inheritor.on_error(
+            action: default_action,
+            notify: default_notify || self::DEFAULT_NOTIFY
+          )
+          super
         end
       end
     end
