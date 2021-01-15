@@ -172,15 +172,6 @@ module LunaPark
       #
       #   WrongAnswerError.new.message # => 'Answer is 42'
       #
-      # @example message is defined in class with block
-      #   class WrongAnswerError < LunaPark::Errors::Adaptive
-      #     message { |details| "Answer is `#{details[:correct]}` - not `#{details[:wrong]}`" }
-      #   end
-      #
-      #   error = WrongAnswerError.new(correct: 42, wrong: 420)
-      #   error.message # => 'Answer is `42` - not `420`'
-      #   error.details # => { correct: 42, wrong: 420 }
-      #
       # @example message is in internatialization config
       #   # I18n YML
       #   # ru:
@@ -194,18 +185,26 @@ module LunaPark
       #   error = FrostError.new
       #   error.message(locale: :ru) # => 'Прости Кузьма, замерзли ноги!'
       #
-      # @example message is in internalization config with i18n interpolation
-      #   # I18n YML
-      #   # en:
-      #   #   errors:
-      #   #     too_young: Only available for ages %{min_age} and older
-      #
-      #   class MinAgeError < LunaPark::Errors::Adaptive
-      #     message i18n_key: 'errors.too_young'
+      # @example message is defined in class with block
+      #   class WrongAnswerError < LunaPark::Errors::Adaptive
+      #     message { |details| "Answer is '#{details[:correct]}' - not '#{details[:wrong]}'" }
       #   end
       #
-      #   error = MinAgeError.new(min_age: 21)
-      #   error.message(locale: :en) # => "Only available for ages 21 and older"
+      #   error = WrongAnswerError.new(correct: 42, wrong: 420)
+      #   error.message # => "Answer is '42' - not '420'"
+      #
+      # @example message is in internalization config with i18n interpolation
+      #   # I18n YML
+      #   # de:
+      #   #   errors:
+      #   #     wrong_answer: Die richtige Antwort ist '%{correct}', nicht '%{wrong}'
+      #
+      #   class WrongAnswerError < LunaPark::Errors::Adaptive
+      #     message i18n_key: 'errors.wrong_answer'
+      #   end
+      #
+      #   error = WrongAnswerError.new(correct: 42, wrong: 420)
+      #   error.message(locale: :de) # => "Die richtige Antwort ist '42', nicht '420'"
       #
       # @example action defined in an instance
       #   error = TemperatureValueError.new 'Please do not use fahrenheits'
