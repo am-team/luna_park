@@ -162,6 +162,32 @@ module LunaPark
       end
     end
 
+    context 'message is defined with i18n, but has no default translation' do
+      let(:error_class) do
+        Class.new(described_class) do
+          message 'Default message', i18n_key: 'foo'
+        end
+      end
+
+      before { skip 'Not implemented yet' }
+
+      it 'is equal to default message' do
+        expect(error_class.new.message(locale: :en)).to eq 'Default message'
+      end
+    end
+
+    context 'message is defined only with i18n, but has no default translation' do
+      let(:error_class) do
+        Class.new(described_class) do
+          message i18n_key: 'errors.foo'
+        end
+      end
+
+      it 'is equal to translation missing error text' do
+        expect(error_class.new.message(locale: :en)).to eq 'translation missing: en.errors.foo'
+      end
+    end
+
     context 'message is defined with i18n that has interpolation' do
       subject(:message) { error_class.new(variable: 'FOO', extra: 'bar').message(locale: :en) }
 

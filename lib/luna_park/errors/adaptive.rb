@@ -156,46 +156,59 @@ module LunaPark
       #
       # The message text is defined in the following order:
       # 1. In the `initialize` method
-      # 2. Translated message, if i18n key was set (see #self.on_error)
-      # 3. In the class method (see #self.on_error)
+      # 2. Translated message, if i18n key was settled in class (see `.message`)
+      # 3. In the class method (see `.message`)
       #
       # @param locale [Symbol,String]
       # @return [String] message text
       #
-      # @example message is undefined
-      #   error = LunaPark::Errors::Adaptive.new
-      #   error.message # => 'LunaPark::Errors::Adaptive'
+      # @example message is not settled
+      #   LunaPark::Errors::Adaptive.new.message # => 'LunaPark::Errors::Adaptive'
       #
       # @example message is defined in class
-      #   class ExampleError < LunaPark::Errors::Adaptive
+      #   class WrongAnswerError < LunaPark::Errors::Adaptive
       #     message 'Answer is 42'
       #   end
-      #   error = ExampleError.new
-      #   error.message # => 'Answer is 42'
+      #
+      #   WrongAnswerError.new.message # => 'Answer is 42'
       #
       # @example message is defined in class with block
-      #   class ExampleError < LunaPark::Errors::Adaptive
+      #   class WrongAnswerError < LunaPark::Errors::Adaptive
       #     message { |details| "Answer is `#{details[:correct]}` - not `#{details[:wrong]}`" }
       #   end
-      #   error = ExampleError.new(correct: 42, wrong: 420)
-      #   error.message # => 'Answer is `42` - not `420`'
       #
-      # @example message is in internalization config
-      #   class TemperatureError < LunaPark::Errors::Adaptive
-      #     message 'Forgive Kuzma, my feet froze', i18n_key: 'errors.temperature'
+      #   error = WrongAnswerError.new(correct: 42, wrong: 420)
+      #   error.message # => 'Answer is `42` - not `420`'
+      #   error.details # => { correct: 42, wrong: 420 }
+      #
+      # @example message is in internatialization config
+      #   # I18n YML
+      #   # ru:
+      #   #   errors:
+      #   #     frost: Прости Кузьма, замерзли ноги!
+      #
+      #   class FrostError < LunaPark::Errors::Adaptive
+      #     message 'Forgive Kuzma, my feet froze', i18n_key: 'errors.frost'
       #   end
-      #   error = TemperatureError.new
+      #
+      #   error = FrostError.new
       #   error.message(locale: :ru) # => 'Прости Кузьма, замерзли ноги!'
       #
       # @example message is in internalization config with i18n interpolation
-      #   class TemperatureError < LunaPark::Errors::Adaptive
-      #     message i18n_key: 'errors.max_age'
+      #   # I18n YML
+      #   # en:
+      #   #   errors:
+      #   #     too_young: Only available for ages %{min_age} and older
+      #
+      #   class MinAgeError < LunaPark::Errors::Adaptive
+      #     message i18n_key: 'errors.too_young'
       #   end
+      #
       #   error = MinAgeError.new(min_age: 21)
       #   error.message(locale: :en) # => "Only available for ages 21 and older"
       #
       # @example action defined in an instance
-      #   error = TemperatureError.new 'Please do not use fahrenheits'
+      #   error = TemperatureValueError.new 'Please do not use fahrenheits'
       #   error.message #=> 'Please do not use fahrenheits'
       def message(locale: nil)
         @message || localized_message(locale) || build_default_message || self.class.name
