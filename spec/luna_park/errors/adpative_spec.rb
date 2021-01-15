@@ -169,8 +169,6 @@ module LunaPark
         end
       end
 
-      before { skip 'Not implemented yet' }
-
       it 'is equal to default message' do
         expect(error_class.new.message(locale: :en)).to eq 'Default message'
       end

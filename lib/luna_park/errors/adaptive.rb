@@ -211,19 +211,25 @@ module LunaPark
       #   error = TemperatureValueError.new 'Please do not use fahrenheits'
       #   error.message #=> 'Please do not use fahrenheits'
       def message(locale: nil)
-        @message || localized_message(locale) || build_default_message || self.class.name
+        return @message if @message
+
+        default_message = build_default_message
+        localized_message(locale, show_error: default_message.nil?) || default_message || self.class.name
       end
 
       private
 
       # Return translation of an error message if 18n_key is defined
+      # if `show_error: true` and translation is missing, will return string 'translation missing: path'
+      # if `show_error: false` and translation is missing, will return nil
       #
       # @param locale [Symbol] - specified locale
       # @return [String] - Translated text
-      def localized_message(locale = nil, skip_error: true)
-        return unless skip_error || I18n.exists?(self.class.i18n_key)
+      def localized_message(locale = nil, show_error:)
+        return unless self.class.i18n_key
+        return unless show_error || I18n.exists?(self.class.i18n_key)
 
-        I18n.t(self.class.i18n_key, locale: locale, **details) if self.class.i18n_key
+        I18n.t(self.class.i18n_key, locale: locale, **details)
       end
 
       # @return [String] - Default message
@@ -274,7 +280,7 @@ module LunaPark
         # @param i18n_key [String] - internationalization key
         # @return [NilClass]
         def message(txt = nil, i18n_key: nil, &default_message_block)
-          @default_message_block = block_given? ? default_message_block : ->(_) { txt }
+          @default_message_block = block_given? ? default_message_block : txt && ->(_) { txt }
           @i18n_key = i18n_key
           nil
         end
