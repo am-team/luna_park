@@ -33,11 +33,88 @@ module LunaPark
       ACTION_VALUES           = %i[stop catch raise].freeze
       NOTIFY_VALUES           = [true, false, :debug, :info, :warning, :error, :fatal, :unknown].freeze
       NOTIFY_LEVELS           = %i[debug info warning error fatal unknown].freeze
-      DEFAULT_ACTION          = :raise
-      DEFAULT_NOTIFY          = false
       DEFAULT_NOTIFY_LEVEL    = :error
 
       private_constant :ACTION_VALUES, :NOTIFY_VALUES, :NOTIFY_LEVELS, :DEFAULT_NOTIFY_LEVEL
+
+      class << self
+        # Explains how this error class will be notified
+        #
+        # @return [Boolean, Symbol] the behavior of the notification
+        attr_reader :default_notify
+
+        # Default handler action if it's not specified
+        #
+        # @return [Symbol]
+        attr_reader :default_action
+
+        # What the key of the translation was selected for this error
+        #
+        # @return [NilClass, String] internationalization key
+        attr_reader :i18n_key
+
+        # Proc, that receives details hash: { detail_key => detail_value }
+        #
+        # @private
+        attr_reader :default_message_block
+
+        # Specifies the expected behavior of the error handler if an error
+        # instance of this class is raised
+        #
+        # @param action [Symbol] action:
+        #   - :stop - stop the application and don't give any feedback (
+        #     Something has happened, but the user doesn't know what it is )
+        #   - :catch - send a fail message to end-user, handler should catch it (usually it is used in business layer)
+        #   - :raise - works like StandardError, and it is handled on application layer
+        #
+        # @param notify [Symbol] - set behavior of the notification (see #default_notify)
+        #
+        # @return [NilClass]
+        def on_error(action: nil, notify: nil)
+          self.default_action = action unless action.nil?
+          self.default_notify = notify unless notify.nil?
+
+          nil
+        end
+
+        # Specify default error message
+        #
+        # @param txt [String] - text of message
+        # @param i18n_key [String] - internationalization key
+        # @return [NilClass]
+        def message(txt = nil, i18n_key: nil, &default_message_block)
+          @default_message_block = block_given? ? default_message_block : txt && ->(_) { txt }
+          @i18n_key = i18n_key
+          nil
+        end
+
+        def inherited(inheritor)
+          if default_message_block
+            inheritor.message(i18n_key: i18n_key, &default_message_block)
+          elsif i18n_key
+            inheritor.message(i18n_key: i18n_key)
+          end
+
+          inheritor.default_action = default_action
+          inheritor.default_notify = default_notify
+
+          super
+        end
+
+        protected
+
+        def default_action=(action)
+          raise ArgumentError, "Unexpected action #{action}" unless ACTION_VALUES.include? action
+          @default_action = action
+        end
+
+        def default_notify=(notify)
+          raise ArgumentError, "Unexpected notify value #{notify}" unless NOTIFY_VALUES.include? notify
+          @default_notify = notify
+        end
+      end
+
+      on_error action: :raise, notify: false
 
       # It is additional information which extends the notification message
       #
@@ -235,76 +312,6 @@ module LunaPark
       # @return [String] - Default message
       def build_default_message
         self.class.default_message_block&.call(details)
-      end
-
-      class << self
-        # Explains how this error class will be notified
-        #
-        # @return [Boolean, Symbol] the behavior of the notification
-        attr_reader :default_notify
-
-        # What the key of the translation was selected for this error
-        #
-        # @return [NilClass, String] internationalization key
-        attr_reader :i18n_key
-
-        # Proc, that receives details hash: { detail_key => detail_value }
-        #
-        # @private
-        attr_reader :default_message_block
-
-        # Specifies the expected behavior of the error handler if an error
-        # instance of this class is raised
-        #
-        # @param action [Symbol] action:
-        #   - :stop - stop the application and don't give any feedback (
-        #     Something has happened, but the user doesn't know what it is )
-        #   - :catch - send a fail message to end-user, handler should catch it (usually it is used in business layer)
-        #   - :raise - works like StandardError, and it is handled on application layer
-        #
-        # @param notify [Symbol] - set behavior of the notification (see #default_notify)
-        #
-        # @return [NilClass]
-        def on_error(action: self::DEFAULT_ACTION, notify: self::DEFAULT_NOTIFY)
-          raise ArgumentError, "Unexpected action #{action}"       unless ACTION_VALUES.include? action
-          raise ArgumentError, "Unexpected notify value #{notify}" unless NOTIFY_VALUES.include? notify
-
-          @default_action = action
-          @default_notify = notify
-          nil
-        end
-
-        # Specify default error message
-        #
-        # @param txt [String] - text of message
-        # @param i18n_key [String] - internationalization key
-        # @return [NilClass]
-        def message(txt = nil, i18n_key: nil, &default_message_block)
-          @default_message_block = block_given? ? default_message_block : txt && ->(_) { txt }
-          @i18n_key = i18n_key
-          nil
-        end
-
-        # Default handler action if it's not specified (see #on_error) it is `:raise`
-        #
-        # @return [Symbol]
-        def default_action
-          @default_action ||= self::DEFAULT_ACTION
-        end
-
-        def inherited(inheritor)
-          if default_message_block
-            inheritor.message(i18n_key: i18n_key, &default_message_block)
-          elsif i18n_key
-            inheritor.message(i18n_key: i18n_key)
-          end
-
-          inheritor.on_error(
-            action: default_action,
-            notify: default_notify || self::DEFAULT_NOTIFY
-          )
-          super
-        end
       end
     end
   end

@@ -5,7 +5,7 @@ require 'luna_park/errors/adaptive'
 module LunaPark
   module Errors
     class Processing < Adaptive
-      DEFAULT_ACTION = :catch
+      on_error action: :catch
 
       # The expected behavior of the error handler if an error
       # instance of this class is raised
