@@ -222,8 +222,8 @@ module LunaPark
       context 'when default notify is not defined' do
         let(:error_class) { described_class }
 
-        it 'is eq error class name' do
-          is_expected.to eq nil
+        it 'is eq error false' do
+          is_expected.to eq false
         end
       end
 
