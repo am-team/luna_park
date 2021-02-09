@@ -46,6 +46,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rest-client', '~> 2.1'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 0.87'
+  spec.add_development_dependency 'sentry-ruby', '~> 4.2'
   spec.add_development_dependency 'simplecov', '~> 0.18'
   spec.add_development_dependency 'timecop', '~> 0.9'
   spec.add_development_dependency 'webmock', '~> 3.7.0'

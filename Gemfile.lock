@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    luna_park (0.10.7)
+    luna_park (0.10.8)
 
 GEM
   remote: https://rubygems.org/
@@ -64,6 +64,11 @@ GEM
       dry-equalizer (~> 0.2)
       dry-initializer (~> 3.0)
       dry-schema (~> 1.5)
+    faraday (1.3.0)
+      faraday-net_http (~> 1.0)
+      multipart-post (>= 1.2, < 3)
+      ruby2_keywords
+    faraday-net_http (1.0.1)
     hashdiff (1.0.1)
     http-accept (1.7.0)
     http-cookie (1.0.3)
@@ -76,6 +81,7 @@ GEM
     mime-types (3.3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2020.0512)
+    multipart-post (2.1.1)
     netrc (0.11.0)
     overcommit (0.55.0)
       childprocess (>= 0.6.3, < 5)
@@ -124,7 +130,15 @@ GEM
     rubocop-ast (0.1.0)
       parser (>= 2.7.0.1)
     ruby-progressbar (1.10.1)
+    ruby2_keywords (0.0.4)
     safe_yaml (1.0.5)
+    sentry-ruby (4.2.1)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      faraday (>= 1.0)
+      sentry-ruby-core (= 4.2.1)
+    sentry-ruby-core (4.2.1)
+      concurrent-ruby
+      faraday
     simplecov (0.18.5)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -158,6 +172,7 @@ DEPENDENCIES
   rest-client (~> 2.1)
   rspec (~> 3.0)
   rubocop (~> 0.87)
+  sentry-ruby (~> 4.2)
   simplecov (~> 0.18)
   timecop (~> 0.9)
   webmock (~> 3.7.0)

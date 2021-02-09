@@ -49,6 +49,7 @@ require 'luna_park/forms/single_item'
 
 LunaPark::Tools.if_gem_installed('rest-client', '~> 2.1') { require 'luna_park/http/client' }
 LunaPark::Tools.if_gem_installed('bugsnag', '~> 6') { require 'luna_park/notifiers/bugsnag' }
+LunaPark::Tools.if_gem_installed('sentry-ruby', '~> 4') { require 'luna_park/notifiers/sentry' }
 
 require 'luna_park/notifiers/log'
 
