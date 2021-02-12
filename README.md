@@ -13,7 +13,7 @@ This project is under development. At first we are planing to complete Russian g
 
 See [GUIDELINE](https://am-team.github.io/luna_park/) it is on russian.
 
-English documentation is coming soon.
+English [RDOC](https://rubydoc.info/github/am-team/luna_park/master) also avaliable.
 
 ## Installation
 
