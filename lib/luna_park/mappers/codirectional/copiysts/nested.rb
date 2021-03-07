@@ -1,12 +1,32 @@
 # frozen_string_literal: true
 
-require 'luna_park/mappers/codirectional/errors'
-
 module LunaPark
   module Mappers
     class Codirectional < Simple
       module Copyists
-        class Abstract
+        # Copyist for copiyng value between two schemas with DIFFERENT or NESTED paths
+        #   (Works with only one described attribute)
+        class Nested
+          def initialize(attrs_path:, row_path:)
+            @attrs_path = attrs_path
+            @row_path   = row_path
+
+            raise ArgumentError, 'attr path can not be nil'  if attrs_path.nil?
+            raise ArgumentError, 'store path can not be nil' if row_path.nil?
+          end
+
+          def path?(*paths)
+            paths.any? { |path| [@attrs_path, @row_path].include? path }
+          end
+
+          def from_row(row:, attrs:)
+            copy_nested(from: row, to: attrs, from_path: @row_path, to_path: @attrs_path)
+          end
+
+          def to_row(row:, attrs:)
+            copy_nested(from: attrs, to: row, from_path: @attrs_path, to_path: @row_path)
+          end
+
           private
 
           def copy_nested(from:, to:, from_path:, to_path:)
@@ -56,16 +76,14 @@ module LunaPark
 
           #
           # @example
-          #   nested_hash = { a: {} }
-          #   build_nested_hash(nested_hash, [:a, :b, :c]) # => {} # (returns new hash at path [:a, :b, :c])
-          #
-          #   nested_hash # => { a: { b: { c: {} } } }
+          #   hash = { a: { x: 'x' } }
+          #   build_nested_hash(hash, [:a, :b, :c]) # => {} # (returns new hash at path [:a, :b, :c])
+          #   hash # => { a: { b: { c: {} }, x: 'x' } }
           #
           # @example
-          #   nested_hash = { a: {} }
-          #   build_nested_hash(nested_hash, [:a, :b, :c])[:d] = 'value'
-          #
-          #   nested_hash # => { a: { b: { c: { d: 'value' } } } }
+          #   hash = { a: { x: 'x' } }
+          #   build_nested_hash(hash, [:a, :b, :c])[:d] = 'value'
+          #   hash # => { a: { b: { c: { d: 'value' } }, x: 'x' } }
           def build_nested_hash(nested_hash, path)
             path.inject(nested_hash) { |output, key| output[key] ||= {} }
           end

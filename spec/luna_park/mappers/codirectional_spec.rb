@@ -5,12 +5,12 @@ require 'luna_park/serializers/simple'
 
 module MappersCodirectionalSpec
   class TransactionMapper < LunaPark::Mappers::Codirectional
-    map entity: :uid,                      store: :id
-    map entity: %i[funds charge amount],   store: :funds_charge_amount
-    map attr:   %i[funds charge currency], row:   :funds_charge_currency
-    map %i[sizes waist]
-    map %i[sizes length]
-    map :comment
+    attr :uid,                      row: :id
+    attr %i[funds charge amount],   row: :funds_charge_amount
+    attr %i[funds charge currency], row: :funds_charge_currency
+    attr %i[sizes waist]
+    attr %i[sizes length]
+    attr :comment
   end
 
   class Transaction

@@ -42,26 +42,20 @@ module LunaPark
       end
 
       module ClassMethods
-        attr_reader :entity_class, :mapper_class
-
         # Configure repository
 
         def entity(entity_class = nil)
-          @entity_class = entity_class
+          entity_class ? @entity_class = entity_class : @entity_class
         end
 
         def mapper(mapper_class = nil)
-          @mapper_class = mapper_class
+          mapper_class ? @mapper_class = mapper_class : @mapper_class
         end
 
         DEFAULT_PRIMARY_KEY = :id
 
         def primary_key(pk = nil)
-          @db_primary_key = pk
-        end
-
-        def db_primary_key
-          @db_primary_key || DEFAULT_PRIMARY_KEY
+          pk ? @primary_key = pk : @primary_key || DEFAULT_PRIMARY_KEY
         end
       end
 
@@ -172,15 +166,15 @@ module LunaPark
         # Read config
 
         def mapper_class
-          self.class.mapper_class
+          self.class.mapper
         end
 
         def entity_class
-          self.class.entity_class
+          self.class.entity
         end
 
         def primary_key
-          self.class.db_primary_key
+          self.class.primary_key
         end
 
         # Factory Methods

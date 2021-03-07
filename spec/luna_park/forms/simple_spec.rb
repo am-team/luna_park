@@ -19,21 +19,21 @@ module FormsSimpleSpec
       include Singleton
 
       def initialize
-        @records = []
+        @rows = []
       end
 
-      def save(record)
-        records << record
+      def save(row)
+        rows << row
         self
       end
 
       def count
-        records.size
+        rows.size
       end
 
       private
 
-      attr_reader :records
+      attr_reader :rows
     end
 
     class RegisterVisitor < LunaPark::Forms::Simple
@@ -64,8 +64,8 @@ module LunaPark
       end
     end
 
-    let(:correct_record)   { { name: 'John Doe' } }
-    let(:incorrect_record) { { name: 42 } }
+    let(:correct_row)   { { name: 'John Doe' } }
+    let(:incorrect_row) { { name: 42 } }
     let(:klass) { FormsSimpleSpec::Reception::RegisterVisitor }
 
     let(:form) { klass.new(params) }
@@ -73,15 +73,15 @@ module LunaPark
     describe '.submit' do
       subject { form.submit }
 
-      context 'when fill form with correct record,' do
-        let(:params) { correct_record }
+      context 'when fill form with correct row,' do
+        let(:params) { correct_row }
 
         it { is_expected.to be true }
         it_behaves_like 'performed'
       end
 
-      context 'when fill form with incorrect record,' do
-        let(:params) { incorrect_record }
+      context 'when fill form with incorrect row,' do
+        let(:params) { incorrect_row }
 
         it { is_expected.to be false }
         it_behaves_like 'not performed'
@@ -89,7 +89,7 @@ module LunaPark
 
       context 'when perform method undefined,' do
         let(:defected_klass) { klass.dup }
-        let(:form) { defected_klass.new correct_record }
+        let(:form) { defected_klass.new correct_row }
         before { defected_klass.remove_method :perform }
 
         it 'raises AbstractMethod error,' do
@@ -101,15 +101,15 @@ module LunaPark
     describe '.errors' do
       subject { form.errors }
 
-      context 'when fill form with correct record,' do
-        let(:params) { correct_record }
+      context 'when fill form with correct row,' do
+        let(:params) { correct_row }
 
         it { is_expected.to be_instance_of Hash }
         it { is_expected.to be_empty }
       end
 
-      context 'when fill form with incorrect record,' do
-        let(:params) { incorrect_record }
+      context 'when fill form with incorrect row,' do
+        let(:params) { incorrect_row }
 
         it { is_expected.to be_instance_of Hash }
         it { is_expected.to_not be_empty }
@@ -120,7 +120,7 @@ module LunaPark
       subject { form.result }
 
       context 'before form submited,' do
-        let(:params) { correct_record }
+        let(:params) { correct_row }
 
         it { is_expected.to be_nil }
       end
@@ -128,16 +128,16 @@ module LunaPark
       context 'after form submited,' do
         before { form.submit }
 
-        context 'when fill form with correct record,' do
-          let(:params) { correct_record }
+        context 'when fill form with correct row,' do
+          let(:params) { correct_row }
 
           it 'returns performed object' do
             is_expected.to eq repo
           end
         end
 
-        context 'when fill form with incorrect record,' do
-          let(:params) { incorrect_record }
+        context 'when fill form with incorrect row,' do
+          let(:params) { incorrect_row }
 
           it { is_expected.to be_nil }
         end

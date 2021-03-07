@@ -67,6 +67,7 @@ module LunaPark
         # Transforms array of rows to array of attribute hashes
         def from_rows(rows)
           return [] if rows.nil?
+          raise "input MUST be an Array, but given `#{rows.inspect}`" unless rows.is_a?(Array)
 
           rows.to_a.map { |hash| from_row(hash) }
         end
@@ -75,6 +76,7 @@ module LunaPark
         # Transforms array of attribute hashes to array of rows
         def to_rows(attr_hashes)
           return [] if attr_hashes.nil?
+          raise "input MUST be an Array, but given `#{attr_hashes.inspect}`" unless attr_hashes.is_a?(Array)
 
           attr_hashes.to_a.map { |entity| to_row(entity) }
         end
