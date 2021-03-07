@@ -11,7 +11,7 @@ RSpec.describe LunaPark::Extensions::Repositories::Postgres::Delete do
 
       attr_accessor :dataset
 
-      primary_key :uid
+      record_primary_key :uid
     end
   end
   let(:fake_repo) { fake_repo_klass.new }

@@ -9,7 +9,7 @@ module LunaPark
             entity = wrap(input)
             entity.updated_at = Time.now.utc
             row = to_row(entity)
-            new_row = dataset.returning.where(primary_key => row[primary_key]).update(row).first
+            new_row = dataset.returning.where(wrap_pk_to_record(input)).update(row).first
             new_attrs = from_row(new_row)
             entity.set_attributes(new_attrs)
             entity

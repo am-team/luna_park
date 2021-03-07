@@ -5,8 +5,8 @@ module LunaPark
     module Repositories
       module Postgres
         module Delete
-          def delete(uid)
-            dataset.returning.where(primary_key => uid).delete
+          def delete(input)
+            dataset.returning.where(wrap_pk_to_record(input)).delete
           end
         end
       end

@@ -5,22 +5,13 @@ module LunaPark
     module Repositories
       module Postgres
         module Read
-          def find!(pk_value, for_update: false)
-            ds = dataset.where(primary_key => pk_value)
-            read_one!(ds, for_update: for_update, not_found_meta: pk_value)
+          def find!(input, for_update: false)
+            found! find(input, for_update: for_update), not_found_meta: input
           end
 
-          def find(pk_value, for_update: false)
-            ds = dataset.where(primary_key => pk_value)
+          def find(input, for_update: false)
+            ds = dataset.where(wrap_pk_to_record(input))
             read_one(ds, for_update: for_update)
-          end
-
-          def lock!(pk_value)
-            lock(pk_value) || raise(Errors::NotFound, "#{short_class_name} (#{pk_value})")
-          end
-
-          def lock(pk_value)
-            dataset.for_update.select(primary_key).where(primary_key => pk_value).first ? true : false
           end
 
           def count
@@ -31,6 +22,10 @@ module LunaPark
             read_all(dataset.order { created_at.desc })
           end
 
+          def first
+            to_entity from_row dataset.order(:created_at).first
+          end
+
           def last
             to_entity from_row dataset.order(:created_at).last
           end
@@ -38,9 +33,13 @@ module LunaPark
           private
 
           def read_one!(dataset, for_update: false, not_found_meta:)
-            read_one(dataset, for_update: for_update).tap do |entity|
-              raise Errors::NotFound, "#{short_class_name} (#{not_found_meta})" if entity.nil?
-            end
+            found! read_one(dataset, for_update: for_update), not_found_meta: not_found_meta
+          end
+
+          def found!(entity, not_found_meta:)
+            return entity if entity
+
+            raise Errors::NotFound, "#{short_class_name} (#{not_found_meta})" if entity.nil?
           end
 
           def read_one(dataset, for_update: false)

@@ -56,13 +56,21 @@ module LunaPark
 
         DEFAULT_PRIMARY_KEY = :id
 
-        def primary_key(pk = nil)
-          @db_primary_key = pk
+        def record_primary_key(pk = nil)
+          return @record_primary_key      if @record_primary_key
+          return @record_primary_key = pk if pk
+
+          @record_primary_key || DEFAULT_PRIMARY_KEY
         end
 
-        def db_primary_key
-          @db_primary_key || DEFAULT_PRIMARY_KEY
+        # DEPRECATED! Use `.record_primary_key` instead
+        # @deprecated
+        def primary_key(pk = nil)
+          warn 'DEPRECATED! Use `.record_primary_key` instead'
+          record_primary_key(pk)
         end
+
+        alias record_pk record_primary_key
       end
 
       module InstanceMethods
@@ -169,6 +177,15 @@ module LunaPark
           entity_class ? entity_class.wrap(input) : input
         end
 
+        def wrap_pk_to_record(input)
+          case input
+          when nil          then nil
+          when entity_class then { self.class.record_primary_key => input.to_h[self.class.record_primary_key] }
+          when Hash         then { self.class.record_primary_key => input[self.class.record_primary_key] }
+          else                   { self.class.record_primary_key => input }
+          end
+        end
+
         # Read config
 
         def mapper_class
@@ -177,10 +194,6 @@ module LunaPark
 
         def entity_class
           self.class.entity_class
-        end
-
-        def primary_key
-          self.class.db_primary_key
         end
 
         # Factory Methods

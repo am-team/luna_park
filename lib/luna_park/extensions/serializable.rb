@@ -32,24 +32,24 @@ module LunaPark
         def serializable_attributes(*names)
           raise 'No attributes given' if names.compact.empty?
 
-          @serializable_attributes_list ||= []
-          @serializable_attributes_list |= names
+          self.serializable_attributes_list |= names
         end
 
         ##
         # List of methods that will be used for serialization via `#to_h` and `#serialize` methods
         def serializable_attributes_list
-          return @serializable_attributes_list if @serializable_attributes_list
-
-          raise Errors::NotConfigured,
-                "You must set at least one serializable attribute using #{self}.serializable_attributes(*names)"
+          @serializable_attributes_list ||= []
         end
+
+        protected
+
+        attr_writer :serializable_attributes_list
 
         private
 
         def inherited(child)
           super
-          child.instance_variable_set(:@serializable_attributes_list, @serializable_attributes_list&.dup)
+          child.serializable_attributes_list = serializable_attributes_list&.dup
         end
       end
 

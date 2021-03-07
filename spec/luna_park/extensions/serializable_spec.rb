@@ -7,14 +7,11 @@ module ExtensionsSerializableSpec
     include LunaPark::Extensions::Serializable
 
     attr_accessor :title, :author, :comment, :in_sale
-
-    protected(:in_sale)
+    serializable_attributes :title, :author, :in_sale
 
     def in_sale?
       @in_sale
     end
-
-    serializable_attributes :title, :author, :in_sale
   end
 
   class ElectronicBook < Book; end
@@ -96,10 +93,8 @@ module LunaPark
         end
         # rubocop:enable Style/ClassAndModuleChildren, Style/StructInheritance
 
-        it 'raises meaningfull exception' do
-          expect { to_h }.to raise_error Errors::NotConfigured,
-                                         'You must set at least one serializable attribute ' \
-                                         'using ExtensionsSerializableSpec::ClassName.serializable_attributes(*names)'
+        it 'returns empty hash' do
+          expect(to_h).to eq({})
         end
       end
     end

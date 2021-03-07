@@ -105,11 +105,13 @@ module LunaPark
 
         def default_action=(action)
           raise ArgumentError, "Unexpected action #{action}" unless ACTION_VALUES.include? action
+
           @default_action = action
         end
 
         def default_notify=(notify)
           raise ArgumentError, "Unexpected notify value #{notify}" unless NOTIFY_VALUES.include? notify
+
           @default_notify = notify
         end
       end

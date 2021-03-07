@@ -5,7 +5,8 @@ require 'luna_park/extensions/comparable'
 module ExtensionsComparableDebugSpec
   class Money
     include LunaPark::Extensions::Comparable
-    include LunaPark::Extensions::ComparableDebug
+
+    enable_debug
 
     attr_reader :currency, :amount
 
@@ -19,7 +20,8 @@ module ExtensionsComparableDebugSpec
 
   class Src
     include LunaPark::Extensions::Comparable
-    include LunaPark::Extensions::ComparableDebug
+
+    enable_debug
 
     attr_reader :charge, :account
 
@@ -33,7 +35,8 @@ module ExtensionsComparableDebugSpec
 
   class Transaction
     include LunaPark::Extensions::Comparable
-    include LunaPark::Extensions::ComparableDebug
+
+    enable_debug
 
     attr_reader :from, :usd
 
@@ -76,7 +79,7 @@ module LunaPark
                   { false =>                                    #     (t1.from.charge == t2.from.charge) == false
                     { :currency => { true => ['USD', 'USD'] },  #       (t1.from.charge.currency == t2.from.charge.currency) == ('USD' == 'USD')
                       :amount => { false => [42, 43] } } } } }, #       (t1.from.amount == t2.from.amount) == (42 == 43)
-              :usd =>                                         #   `#from#usd`
+              :usd =>                                           #   `#from#usd`
                   { false =>                                    #     (t1.from.usd == t2.from.usd) == false
                     { :currency => { true => ['USD', 'USD'] },  #       (t1.from.usd.currency == t2.from.usd.currency) == ('USD' == 'USD')
                       :amount => { false => [41, 42] } } } }    #       (t1.from.usd.amount == t2.from.usd.amount) == (41 == 44)
