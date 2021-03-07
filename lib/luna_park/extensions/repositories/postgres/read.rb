@@ -38,19 +38,23 @@ module LunaPark
           private
 
           def read_one!(dataset, for_update: false, not_found_meta:)
-            read_one(dataset, for_update: for_update).tap do |entity|
-              raise Errors::NotFound, "#{short_class_name} (#{not_found_meta})" if entity.nil?
-            end
+            found! read_one(dataset, for_update: for_update), not_found_meta: not_found_meta
+          end
+
+          def found!(entity, not_found_meta:)
+            return entity if entity
+
+            raise Errors::NotFound, "#{short_class_name} (#{not_found_meta})"
           end
 
           def read_one(dataset, for_update: false)
             dataset = dataset.for_update if for_update
-            row = dataset.first
-            to_entity from_row(row)
+            record = dataset.first
+            to_entity from_record(record)
           end
 
           def read_all(dataset)
-            to_entities from_rows(dataset)
+            to_entities from_records(dataset)
           end
 
           def short_class_name

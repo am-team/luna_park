@@ -14,12 +14,12 @@ module LunaPark
             @keys << key
           end
 
-          def from_row(row:, attrs:)
-            attrs.merge! row.slice(*@keys)
+          def from_record(record:, attrs:)
+            attrs.merge! record.slice(*@keys)
           end
 
-          def to_row(row:, attrs:)
-            row.merge! attrs.slice(*@keys)
+          def to_record(record:, attrs:)
+            record.merge! attrs.slice(*@keys)
           end
         end
       end

@@ -44,11 +44,11 @@ RSpec.describe LunaPark::Extensions::Repositories::Postgres::Read do
     let(:uid) { 42 }
 
     context 'when exist' do
-      let(:fake_row) { { uid: uid, foo: 'FOO' } }
+      let(:fake_record) { { uid: uid, foo: 'FOO' } }
 
-      before { allow(fake_dataset).to receive(:where).with(uid: uid).and_return([fake_row]) }
+      before { allow(fake_dataset).to receive(:where).with(uid: uid).and_return([fake_record]) }
 
-      it { is_expected.to eq fake_entity_klass.new(fake_row) }
+      it { is_expected.to eq fake_entity_klass.new(fake_record) }
     end
 
     context 'when not exist' do
@@ -63,11 +63,11 @@ RSpec.describe LunaPark::Extensions::Repositories::Postgres::Read do
     let(:uid) { 42 }
 
     context 'when exist' do
-      let(:fake_row) { { uid: uid, foo: 'FOO' } }
+      let(:fake_record) { { uid: uid, foo: 'FOO' } }
 
-      before { allow(fake_dataset).to receive(:where).with(uid: uid).and_return([fake_row]) }
+      before { allow(fake_dataset).to receive(:where).with(uid: uid).and_return([fake_record]) }
 
-      it { is_expected.to eq fake_entity_klass.new(fake_row) }
+      it { is_expected.to eq fake_entity_klass.new(fake_record) }
     end
 
     context 'when not exist' do
