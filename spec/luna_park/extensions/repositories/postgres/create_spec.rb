@@ -39,12 +39,12 @@ RSpec.describe LunaPark::Extensions::Repositories::Postgres::Create do
   describe '#create' do
     subject(:create) { fake_repo.create(params) }
 
-    let(:params)           { { uid: fake_uid, foo: 'FOO', bar: 'BAR' } }
-    let(:fake_created_row) { params.merge(created_at: time_now, updated_at: time_now) }
+    let(:params)              { { uid: fake_uid, foo: 'FOO', bar: 'BAR' } }
+    let(:fake_created_record) { params.merge(created_at: time_now, updated_at: time_now) }
 
     before do
       fake_repo.dataset = double
-      allow(fake_repo.dataset).to receive_message_chain(:returning, :insert, :first).and_return(fake_created_row)
+      allow(fake_repo.dataset).to receive_message_chain(:returning, :insert, :first).and_return(fake_created_record)
     end
 
     it 'returns entity' do

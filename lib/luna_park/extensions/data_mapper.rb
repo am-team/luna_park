@@ -18,10 +18,10 @@ module LunaPark
     #     end
     #
     #     def save(input)
-    #       entity = wrap(input)
-    #       row    = to_row(entity)
-    #       new_row   = products.where(id: entity.id).update(row)
-    #       new_attrs = from_row(new_row)
+    #       entity     = wrap(input)
+    #       record     = to_record(entity)
+    #       new_record = products.where(id: entity.id).update(record)
+    #       new_attrs  = from_record(new_record)
     #       entity.set_attributes(new_attrs)
     #       entity
     #     end
@@ -74,63 +74,83 @@ module LunaPark
 
         # Helpers
 
-        # Get collection of entities from row
+        # Get collection of entities from record
         # @example
         #   def where_type(type)
         #     read_all products.where(type: type)
         #   end
-        def read_all(rows)
-          to_entities from_rows rows.to_a
+        def read_all(records)
+          to_entities from_records records.to_a
         end
 
-        # Get one entity from row
+        # Get one entity from record
         # @example
         #   def find(id)
         #     read_all products.where(id: id)
         #   end
-        def read_one(row)
-          to_entity from_row row
+        def read_one(record)
+          to_entity from_record record
         end
 
         # Mapper helpers
 
         # @example
         #   def create(entities)
-        #     rows = to_rows(entities)
-        #     database.insert_many(rows)
+        #     records = to_records(entities)
+        #     database.insert_many(records)
         #   end
-        def to_rows(input_array)
-          mapper_class ? mapper_class.to_rows(input_array) : input_array.map(&:to_h)
+        def to_records(input_array)
+          mapper_class ? mapper_class.to_records(input_array) : input_array.map(&:to_h)
         end
 
         # @example
         #   def create(entity)
-        #     row = to_row(entity)
-        #     database.insert(row)
+        #     record = to_record(entity)
+        #     database.insert(record)
         #   end
-        def to_row(input)
-          mapper_class ? mapper_class.to_row(input) : input.to_h
+        def to_record(input)
+          mapper_class ? mapper_class.to_record(input) : input.to_h
         end
 
         # @example
         #   def where_type(type)
-        #     entities_attrs = from_rows(products.where(type: type))
+        #     entities_attrs = from_records(products.where(type: type))
         #     entities_attrs.map { |entity_attrs| Entity.new(entity_attrs) }
         #   end
-        def from_rows(rows_array)
-          mapper_class ? mapper_class.from_rows(rows_array) : rows_array
+        def from_records(records_array)
+          mapper_class ? mapper_class.from_records(records_array) : records_array
         end
 
         # @example
         #   def find(id)
-        #     entity_attrs = from_row(products.where(id: id))
+        #     entity_attrs = from_record(products.where(id: id))
         #     Entity.new(entity_attrs)
         #   end
-        def from_row(input)
+        def from_record(input)
           return if input.nil?
           raise ArgumentError, 'Can not be an Array' if input.is_a?(Array)
 
-          mapper_class ? mapper_class.from_row(input.to_h) : input
+          mapper_class ? mapper_class.from_record(input.to_h) : input
+        end
+
+        # @deprecated
+        def to_rows(input_array)
+          to_records(input_array)
+        end
+
+        # @deprecated
+        def to_row(input)
+          to_record(input)
+        end
+
+        # @deprecated
+        def from_rows(records_array)
+          from_records(records_array)
+        end
+
+        # @deprecated
+        def from_row(input)
+          from_record(input)
         end
 
         # Entity construction helpers
@@ -147,7 +167,7 @@ module LunaPark
         def to_entity(attrs)
           return if attrs.nil?
 
-          entity_class ? entity_class.new(attrs) : attrs
+          entity_class ? entity_class.wrap(attrs) : attrs
         end
 
         # Entity wrapping helpers

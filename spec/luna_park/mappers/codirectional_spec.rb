@@ -5,9 +5,9 @@ require 'luna_park/serializers/simple'
 
 module MappersCodirectionalSpec
   class TransactionMapper < LunaPark::Mappers::Codirectional
-    attr :uid,                      row: :id
-    attr %i[funds charge amount],   row: :funds_charge_amount
-    attr %i[funds charge currency], row: :funds_charge_currency
+    attr :uid,                      record: :id
+    attr %i[funds charge amount],   record: :funds_charge_amount
+    attr %i[funds charge currency], record: :funds_charge_currency
     attr %i[sizes waist]
     attr %i[sizes length]
     attr :comment
@@ -62,27 +62,27 @@ module LunaPark
     let(:sizes) { { waist: 42, length: 176 } }
 
     let(:attrs) { { uid: 42, funds: { charge: { amount: 10, currency: 'USD' } }, sizes: sizes, comment: 'Foobar' } }
-    let(:row)   { { id: 42, funds_charge_amount: 10, funds_charge_currency: 'USD', sizes: sizes, comment: 'Foobar' } }
+    let(:record)   { { id: 42, funds_charge_amount: 10, funds_charge_currency: 'USD', sizes: sizes, comment: 'Foobar' } }
 
-    describe '.to_row' do
-      subject(:to_row) { mapper.to_row(input) }
+    describe '.to_record' do
+      subject(:to_record) { mapper.to_record(input) }
 
       let(:input) { attrs }
 
-      it 'transforms nested attributes to row' do
-        is_expected.to eq row
+      it 'transforms nested attributes to record' do
+        is_expected.to eq record
       end
 
       context 'when given object,' do
         let(:input) { MappersCodirectionalSpec::Transaction.new(**attrs) }
 
         it 'converts object to attributes before mapping' do
-          is_expected.to eq row
+          is_expected.to eq record
         end
 
         it 'uses `#to_h` for converts object to attributes' do
           expect(input).to receive(:to_h).and_call_original
-          to_row
+          to_record
         end
       end
 
@@ -96,16 +96,16 @@ module LunaPark
       end
     end
 
-    describe '.from_row' do
-      subject(:from_row) { mapper.from_row(input) }
+    describe '.from_record' do
+      subject(:from_record) { mapper.from_record(input) }
 
-      let(:input) { row }
+      let(:input) { record }
 
-      it 'transforms row to nested attributes' do
+      it 'transforms record to nested attributes' do
         is_expected.to eq attrs
       end
 
-      context 'when given not full row,' do
+      context 'when given not full record,' do
         let(:input)           { { funds_charge_currency: 'USD', comment: 'Foobar' } }
         let(:expected_output) { { funds: { charge: { currency: 'USD' } }, comment: 'Foobar' } }
 

@@ -13,25 +13,25 @@ module ExtensionsDataMapperSpec
 
   class AccountMapper
     class << self
-      def from_rows(rows)
-        Array(rows).map { |row| from_row(row) }
+      def from_records(records)
+        Array(records).map { |record| from_record(record) }
       end
 
-      def to_rows(attrs_)
-        Array(attrs_).map { |attrs| to_row(attrs) }
+      def to_records(attrs_)
+        Array(attrs_).map { |attrs| to_record(attrs) }
       end
 
-      def to_row(input)
+      def to_record(input)
         return if input.nil?
 
         attrs = input.to_h
         { id: attrs[:uid], account_type: attrs[:type] }
       end
 
-      def from_row(row)
-        return if row.nil?
+      def from_record(record)
+        return if record.nil?
 
-        { uid: row[:id], type: row[:account_type] }
+        { uid: record[:id], type: record[:account_type] }
       end
     end
   end
@@ -42,32 +42,32 @@ module ExtensionsDataMapperSpec
     mapper AccountMapper
     entity Account
 
-    # when read_all receives Array of rows
+    # when read_all receives Array of records
     def all
       read_all accounts.values
     end
 
-    # when read_one receives row
+    # when read_one receives record
     def find(uid)
       read_one accounts[uid]
     end
 
-    # when read_one receives Array of rows
+    # when read_one receives Array of records
     def get_one(_uid)
       read_one accounts.values
     end
 
     def create_one(input)
       entity = wrap input
-      row = to_row entity
-      accounts[entity.uid] ||= row
+      record = to_record entity
+      accounts[entity.uid] ||= record
       entity
     end
 
     def create_many(input)
       entities = wrap_all input
-      rows     = to_rows entities
-      rows.each { |row| accounts[row[:id]] ||= row }
+      records  = to_records entities
+      records.each { |record| accounts[record[:id]] ||= record }
       entities
     end
 
@@ -119,31 +119,31 @@ module LunaPark
 
       before { repo.seed! }
 
-      it '#to_entity, #from_row works fine' do
+      it '#to_entity, #from_record works fine' do
         expect(repo.find(42)).to eq expected_entities.first
       end
 
-      it '#to_entity, #from_row returns nil when given nil' do
+      it '#to_entity, #from_record returns nil when given nil' do
         expect(repo.find(0)).to be nil
       end
 
-      it '#to_entities, #from_rows works fine' do
+      it '#to_entities, #from_records works fine' do
         expect(repo.all).to eq expected_entities
       end
 
-      it '#wrap, #to_row returns expected value' do
+      it '#wrap, #to_record returns expected value' do
         expect(repo.create_one(new_entity)).to eq new_entity
       end
 
-      it '#wrap, #to_row works fine' do
+      it '#wrap, #to_record works fine' do
         expect { repo.create_one(new_entity) }.to change { repo.find(new_entity.uid) }.from(nil).to(new_entity)
       end
 
-      it '#wrap_all, #to_rows returns expected value' do
+      it '#wrap_all, #to_records returns expected value' do
         expect(repo.create_many(new_entities)).to eq new_entities
       end
 
-      it '#wrap, #to_row returns expected value' do
+      it '#wrap, #to_record returns expected value' do
         expect { repo.create_many(new_entities) }.to change { repo.all }.from(expected_entities).to(expected_entities + new_entities)
       end
     end

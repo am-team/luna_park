@@ -4,19 +4,19 @@ require 'luna_park/mappers/simple'
 
 module MappersSimpleSpec
   class TransactionMapper < LunaPark::Mappers::Simple
-    def self.from_row(row)
+    def self.from_record(record)
       {
         charge: {
-          fractional: row[:charge_fractional],
-          currency: row[:charge_currency]
+          fractional: record[:charge_fractional],
+          currency: record[:charge_currency]
         }
       }
     end
 
-    def self.to_row(row)
+    def self.to_record(record)
       {
-        charge_fractional: row.dig(:charge, :fractional),
-        charge_currency: row.dig(:charge, :currency)
+        charge_fractional: record.dig(:charge, :fractional),
+        charge_currency: record.dig(:charge, :currency)
       }
     end
   end
@@ -27,53 +27,53 @@ module LunaPark
     let(:abstract_mapper) { LunaPark::Mappers::Simple }
     let(:sample_mapper) { MappersSimpleSpec::TransactionMapper }
 
-    let(:row)   { { charge_fractional: 100, charge_currency: 'USD' } }
+    let(:record)   { { charge_fractional: 100, charge_currency: 'USD' } }
     let(:attrs) { { charge: { fractional: 100, currency: 'USD' } } }
 
-    describe '.from_row' do
-      it { expect { abstract_mapper.from_row(row) }.to raise_error Errors::AbstractMethod }
+    describe '.from_record' do
+      it { expect { abstract_mapper.from_record(record) }.to raise_error Errors::AbstractMethod }
     end
 
-    describe '.to_row' do
-      it { expect { abstract_mapper.to_row(attrs) }.to raise_error Errors::AbstractMethod }
+    describe '.to_record' do
+      it { expect { abstract_mapper.to_record(attrs) }.to raise_error Errors::AbstractMethod }
     end
 
-    describe '.from_rows' do
-      subject(:from_rows) { sample_mapper.from_rows([row, row]) }
+    describe '.from_records' do
+      subject(:from_records) { sample_mapper.from_records([record, record]) }
 
       it 'transforms array' do
         is_expected.to eq [attrs, attrs]
       end
 
       context 'when not an Array given' do
-        subject(:from_rows) { sample_mapper.from_rows('Foo') }
+        subject(:from_records) { sample_mapper.from_records('Foo') }
 
         it 'raises exception' do
-          expect { from_rows }.to raise_error Mappers::Errors::NotArray
+          expect { from_records }.to raise_error Mappers::Errors::NotArray
         end
 
         it 'raises meaningfull exception' do
-          expect { from_rows }.to raise_error 'input MUST be an Array, but given String `"Foo"`'
+          expect { from_records }.to raise_error 'input MUST be an Array, but given String `"Foo"`'
         end
       end
     end
 
-    describe '.to_rows' do
-      subject(:from_rows) { sample_mapper.to_rows([attrs, attrs]) }
+    describe '.to_records' do
+      subject(:from_records) { sample_mapper.to_records([attrs, attrs]) }
 
       it 'transforms array' do
-        is_expected.to eq [row, row]
+        is_expected.to eq [record, record]
       end
 
       context 'when not an Array given' do
-        subject(:to_rows) { sample_mapper.to_rows('Foo') }
+        subject(:to_records) { sample_mapper.to_records('Foo') }
 
         it 'raises exception' do
-          expect { to_rows }.to raise_error Mappers::Errors::NotArray
+          expect { to_records }.to raise_error Mappers::Errors::NotArray
         end
 
         it 'raises meaningfull exception' do
-          expect { to_rows }.to raise_error 'input MUST be an Array, but given String `"Foo"`'
+          expect { to_records }.to raise_error 'input MUST be an Array, but given String `"Foo"`'
         end
       end
     end

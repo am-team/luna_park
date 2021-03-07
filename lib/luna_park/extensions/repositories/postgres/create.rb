@@ -7,9 +7,9 @@ module LunaPark
         module Create
           def create(input)
             entity = wrap(input)
-            row    = to_row(entity)
-            new_row = dataset.returning.insert(row).first
-            new_attrs = from_row(new_row)
+            record     = to_record(entity)
+            new_record = dataset.returning.insert(record).first
+            new_attrs  = from_record(new_record)
             entity.set_attributes(new_attrs)
             entity
           end

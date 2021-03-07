@@ -7,24 +7,24 @@ module LunaPark
         # Copyist for copiyng value between two schemas with DIFFERENT or NESTED paths
         #   (Works with only one described attribute)
         class Nested
-          def initialize(attrs_path:, row_path:)
+          def initialize(attrs_path:, record_path:)
             @attrs_path = attrs_path
-            @row_path   = row_path
+            @record_path   = record_path
 
             raise ArgumentError, 'attr path can not be nil'  if attrs_path.nil?
-            raise ArgumentError, 'store path can not be nil' if row_path.nil?
+            raise ArgumentError, 'store path can not be nil' if record_path.nil?
           end
 
           def path?(*paths)
-            paths.any? { |path| [@attrs_path, @row_path].include? path }
+            paths.any? { |path| [@attrs_path, @record_path].include? path }
           end
 
-          def from_row(row:, attrs:)
-            copy_nested(from: row, to: attrs, from_path: @row_path, to_path: @attrs_path)
+          def from_record(record:, attrs:)
+            copy_nested(from: record, to: attrs, from_path: @record_path, to_path: @attrs_path)
           end
 
-          def to_row(row:, attrs:)
-            copy_nested(from: attrs, to: row, from_path: @attrs_path, to_path: @row_path)
+          def to_record(record:, attrs:)
+            copy_nested(from: attrs, to: record, from_path: @attrs_path, to_path: @record_path)
           end
 
           private

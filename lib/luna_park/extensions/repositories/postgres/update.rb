@@ -8,9 +8,9 @@ module LunaPark
           def save(input)
             entity = wrap(input)
             entity.updated_at = Time.now.utc
-            row = to_row(entity)
-            new_row = dataset.returning.where(primary_key => row[primary_key]).update(row).first
-            new_attrs = from_row(new_row)
+            record     = to_record(entity)
+            new_record = dataset.returning.where(primary_key => record[primary_key]).update(record).first
+            new_attrs  = from_record(new_record)
             entity.set_attributes(new_attrs)
             entity
           end
