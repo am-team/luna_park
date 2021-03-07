@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'luna_park/extensions/comparable_debug'
 require 'luna_park/errors'
 
 module LunaPark
@@ -30,9 +29,12 @@ module LunaPark
       end
 
       module ClassMethods
+        attr_reader :comparable_attributes_list
+
         ##
         # Enable debug mode (just include debug methods)
         def enable_debug
+          require 'luna_park/extensions/comparable_debug'
           include ComparableDebug unless include?(ComparableDebug)
           self
         end
@@ -44,24 +46,19 @@ module LunaPark
         def comparable_attributes(*names)
           raise 'No attributes given' if names.compact.empty?
 
-          @comparable_attributes_list ||= []
-          @comparable_attributes_list |= names
+          self.comparable_attributes_list ||= []
+          self.comparable_attributes_list |= names
         end
 
-        ##
-        # List of methods that will be used for comparsion via `#==` method
-        def comparable_attributes_list
-          return @comparable_attributes_list if @comparable_attributes_list
+        protected
 
-          raise Errors::NotConfigured,
-                "You must set at least one comparable attribute using #{self}.comparable_attributes(*names)"
-        end
+        attr_writer :comparable_attributes_list
 
         private
 
         def inherited(child)
           super
-          child.instance_variable_set(:@comparable_attributes_list, @comparable_attributes_list&.dup)
+          child.comparable_attributes_list = comparable_attributes_list&.dup
         end
       end
 
@@ -71,7 +68,7 @@ module LunaPark
         def eql?(other)
           return false unless other.is_a?(self.class)
 
-          self.class.comparable_attributes_list.all? { |attr| send(attr) == other.send(attr) }
+          self.class.comparable_attributes_list&.all? { |attr| send(attr) == other.send(attr) }
         end
 
         alias == eql?

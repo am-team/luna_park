@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'luna_park/extensions/comparable'
-require 'luna_park/extensions/serializable'
 require 'luna_park/extensions/predicate_attr_accessor'
 require 'luna_park/extensions/typed_attr_accessor'
 
@@ -45,8 +43,8 @@ module LunaPark
       #
       #   e1.alive? # => true
       module Attributes
-        DEFAULT_TYPE_METH = :call
-        private_constant :DEFAULT_TYPE_METH
+        DEFAULT_COERCION_METH = :call
+        private_constant :DEFAULT_COERCION_METH
 
         include PredicateAttrAccessor
         include TypedAttrAccessor
@@ -59,7 +57,6 @@ module LunaPark
           defined_methods_arr = attrs(*args, **options)
           getter_names = defined_methods_arr.map { |r| r[:getter] }
 
-          protected(*getter_names)
           attr_reader?(*getter_names)
 
           defined_methods_arr.map { |r| r.merge(predicate: :"#{r[:getter]}?") }
@@ -74,7 +71,6 @@ module LunaPark
           defined_methods = attr(*args, **options)
           getter_name = defined_methods[:getter]
 
-          protected(getter_name)
           attr_reader?(getter_name)
 
           defined_methods.merge(predicate: :"#{getter_name}?")
@@ -84,16 +80,17 @@ module LunaPark
         # .attr with mass defining
         #
         # @example
-        #   attrs name1, name2, name3, **attr_options
-        #   attrs name1, name2, name3, CallableType, **attr_options
-        #   attrs name1, name2, name3, Type, :type_method, **attr_options
+        #   attrs :name1, :name2, :name3
+        #   attrs :name1, :name2, :name3, CallableType
+        #   attrs :name1, :name2, :name3, Type,  :type_method
+        #   attrs :name1, :name2, :name3, Type2, :type_method, comparable: false, array: true
         #
         # @return [Array of Hash(Symbol => Symbol)] Hash of defined methods
         def attrs(*args, **options) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
           *names, type, type_meth = if args.all? { |arg| arg.is_a?(Symbol) }
                                       [*args, nil, nil]
                                     elsif args[0..-2].all? { |arg| arg.is_a?(Symbol) }
-                                      [*args, DEFAULT_TYPE_METH]
+                                      [*args, DEFAULT_COERCION_METH]
                                     elsif args[0..-3].all? { |arg| arg.is_a?(Symbol) } && args.last.is_a?(Symbol)
                                       args
                                     else
@@ -109,23 +106,29 @@ module LunaPark
         #   so it will be comparable using `#==`, `#eql?` and serializable using `#to_h`, `#serialize`
         #   return Hash of defined methods `{ getter: :foo, setter: :foo= }`
         #
+        # @example
+        #   attr :name
+        #   attr :name, CallableType
+        #   attr :name, Type,  :type_method
+        #   attr :name, Type2, :type_method, comparable: false, array: true
+        #
         # @param name [Symbol]
         # @param type [Object] any object that responds to method described in next param. Skip if you dont need stypification
-        # @param type_meth [Symbol] (call)
+        # @param coercion_method [Symbol] (call)
         # @option options [Bool] comparable (true)
         # @option options [Bool] array (false)
         # @option options [Bool] private_setter (false)
         #
         # @return [Hash(Symbol => Symbol)]
         #   Hash of defined methods { :method_role => :method_name }; `{ getter: :foo }`
-        def attr(name, type = nil, type_meth = nil, comparable: true, array: false)
-          type_meth ||= DEFAULT_TYPE_METH
+        def attr(name, type = nil, coercion_method = nil, comparable: true, array: false)
+          coercion_method ||= DEFAULT_COERCION_METH
           attr_reader(name)
 
-          serializable_attributes(name) if include?(Serializable)
-          comparable_attributes(name)   if comparable && include?(Comparable)
+          serializable_attributes(name) if               defined?(Serializable) && include?(Serializable)
+          comparable_attributes(name)   if comparable && defined?(Comparable)   && include?(Comparable)
 
-          typed_attr_writer(name, type&.method(type_meth), is_array: array)
+          typed_attr_writer(name, type&.method(coercion_method), is_array: array)
 
           { getter: name, setter: :"#{name}=" }
         end

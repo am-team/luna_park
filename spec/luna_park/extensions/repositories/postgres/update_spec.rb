@@ -14,7 +14,7 @@ RSpec.describe LunaPark::Extensions::Repositories::Postgres::Update do
       attr_accessor :dataset
 
       entity fake_entity_klass_
-      primary_key :uid
+      record_primary_key :uid
 
       def self.wrap(input)
         input

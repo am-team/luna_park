@@ -62,10 +62,8 @@ module LunaPark
         end
         # rubocop:enable Style/ClassAndModuleChildren, Style/StructInheritance
 
-        it 'raises meaningfull exception' do
-          expect { eq }.to raise_error Errors::NotConfigured,
-                                       'You must set at least one comparable attribute ' \
-                                       'using ExtensionsComparableSpec::ClassName.comparable_attributes(*names)'
+        it 'returns nil' do
+          expect(eq).to be nil
         end
       end
     end
@@ -73,6 +71,12 @@ module LunaPark
     describe '.debug' do
       subject(:debug) { klass.debug }
       let(:klass) { ExtensionsComparableSpec::Book.dup }
+
+      it 'requires ComparableDebug' do
+        unless defined?(Extensions::ComparableDebug)
+          expect { klass.debug }.to change { defined?(Extensions::ComparableDebug) }.from(nil).to('constant')
+        end
+      end
 
       it 'includes Extensions::ComparableDebug' do
         expect { debug }.to change { klass.include? Extensions::ComparableDebug }.from(false).to(true)
@@ -82,6 +86,12 @@ module LunaPark
     describe '#debug' do
       subject(:debug) { klass.new.debug }
       let(:klass) { ExtensionsComparableSpec::Book.dup }
+
+      it 'requires ComparableDebug' do
+        unless defined?(Extensions::ComparableDebug)
+          expect { klass.new.debug }.to change { defined?(Extensions::ComparableDebug) }.from(nil).to('constant')
+        end
+      end
 
       it 'includes Extensions::ComparableDebug' do
         expect { debug }.to change { klass.include? Extensions::ComparableDebug }.from(false).to(true)

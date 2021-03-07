@@ -15,7 +15,7 @@ RSpec.describe LunaPark::Extensions::Repositories::Postgres::Read do
       attr_accessor :dataset
 
       entity fake_entity_klass_
-      primary_key :uid
+      record_primary_key :uid
 
       def self.wrap(input)
         input
@@ -74,48 +74,6 @@ RSpec.describe LunaPark::Extensions::Repositories::Postgres::Read do
       before { allow(fake_dataset).to receive(:where).with(uid: uid).and_return([]) }
 
       it { expect { find! }.to raise_error LunaPark::Errors::NotFound, 'FakeEntity (42)' }
-    end
-  end
-
-  describe '#lock' do
-    subject(:lock) { fake_repo.lock(uid) }
-    let(:uid) { 42 }
-
-    context 'when exist' do
-      before do
-        allow(fake_dataset).to receive_message_chain(:for_update, :select, :where).and_return(['some result'])
-      end
-
-      it { is_expected.to be true }
-    end
-
-    context 'when not exist' do
-      before do
-        allow(fake_dataset).to receive_message_chain(:for_update, :select, :where).and_return([])
-      end
-
-      it { is_expected.to be false }
-    end
-  end
-
-  describe '#lock!' do
-    subject(:lock!) { fake_repo.lock!(uid) }
-    let(:uid) { 42 }
-
-    context 'when exist' do
-      before do
-        allow(fake_dataset).to receive_message_chain(:for_update, :select, :where).and_return(['some result'])
-      end
-
-      it { is_expected.to be true }
-    end
-
-    context 'when not exist' do
-      before do
-        allow(fake_dataset).to receive_message_chain(:for_update, :select, :where).and_return([])
-      end
-
-      it { expect { lock! }.to raise_error LunaPark::Errors::NotFound, 'FakeEntity (42)' }
     end
   end
 
