@@ -44,6 +44,18 @@ module LunaPark
       it 'transforms array' do
         is_expected.to eq [attrs, attrs]
       end
+
+      context 'when not an Array given' do
+        subject(:from_rows) { sample_mapper.from_rows('Foo') }
+
+        it 'raises exception' do
+          expect { from_rows }.to raise_error Mappers::Errors::NotArray
+        end
+
+        it 'raises meaningfull exception' do
+          expect { from_rows }.to raise_error 'input MUST be an Array, but given String `"Foo"`'
+        end
+      end
     end
 
     describe '.to_rows' do
@@ -51,6 +63,18 @@ module LunaPark
 
       it 'transforms array' do
         is_expected.to eq [row, row]
+      end
+
+      context 'when not an Array given' do
+        subject(:to_rows) { sample_mapper.to_rows('Foo') }
+
+        it 'raises exception' do
+          expect { to_rows }.to raise_error Mappers::Errors::NotArray
+        end
+
+        it 'raises meaningfull exception' do
+          expect { to_rows }.to raise_error 'input MUST be an Array, but given String `"Foo"`'
+        end
       end
     end
   end

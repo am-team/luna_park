@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
-require 'luna_park/errors'
+require 'luna_park/mappers/errors'
 
 module LunaPark
   module Mappers
+    ##
     # Abstract mapper for transform data from Entity attributes schema to Database row schema
+    #
     # @example
     #   class TransactionMapper < LunaPark::Mappers::Simple
     #     def self.from_row(row)
@@ -65,6 +67,7 @@ module LunaPark
         # Transforms array of rows to array of attribute hashes
         def from_rows(rows)
           return [] if rows.nil?
+          raise Errors::NotArray.new(input: rows) unless rows.is_a?(Array)
 
           rows.to_a.map { |hash| from_row(hash) }
         end
@@ -73,18 +76,19 @@ module LunaPark
         # Transforms array of attribute hashes to array of rows
         def to_rows(attr_hashes)
           return [] if attr_hashes.nil?
+          raise Errors::NotArray.new(input: attr_hashes) unless attr_hashes.is_a?(Array)
 
           attr_hashes.to_a.map { |entity| to_row(entity) }
         end
 
         # @abstract
         def from_row(_row)
-          raise Errors::AbstractMethod
+          raise LunaPark::Errors::AbstractMethod
         end
 
         # @abstract
         def to_row(_attrs)
-          raise Errors::AbstractMethod
+          raise LunaPark::Errors::AbstractMethod
         end
       end
     end
