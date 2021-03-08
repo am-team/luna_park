@@ -48,11 +48,11 @@ module LunaPark
         #    use_case.dependencies[:messenger] # => #<Proc:0x0000564a0d90d438@t.rb:34>
         #    use_case.dependencies.call_with_cache(:messenger) # => 'Foobar'
         def call_with_cache(key)
-          cache[key] ||= self[key].call
+          cache.key?(key) ? cache[key] : cache[key] = self.fetch(key).call
         end
 
         def []=(key, _val)
-          cache[key] = nil
+          cache.delete(key)
           super
         end
 
