@@ -118,6 +118,8 @@ module LunaPark
         #     dependency(:example) { Bar.new }
         #   end
         def dependency(name, &block)
+          raise ArgumentError, 'no block given' unless block_given?
+
           dependencies[name] = block
 
           define_method(name) do

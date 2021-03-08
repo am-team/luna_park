@@ -18,6 +18,18 @@ module LunaPark
     let(:engine) { Engine.new }
 
     describe '.dependency' do
+      it 'sets dependency' do
+        expect { Engine.dependency(:foo) { 'Foo' } }.to change { Engine.dependencies[:foo] }.from(nil).to Proc
+      end
+
+      context 'when no block given' do
+        it 'raises ArgumentError' do
+          expect { Engine.dependency(:foo) }.to raise_error ArgumentError, 'no block given'
+        end
+      end
+    end
+
+    describe '#dependency' do
       it 'should add class dependency' do
         expect(engine.dependencies[:fuel]).to be_an_instance_of Proc
       end
