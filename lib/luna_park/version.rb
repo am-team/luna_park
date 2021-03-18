@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module LunaPark
-  VERSION = '0.10.8'
+  VERSION = '0.11.0'
 end

@@ -8,7 +8,7 @@ module LunaPark
   module Forms; end
   module Handlers; end
   module Http; end
-  module Interactors; end
+  module UseCases; end
   module Notifiers; end
   module Serializers; end
   module Tools; end
@@ -19,8 +19,9 @@ end
 
 require 'luna_park/tools'
 require 'luna_park/errors'
-require 'luna_park/errors/adaptive'
-require 'luna_park/errors/processing'
+require 'luna_park/errors/base'
+require 'luna_park/errors/system'
+require 'luna_park/errors/business'
 require 'luna_park/errors/json_parse'
 LunaPark::Tools.if_gem_installed('rest-client', '~> 2.1') { require 'luna_park/errors/http' }
 require 'luna_park/extensions/attributable'
@@ -35,6 +36,7 @@ require 'luna_park/extensions/typed_attr_accessor'
 require 'luna_park/extensions/dsl/attributes'
 require 'luna_park/extensions/dsl/foreign_key'
 require 'luna_park/extensions/data_mapper'
+require 'luna_park/extensions/has_errors'
 require 'luna_park/extensions/injector'
 require 'luna_park/extensions/repositories/postgres/create'
 require 'luna_park/extensions/repositories/postgres/read'
@@ -54,8 +56,8 @@ LunaPark::Tools.if_gem_installed('sentry-ruby', '~> 4') { require 'luna_park/not
 require 'luna_park/notifiers/log'
 
 require 'luna_park/handlers/simple'
-require 'luna_park/interactors/sequence'
-require 'luna_park/interactors/scenario'
+require 'luna_park/use_cases/scenario'
+require 'luna_park/use_cases/service'
 require 'luna_park/serializers/simple'
 require 'luna_park/callable'
 

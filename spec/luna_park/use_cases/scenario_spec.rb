@@ -3,29 +3,33 @@
 require 'i18n'
 I18n.load_path << Dir['spec/locales/*.yml']
 
-require 'luna_park/errors/adaptive'
-require 'luna_park/errors/processing'
-require 'luna_park/interactors/scenario'
+require 'luna_park/errors/system'
+require 'luna_park/errors/business'
+require 'luna_park/use_cases/scenario'
 
-class YouDied < LunaPark::Errors::Adaptive
+class YouDied < LunaPark::Errors::Business
   message 'Always something went wrong', i18n_key: 'errors.you_die'
 end
 
+class ShootInFoot < LunaPark::Errors::System
+  message 'Dont use ruby', i18n_key: 'errors.shoot_in_the_foot'
+end
+
 module LunaPark
-  RSpec.describe Interactors::Scenario do
+  RSpec.describe UseCases::Scenario do
     let(:gunshot) do
       Class.new(described_class) do
-        attr_accessor :lucky_mode, :action, :notify
+        attr_accessor :lucky_mode, :error
 
         def call!
-          raise YouDied.new(action: action, notify: notify) unless lucky_mode
+          raise error unless lucky_mode
 
           'Good day for you'
         end
       end
     end
 
-    let(:scenario) { gunshot.new lucky_mode: true, action: :catch }
+    let(:scenario) { gunshot.new lucky_mode: true, error: YouDied.new(notify: :info) }
 
     describe '#state' do
       subject(:state) { scenario.state }
@@ -43,18 +47,9 @@ module LunaPark
           it { expect { scenario.call }.to change { scenario.state }.from(:initialized).to(:success) }
         end
 
-        context 'when scenario - fail' do
-          let(:scenario) { gunshot.new lucky_mode: false, action: action }
-
-          context 'when error action is stop' do
-            let(:action) { :stop }
-            it { expect { scenario.call }.to change { scenario.state }.from(:initialized).to(:fail) }
-          end
-
-          context 'when action is catch' do
-            let(:action) { :catch }
-            it { expect { scenario.call }.to change { scenario.state }.from(:initialized).to(:fail) }
-          end
+        context 'when scenario has business error' do
+          let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
+          it { expect { scenario.call }.to change { scenario.state }.from(:initialized).to(:fail) }
         end
       end
     end
@@ -71,18 +66,9 @@ module LunaPark
           it { is_expected.to be_nil }
         end
 
-        context 'when scenario - fail' do
-          let(:scenario) { gunshot.new lucky_mode: false, action: action }
-
-          context 'when error action is stop' do
-            let(:action) { :stop }
-            it { is_expected.to be_nil }
-          end
-
-          context 'when action is catch' do
-            let(:action) { :catch }
-            it { is_expected.to be_an_instance_of YouDied }
-          end
+        context 'when scenario has business error' do
+          let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
+          it { is_expected.to be_an_instance_of YouDied }
         end
       end
     end
@@ -103,12 +89,12 @@ module LunaPark
         before { scenario.call }
 
         context 'when scenario - success' do
-          let(:scenario) { gunshot.new lucky_mode: true, action: :catch }
+          let(:scenario) { gunshot.new lucky_mode: true, error: YouDied.new }
           it { is_expected.to eq 'Good day for you' }
         end
 
-        context 'when scenario - fail' do
-          let(:scenario) { gunshot.new lucky_mode: false, action: :catch }
+        context 'when scenario has business error' do
+          let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
           it { is_expected.to be_nil }
         end
       end
@@ -142,7 +128,7 @@ module LunaPark
       end
 
       context 'when scenario - fail' do
-        let(:scenario) { gunshot.new lucky_mode: false }
+        let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
 
         it { expect { call! }.to raise_error YouDied }
       end
@@ -160,117 +146,105 @@ module LunaPark
       end
 
       context 'when scenario - fail' do
-        describe 'action parameter' do
-          let(:scenario) { gunshot.new lucky_mode: false, action: action }
+        context 'is business error' do
+          let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
 
-          context 'is stop' do
-            let(:action) { :stop }
-
-            it 'return the same scenario' do
-              is_expected.to eq scenario
-            end
-          end
-
-          context 'is catch' do
-            let(:action) { :catch }
-
-            it 'return the same scenario' do
-              is_expected.to eq scenario
-            end
-          end
-
-          context 'is raise' do
-            let(:action) { :raise }
-
-            it 'is expected to raise defined error' do
-              expect { call }.to raise_error YouDied
-            end
+          it 'return the same scenario' do
+            is_expected.to eq scenario
           end
         end
 
-        describe 'notify parameter' do
-          let(:notifier) { double('Notifier', error: nil, warning: nil, info: nil) }
-          let(:scenario) { gunshot.new lucky_mode: false, notify: notify, notifier: notifier, action: :catch }
+        context 'is system error' do
+          let(:scenario) { gunshot.new lucky_mode: false, error: ShootInFoot.new }
 
-          context 'when it undefined' do
-            let(:notify) { nil }
-
-            it 'should not notify' do
-              expect(notifier).to_not receive(:post)
-              call
-            end
+          it 'is expected to raise defined error' do
+            expect { call }.to raise_error ShootInFoot
           end
+        end
+      end
 
-          context 'when it disabled' do
-            let(:notify) { false }
+      describe 'notify parameter' do
+        let(:notifier) { double('Notifier', error: nil, warning: nil, info: nil) }
+        let(:scenario) { gunshot.new lucky_mode: false, notifier: notifier, error: YouDied.new(notify: notify) }
 
-            it 'should not notify' do
-              expect(notifier).to_not receive(:post)
-              call
-            end
+        context 'when it undefined' do
+          let(:notify) { nil }
+
+          it 'should not notify' do
+            expect(notifier).to_not receive(:post)
+            call
           end
+        end
 
-          context 'when it enabled' do
-            let(:notify) { true }
+        context 'when it disabled' do
+          let(:notify) { false }
 
-            it 'should notify error lvl message' do
-              expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :error)
-              call
-            end
+          it 'should not notify' do
+            expect(notifier).to_not receive(:post)
+            call
           end
+        end
 
-          context 'when it set to unknown lvl' do
-            let(:notify) { :unknown }
+        context 'when it enabled' do
+          let(:notify) { true }
 
-            it 'should notify error lvl message' do
-              expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :unknown)
-              call
-            end
+          it 'should notify error lvl message' do
+            expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :error)
+            call
           end
+        end
 
-          context 'when it set to fatal lvl' do
-            let(:notify) { :fatal }
+        context 'when it set to unknown lvl' do
+          let(:notify) { :unknown }
 
-            it 'should notify error lvl message' do
-              expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :fatal)
-              call
-            end
+          it 'should notify error lvl message' do
+            expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :unknown)
+            call
           end
+        end
 
-          context 'when it set to error lvl' do
-            let(:notify) { :error }
+        context 'when it set to fatal lvl' do
+          let(:notify) { :fatal }
 
-            it 'should notify error lvl message' do
-              expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :error)
-              call
-            end
+          it 'should notify error lvl message' do
+            expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :fatal)
+            call
           end
+        end
 
-          context 'when it set to warning lvl' do
-            let(:notify) { :warning }
+        context 'when it set to error lvl' do
+          let(:notify) { :error }
 
-            it 'should notify error lvl message' do
-              expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :warning)
-              call
-            end
+          it 'should notify error lvl message' do
+            expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :error)
+            call
           end
+        end
 
-          context 'when it set to info lvl' do
-            let(:notify) { :info }
+        context 'when it set to warning lvl' do
+          let(:notify) { :warning }
 
-            it 'should notify info lvl message' do
-              expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :info)
-              call
-            end
+          it 'should notify error lvl message' do
+            expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :warning)
+            call
           end
+        end
 
-          context 'when it set to debug lvl' do
-            let(:notify) { :debug }
+        context 'when it set to info lvl' do
+          let(:notify) { :info }
 
-            it 'should notify debug lvl message' do
-              expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :debug)
-              call
-            end
+          it 'should notify info lvl message' do
+            expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :info)
+            call
+          end
+        end
+
+        context 'when it set to debug lvl' do
+          let(:notify) { :debug }
+
+          it 'should notify debug lvl message' do
+            expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :debug)
+            call
           end
         end
       end
@@ -290,7 +264,7 @@ module LunaPark
 
         let(:gunshot) do
           Class.new(described_class) do
-            attr_accessor :lucky_mode, :action, :notify
+            attr_accessor :notify, :lucky_mode, :error
 
             notify_with Notifier
           end
@@ -303,7 +277,7 @@ module LunaPark
 
       context 'when notifier does not set in instance' do
         let(:notifier) { double 'Notifier' }
-        let(:scenario) { gunshot.new lucky_mode: true, action: :catch, notifier: notifier }
+        let(:scenario) { gunshot.new notifier: notifier }
 
         it 'should eq defined notifier' do
           is_expected.to eq notifier
@@ -328,17 +302,8 @@ module LunaPark
         end
 
         context 'when scenario - fail' do
-          let(:scenario) { gunshot.new lucky_mode: false, action: action }
-
-          context 'when error action is stop' do
-            let(:action) { :stop }
-            it { expect { scenario.call }.to change { scenario.fail? }.from(false).to(true) }
-          end
-
-          context 'when action is catch' do
-            let(:action) { :catch }
-            it { expect { scenario.call }.to change { scenario.fail? }.from(false).to(true) }
-          end
+          let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
+          it { expect { scenario.call }.to change { scenario.fail? }.from(false).to(true) }
         end
       end
     end
@@ -360,17 +325,8 @@ module LunaPark
         end
 
         context 'when scenario - fail' do
-          let(:scenario) { gunshot.new lucky_mode: false, action: action }
-
-          context 'when error action is stop' do
-            let(:action) { :stop }
-            it { expect { scenario.call }.not_to change { scenario.success? } }
-          end
-
-          context 'when action is catch' do
-            let(:action) { :catch }
-            it { expect { scenario.call }.not_to change { scenario.success? } }
-          end
+          let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
+          it { expect { scenario.call }.not_to change { scenario.success? } }
         end
       end
     end
@@ -388,14 +344,9 @@ module LunaPark
         end
 
         context 'when scenario - fail' do
-          context 'when error action is stop' do
-            let(:scenario) { gunshot.new lucky_mode: false, action: :stop }
-            it { is_expected.to be_nil }
-          end
-
-          context 'when action is catch' do
+          context 'when has business error' do
             context 'on default locale' do
-              let(:scenario) { gunshot.new lucky_mode: false, action: :catch }
+              let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
 
               it 'should use default locale' do
                 is_expected.to eq 'You die'
@@ -403,14 +354,14 @@ module LunaPark
             end
 
             context 'on defined locale in object' do
-              let(:scenario) { gunshot.new lucky_mode: false, action: :catch, locale: :ru }
+              let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new, locale: :ru }
               it 'should use object locale' do
                 is_expected.to eq 'Всего лишь царапина'
               end
             end
 
             context 'on defined locale in object and defined locale in method' do
-              let(:scenario) { gunshot.new lucky_mode: false, action: :catch, locale: :ru }
+              let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new, locale: :ru }
               subject(:failure_message) { scenario.failure_message locale: :fr }
 
               it 'should use method locale' do
@@ -434,7 +385,7 @@ module LunaPark
 
         let(:gunshot) do
           Class.new(described_class) do
-            attr_accessor :lucky_mode, :action, :notify
+            attr_accessor :notify
 
             notify_with Notifier
           end
