@@ -47,7 +47,7 @@ module LunaPark
       end
 
       context 'on .call ' do
-        context 'when scenario - success' do
+        context 'when scenario succeed' do
           it { expect { scenario.call }.to change { scenario.state }.from(:initialized).to(:success) }
         end
 
@@ -65,7 +65,7 @@ module LunaPark
       context 'on .call ' do
         before { scenario.call }
 
-        context 'when scenario - success' do
+        context 'when scenario succeed' do
           let(:scenario) { gunshot.new lucky_mode: true }
           it { is_expected.to be_nil }
         end
@@ -92,7 +92,7 @@ module LunaPark
       context 'after .call ' do
         before { scenario.call }
 
-        context 'when scenario - success' do
+        context 'when scenario succeed' do
           let(:scenario) { gunshot.new lucky_mode: true, error: YouDied.new }
           it { is_expected.to eq 'Good day for you' }
         end
@@ -123,7 +123,7 @@ module LunaPark
     describe '#.call!' do
       subject(:call!) { scenario.call! }
 
-      context 'when scenario - success' do
+      context 'when scenario succeed' do
         let(:scenario) { gunshot.new lucky_mode: true }
 
         it 'return defined value' do
@@ -131,7 +131,7 @@ module LunaPark
         end
       end
 
-      context 'when scenario - fail' do
+      context 'when scenario failed' do
         let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
 
         it { expect { call! }.to raise_error YouDied }
@@ -141,7 +141,7 @@ module LunaPark
     describe '#call' do
       subject(:call) { scenario.call }
 
-      context 'when scenario - success' do
+      context 'when scenario succeed' do
         let(:scenario) { gunshot.new lucky_mode: true }
 
         it 'return the same scenario' do
@@ -149,8 +149,8 @@ module LunaPark
         end
       end
 
-      context 'when scenario - fail' do
-        context 'is business error' do
+      context 'when scenario failed' do
+        context 'as business error' do
           let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
 
           it 'return the same scenario' do
@@ -301,11 +301,11 @@ module LunaPark
       end
 
       context 'on .call ' do
-        context 'when scenario - success' do
+        context 'when scenario succeed' do
           it { expect { scenario.call }.not_to change { scenario.fail? } }
         end
 
-        context 'when scenario - fail' do
+        context 'when scenario failed' do
           let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
           it { expect { scenario.call }.to change { scenario.fail? }.from(false).to(true) }
         end
@@ -324,11 +324,11 @@ module LunaPark
       end
 
       context 'on .call ' do
-        context 'when scenario - success' do
+        context 'when scenario succeed' do
           it { expect { scenario.call }.to change { scenario.success? }.from(false).to(true) }
         end
 
-        context 'when scenario - fail' do
+        context 'when scenario failed' do
           let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
           it { expect { scenario.call }.not_to change { scenario.success? } }
         end
@@ -342,13 +342,13 @@ module LunaPark
       context 'on .call ' do
         before { scenario.call }
 
-        context 'when scenario - success' do
+        context 'when scenario succeed' do
           let(:scenario) { gunshot.new lucky_mode: true }
           it { is_expected.to be_nil }
         end
 
-        context 'when scenario - fail' do
-          context 'when has business error' do
+        context 'when scenario failed' do
+          context 'as business error' do
             context 'on default locale' do
               let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
 
