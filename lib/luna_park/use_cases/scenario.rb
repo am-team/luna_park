@@ -6,6 +6,7 @@ require 'luna_park/notifiers/log'
 LunaPark::Tools.if_gem_installed('bugsnag') { require 'luna_park/notifiers/bugsnag' }
 require 'luna_park/extensions/attributable'
 require 'luna_park/extensions/callable'
+require 'luna_park/extensions/has_errors'
 
 module LunaPark
   module UseCases
@@ -41,6 +42,7 @@ module LunaPark
     class Scenario
       include Extensions::Attributable
       extend  Extensions::Callable
+      include Extensions::HasErrors
 
       DEFAULT_NOTIFIER = Notifiers::Log.new
 

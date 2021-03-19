@@ -31,6 +31,10 @@ module LunaPark
 
     let(:scenario) { gunshot.new lucky_mode: true, error: YouDied.new(notify: :info) }
 
+    it 'should has errors' do
+      expect(scenario).to be_a Extensions::HasErrors
+    end
+
     describe '#state' do
       subject(:state) { scenario.state }
 
