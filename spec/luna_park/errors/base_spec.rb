@@ -3,43 +3,13 @@
 require 'i18n'
 I18n.load_path << Dir['spec/locales/*.yml']
 
-require 'luna_park/errors/adaptive'
+require 'luna_park/errors/base'
 
 module LunaPark
-  RSpec.describe Errors::Adaptive do
+  RSpec.describe Errors::Base do
     describe '#initialize' do
-      context 'when use undefined action value' do
-        it { expect { described_class.new action: :undefined }.to raise_error ArgumentError }
-      end
-
       context 'when use undefined notify value' do
         it { expect { described_class.new notify: :undefined }.to raise_error ArgumentError }
-      end
-    end
-
-    describe '#action' do
-      subject(:action) { error.action }
-      context 'action is undefined' do
-        let(:error) { described_class.new }
-
-        it { is_expected.to eq :raise }
-      end
-
-      context 'action defined in class' do
-        let(:error_class) do
-          Class.new(described_class) do
-            on_error action: :catch
-          end
-        end
-        let(:error) { error_class.new }
-
-        it { is_expected.to eq :catch }
-      end
-
-      context 'action defined in class' do
-        let(:error) { described_class.new(action: :stop) }
-
-        it { is_expected.to eq :stop }
       end
     end
 
@@ -55,7 +25,7 @@ module LunaPark
       context 'action defined in class' do
         let(:error_class) do
           Class.new(described_class) do
-            on_error notify: true
+            notify true
           end
         end
         let(:error) { error_class.new }
@@ -79,10 +49,10 @@ module LunaPark
         it { is_expected.to eq :error }
       end
 
-      context 'action defined in class' do
+      context 'notify lvl defined in class' do
         let(:error_class) do
           Class.new(described_class) do
-            on_error notify: :info
+            notify :info
           end
         end
         let(:error) { error_class.new }
@@ -90,7 +60,7 @@ module LunaPark
         it { is_expected.to eq :info }
       end
 
-      context 'action defined in class' do
+      context 'action defined in instance' do
         let(:error) { described_class.new(notify: :warning) }
 
         it { is_expected.to eq :warning }
@@ -230,7 +200,7 @@ module LunaPark
       context 'when default message is defined' do
         let(:error_class) do
           Class.new(described_class) do
-            on_error action: :raise, notify: :error
+            notify :error
           end
         end
 
@@ -262,39 +232,15 @@ module LunaPark
       end
     end
 
-    describe '.on_error' do
+    describe '.notify' do
       let(:error_class) do
         Class.new(described_class) do
-          on_error action: :catch, notify: :info
+          notify :info
         end
-      end
-
-      it 'define default action' do
-        expect(error_class.default_action).to eq :catch
       end
 
       it 'define notify behaviour' do
         expect(error_class.default_notify).to eq :info
-      end
-
-      context 'when use undefined action value' do
-        let(:error_class) do
-          Class.new(described_class) do
-            on_error action: :undefined, notify: :info
-          end
-        end
-
-        it { expect { error_class }.to raise_error ArgumentError }
-      end
-
-      context 'when use undefined action value' do
-        let(:error_class) do
-          Class.new(described_class) do
-            on_error action: :undefined, notify: :info
-          end
-        end
-
-        it { expect { error_class }.to raise_error ArgumentError }
       end
     end
 
@@ -347,38 +293,15 @@ module LunaPark
       end
     end
 
-    describe '.on_error' do
-      context 'when use undefined action value' do
-        let(:error_class) do
-          Class.new(described_class) do
-            on_error action: :undefined, notify: :info
-          end
-        end
-
-        it { expect { error_class }.to raise_error ArgumentError }
-      end
-
-      context 'when use undefined action value' do
-        let(:error_class) do
-          Class.new(described_class) do
-            on_error action: :undefined, notify: :info
-          end
-        end
-
-        it { expect { error_class }.to raise_error ArgumentError }
-      end
-
+    describe '.notify' do
       context 'when inherited' do
         let(:error_superclass) do
           Class.new(described_class) do
-            on_error action: :catch, notify: :info
+            notify :info
           end
         end
-        let(:error_class) { Class.new(error_superclass) }
 
-        it 'child has same default_action' do
-          expect(error_class.default_action).to eq :catch
-        end
+        let(:error_class) { Class.new(error_superclass) }
 
         it 'child has same default_notify' do
           expect(error_class.default_notify).to eq :info
@@ -426,30 +349,6 @@ module LunaPark
 
         it 'can build expected message' do
           expect(default_message_block.call({ detail: 'DETAIL' })).to eq "Message with detail 'DETAIL'"
-        end
-      end
-    end
-
-    describe '.default_action' do
-      subject(:default_action) { error_class.default_action }
-
-      context 'when action is not defined' do
-        let(:error_class) { described_class }
-
-        it 'is eq :raise' do
-          is_expected.to eq :raise
-        end
-      end
-
-      context 'when on error action is defined' do
-        let(:error_class) do
-          Class.new(described_class) do
-            on_error action: :catch
-          end
-        end
-
-        it 'is eq error class name' do
-          is_expected.to eq :catch
         end
       end
     end

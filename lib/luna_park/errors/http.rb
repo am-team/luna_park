@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'luna_park/errors/adaptive'
+require 'luna_park/errors/system'
 require 'luna_park/http/response'
 
 module LunaPark
   module Errors
-    class Http < Adaptive
+    class Http < System
       # Errors::Http must contain response
       #
       # @return LunaPark::Http::Response
@@ -14,28 +14,25 @@ module LunaPark
       # Create new error
       #
       # @param msg - Message text
-      # @param action - custom action for the current instance of error (see #action)
-      # @param notify - custom notify behaviour for the current instance of error (see #self.on_error)
+      # @param notify - custom notify behaviour for the current instance of error (see #self.notify)
       # @param details - additional information to notifier
       #
       # @example without parameters
       #   error = Fatalism.new
       #   error.message     # => 'You cannot change your destiny'
-      #   error.action      # => :catch
       #   error.notify_lvl  # => :error
       #   error.notify?     # => true
       #
       # @example with custom parameters
-      #   @error = Fatalism.new 'Forgive me Kuzma, my feet are frozen', action: :raise, notify: false
+      #   @error = Fatalism.new 'Forgive me Kuzma, my feet are frozen', notify: false
       #   error.message     # => 'Forgive Kuzma, my feet froze'
-      #   error.action      # => :raise
       #   error.notify_lvl  # => :error
       #   error.notify?     # => false
-      def initialize(msg = nil, response:, action: nil, notify: nil, **details)
+      def initialize(msg = nil, response:, notify: nil, **details)
         raise ArgumentError, 'Response should be Http::Response' unless response.is_a? LunaPark::Http::Response
 
         @response = response
-        super msg, action: action, notify: notify, **details
+        super msg, notify: notify, **details
       end
 
       # Return request which call this is error.

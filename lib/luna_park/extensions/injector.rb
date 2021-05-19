@@ -27,7 +27,7 @@ module LunaPark
     #     # the business layer and the data layer, and between the
     #     # business layer and external libraries.
     #
-    #     class SetActive < LunaPark::Interactors::Scenario
+    #     class SetActive < LunaPark::UseCases::Scenario
     #       include LunaPark::Extensions::Injector
     #
     #       attr_accessor :user_id
@@ -70,30 +70,30 @@ module LunaPark
     #     RSpec.describe SetActive do
     #       # We highly dont recommended inject dependencies witch does not call exteranal resources
     #       let(:user)       { Entity.new id: 1, first_name: 'John', last_name: 'Doe'}
-    #       let(:interactor) { described_class.new(user_id: 1) }
+    #       let(:use_case) { described_class.new(user_id: 1) }
     #
     #       before do
-    #         interactor.dependencies = {
+    #         use_case.dependencies = {
     #           repo: -> { instance_double PgRepo, find: user, save: true },
     #           messenger: -> { class_double Messenger, post: true }
     #         }
     #       end
     #
     #       describe '#call!' do
-    #         subject(:set_active!) { interactor.call! }
+    #         subject(:set_active!) { use_case.call! }
     #
     #         it 'should set user is active' do
     #           expect{ set_active! }.to change{ user.active? }.from(false).to(true)
     #         end
     #
     #         it 'should save user' do
-    #           expect(interactor.repo).to receive(:save).with(user)
+    #           expect(use_case.repo).to receive(:save).with(user)
     #           set_active!
     #         end
     #
     #         it 'should send expected message to admin' do
     #           text = 'User John Doe is active_now'
-    #           expect(interactor.messenger).to receive(:post).with(to: :admin, msg: text)
+    #           expect(use_case.messenger).to receive(:post).with(to: :admin, msg: text)
     #           set_active!
     #         end
     #       end

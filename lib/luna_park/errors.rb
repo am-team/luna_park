@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
-require 'luna_park/errors/processing'
+require 'luna_park/errors/base'
+require 'luna_park/errors/system'
+require 'luna_park/errors/business'
 
 module LunaPark
   module Errors
-    class NotConfigured   < StandardError; end
-    class AbstractMethod  < StandardError; end
-    class Unwrapable      < TypeError; end
+    class NotConfigured   < System; end
+    class AbstractMethod  < System; end
+    class Unwrapable      < System; end
 
-    class RepositoryError < StandardError; end
+    class RepositoryError < System; end
     class NotFound        < RepositoryError; end
   end
 end

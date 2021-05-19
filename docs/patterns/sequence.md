@@ -140,7 +140,7 @@ cooking.data         => nil
 
 module Kitchen
   module Errors
-    class Burned < LunaPark::Errors::Processing
+    class Burned < LunaPark::Errors::Business
       message 'The pie burned out', i18n: 'errors.kitchen.burn_out' 
     end
   end

@@ -6,10 +6,11 @@ require 'luna_park/notifiers/log'
 LunaPark::Tools.if_gem_installed('bugsnag') { require 'luna_park/notifiers/bugsnag' }
 require 'luna_park/extensions/attributable'
 require 'luna_park/extensions/callable'
+require 'luna_park/extensions/has_errors'
 
 module LunaPark
-  module Interactors
-    # The main goal of the interactor is a high-level description
+  module UseCases
+    # The main goal of the use case is a high-level description
     # of the business process. This specific implementation
     # is based on the ideas of Ivar Jacobson from his article
     # Ivar Jacobson: Use Case 2.0.
@@ -17,10 +18,10 @@ module LunaPark
     # @example Create new user
     #   module Errors
     #     # To catch the errors, it's should be the error must
-    #     # be inherited from the class LunaPark::Errors::Processing
-    #     class UserAlreadyExists < LunaPark::Errors::Processing
+    #     # be inherited from the class LunaPark::Errors::Business
+    #     class UserAlreadyExists < LunaPark::Errors::Business
     #       message 'Sorry user with this email already created'
-    #       on_error action: :catch, notify: :info
+    #       notify: :info
     #     end
     #   end
     #
@@ -33,7 +34,7 @@ module LunaPark
     #       user.password = Service::Encode.call(password)
     #
     #       DB.transaction do
-    #        error Errors::UserAlreadyExists if Repo::Users.exists?(user)
+    #        raise Errors::UserAlreadyExists if Repo::Users.exists?(user)
     #        Repo::Users.create(user)
     #       end
     #     end
@@ -41,6 +42,7 @@ module LunaPark
     class Scenario
       include Extensions::Attributable
       extend  Extensions::Callable
+      include Extensions::HasErrors
 
       DEFAULT_NOTIFIER = Notifiers::Log.new
 
@@ -76,7 +78,7 @@ module LunaPark
       #   scenario.fail # => nil
       #
       # @example on fail
-      #   class Fail < Errors::Processing; end
+      #   class Fail < Errors::Business; end
       #   class FailScenario < Scenario
       #     def call!
       #       raise Fail
@@ -200,7 +202,7 @@ module LunaPark
       # @abstract
       #
       # @example fail way
-      #   class YouDied < Errors::Processing; end
+      #   class YouDied < Errors::Business; end
       #
       #   class Shot < Scenario
       #     attr_accessor :lucky_mode
@@ -291,7 +293,7 @@ module LunaPark
 
       def catch
         yield
-      rescue Errors::Adaptive => e
+      rescue Errors::Base => e
         @state = FAIL
         notify_error e if e.notify?
         handle_error e
@@ -304,16 +306,11 @@ module LunaPark
       end
 
       def handle_error(error)
-        case error.action
-        when :stop  then on_stop
-        when :catch then on_catch(error)
-        when :raise then on_raise(error)
-        else raise ArgumentError, "Unknown error action #{error.action}"
+        case error
+        when Errors::Business then on_catch(error)
+        when Errors::System then on_raise(error)
+        else raise ArgumentError, "Unknown error action #{error.class}"
         end
-      end
-
-      def on_stop
-        nil
       end
 
       def on_catch(error)

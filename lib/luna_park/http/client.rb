@@ -68,7 +68,7 @@ module LunaPark
     #         )
     #         case response.code
     #         when 200 then true
-    #         when 422 then raise Error::Processing.new(response.body.parse_json(payload_key: error), action: :catch)
+    #         when 422 then raise Error::Business.new(response.body.parse_json(payload_key: error), action: :catch)
     #         else raise Errors::Http.new(response.status, notify: true, response: response)
     #         end
     #       end
@@ -78,7 +78,7 @@ module LunaPark
     #   # In your checkout scenario, payment is being made
     #   module Orders
     #     module Scenarios
-    #       class Checkout < LunaPark::Interactors::Scenario
+    #       class Checkout < LunaPark::UseCases::Scenario
     #         def call!
     #           # ...
     #           payments.create(account: 42, money: Values::Money.new(100, :usd))
