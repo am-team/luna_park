@@ -108,6 +108,12 @@ module LunaPark
       end
 
       module ClassMethods
+        def inherited(inheritor)
+          dependencies.each_pair do |key, block|
+            inheritor.dependency(key, &block)
+          end
+        end
+
         ##
         # Set dependency
         #
@@ -118,7 +124,9 @@ module LunaPark
         #     dependency(:example) { Bar.new }
         #   end
         def dependency(name, &block)
-          dependencies[name] = block
+          raise ArgumentError, 'no block given' unless block_given?
+
+          self.dependencies[name] = block
 
           define_method(name) do
             dependencies.call_with_cache(name)

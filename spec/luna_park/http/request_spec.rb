@@ -172,7 +172,7 @@ module LunaPark
         is_expected.to include 'example.com'
         is_expected.to include 'ping'
         is_expected.to include 'json'
-        is_expected.to include Time.now.to_s
+        is_expected.to include Time.now.inspect
       end
 
       after { Timecop.return }

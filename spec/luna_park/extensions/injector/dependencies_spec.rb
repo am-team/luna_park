@@ -40,13 +40,13 @@ module LunaPark
       context 'when run undefined dependency' do
         subject(:run_dependency) { dependencies.call_with_cache(:undefined) }
 
-        it { expect { run_dependency }.to raise_error NoMethodError }
+        it { expect { run_dependency }.to raise_error KeyError, 'key not found: :undefined' }
       end
 
       context 'when defined dependency not callable instance' do
         let(:dependencies) { described_class.try_convert(foo: 1) }
 
-        it { expect { run_dependency }.to raise_error NoMethodError }
+        it { expect { run_dependency }.to raise_error NoMethodError, "undefined method `call' for 1:Integer" }
       end
     end
 

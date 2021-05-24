@@ -8,22 +8,36 @@ module LunaPark
     ##
     # Form object represents blank document, required to filled right, and can be performed
     #
-    # @example
+    # @example with default behavior
     #  class MyForm < LunaPark::Forms::SingleItem
     #    validation MyValidator # respond to .validate, #valid?, #errors, #valid_params
     #
     #    def perform(valid_params)
-    #      "Performed #{valid_params[:foo_bar]}"
+    #      "Performed #{valid_params[:foo]}"
     #    end
     #  end
     #
-    #  form = MyForm.new({ foo_bar: 'FooBar' })
+    #  form = MyForm.new({ foo: 'Foo', excess: 'Excess' })
     #
     #  if form.submit
-    #    form.result # => 'Performed FooBar'
+    #    form.result # => 'Performed Foo'
     #  else
-    #    form.errors # => { foo_bar: ['is wrong'] }
+    #    form.errors # => { foo: ['is wrong'] }
     #  end
+    #
+    # @example without default behavior
+    #  class MyForm < LunaPark::Forms::SingleItem
+    #    validation MyValidator # respond to .validate, #valid?, #errors, #valid_params
+    #  end
+    #
+    #  form = MyForm.new({ foo: 'Foo', excess: 'Excess' })
+    #
+    #  if form.submit
+    #    form.result # => { foo: 'Foo' }
+    #  else
+    #    form.errors # => { foo: ['is wrong'] }
+    #  end
+    #
     class Simple
       include Extensions::Validatable
 
@@ -54,8 +68,8 @@ module LunaPark
       # :nocov:
 
       # @abstract
-      def perform(_valid_params)
-        raise Errors::AbstractMethod
+      def perform(valid_params)
+        valid_params
       end
       # :nocov:
     end
