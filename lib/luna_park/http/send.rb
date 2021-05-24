@@ -83,10 +83,10 @@ module LunaPark
 
       def build_original_response(rest_response)
         Response.new(
-          body: rest_response.body,
-          code: rest_response.code,
-          headers: rest_response.headers,
-          cookies: rest_response.cookies,
+          body: rest_response&.body,
+          code: rest_response&.code || 0,
+          headers: rest_response&.headers,
+          cookies: rest_response&.cookies,
           request: original_request
         )
       end

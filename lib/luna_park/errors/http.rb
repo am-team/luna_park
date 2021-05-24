@@ -70,17 +70,17 @@ module LunaPark
           request: {
             method: request.method,
             url: request.url,
-            body: request.body,
-            headers: request.headers,
             open_timeout: request.open_timeout,
             read_timeout: request.read_timeout,
-            sent_at: request.sent_at
+            sent_at: request.sent_at,
+            headers: request.headers,
+            body: request.body
           },
           response: {
             code: response.code,
-            body: response.body,
             headers: response.headers,
-            cookies: response.cookies
+            cookies: response.cookies,
+            body: response.body
           },
           error_details: super
         }

@@ -29,6 +29,36 @@ module LunaPark
       end
     end
 
+    describe '.dependencies' do
+      context 'on defined class' do
+        subject(:dependencies) { Engine.dependencies }
+
+        it { is_expected.to be_an_instance_of Hash }
+
+        it 'should be eq defined dependencies' do
+          is_expected.to have_key :fuel
+          is_expected.to have_key :oil
+        end
+      end
+
+      context 'on child class' do
+        class Rotor < Engine; end
+        subject(:dependencies) { Rotor.dependencies }
+
+        it { is_expected.to be_an_instance_of Hash }
+        
+        it 'should be eq defined dependencies' do
+          is_expected.to have_key :fuel
+          is_expected.to have_key :oil
+        end
+
+        it 'Instance shoulde respond to dependencies method' do
+          expect(Rotor.new).to respond_to :fuel
+          expect(Rotor.new).to respond_to :oil
+        end
+      end
+    end
+
     describe '#dependency' do
       it 'should add class dependency' do
         expect(engine.dependencies[:fuel]).to be_an_instance_of Proc
