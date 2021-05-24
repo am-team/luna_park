@@ -87,14 +87,12 @@ module LunaPark
         it_behaves_like 'not performed'
       end
 
-      context 'when perform method undefined,' do
+      context 'when #perform is not defined,' do
         let(:defected_klass) { klass.dup }
         let(:form) { defected_klass.new correct_record }
         before { defected_klass.remove_method :perform }
 
-        it 'raises AbstractMethod error,' do
-          expect { subject }.to raise_error Errors::AbstractMethod
-        end
+        it { is_expected.to be true }
       end
     end
 
@@ -140,6 +138,18 @@ module LunaPark
           let(:params) { incorrect_record }
 
           it { is_expected.to be_nil }
+        end
+
+        context 'when #perform not defined' do
+          let(:params) { correct_record }
+
+          let(:klass) do
+            Class.new(LunaPark::Forms::Simple) do
+              validator FormsSimpleSpec::Reception::VisitorValidator
+            end
+          end
+
+          it { is_expected.to eq name: 'John Doe' }
         end
       end
     end
