@@ -3,154 +3,84 @@
 require 'luna_park/extensions/exceptions/substitutive'
 
 module ExtensionsExceptionsSubstitutiveSpec
+  class RegularError < StandardError; end
+
   class SubstitutiveError < StandardError
     extend LunaPark::Extensions::Exceptions::Substitutive
   end
 
-  class SubstitutiveWithArgs < StandardError
-    extend LunaPark::Extensions::Exceptions::Substitutive
+  class << self
+    ORIGIN_EXCEPTION = StandardError.new('Foo')
 
-    attr_reader :comment
-
-    def initialize(msg = nil, comment = nil)
-      @comment = comment
-      super(msg)
-    end
-  end
-
-  class SubstitutiveWithOptsAndBuiltMessage < StandardError
-    extend LunaPark::Extensions::Exceptions::Substitutive
-
-    attr_reader :comment
-
-    def initialize(msg = nil, comment: nil)
-      @comment = comment
-      super(msg || build_message)
+    def raise_origin_exception
+      raise ORIGIN_EXCEPTION
     end
 
-    def build_message
-      "Comment: #{comment.inspect}"
+    def raise_replaced_exception
+      raise_origin_exception
+    rescue StandardError
+      raise RegularError
+    end
+
+    def raise_substitutive_exception
+      raise_origin_exception
+    rescue StandardError => e
+      raise SubstitutiveError.substitute(e)
     end
   end
 end
 
 module LunaPark
   RSpec.describe Extensions::Exceptions::Substitutive do
-    SPEC = ExtensionsExceptionsSubstitutiveSpec
+    let(:origin_exception)      { catch { ExtensionsExceptionsSubstitutiveSpec.raise_origin_exception } }
+    let(:replaced_exception)    { catch { ExtensionsExceptionsSubstitutiveSpec.raise_replaced_exception } }
+    let(:substituted_exception) { catch { ExtensionsExceptionsSubstitutiveSpec.raise_substitutive_exception } }
 
-    context 'with any args,' do
-      def origin_exception
-        @origin_exception ||=
-          begin
-            raise StandardError, 'OriginMsg'
-          rescue StandardError => e
-            e
-          end
+    describe 'substitutive exception' do
+      it 'has name of origin exception' do
+        expect(substituted_exception.message).to be origin_exception.message
       end
 
-      def substituted_exception
-        origin_exception # touch the memorisation to prevent mistakes
-        @substituted_exception ||=
-          begin
-            raise SPEC::SubstitutiveError.substitute(origin_exception)
-          rescue SPEC::SubstitutiveError => e
-            e
-          end
+      it 'backtrace starts from origin exception backtrace' do
+        expect(substituted_exception.backtrace.first).to be origin_exception.backtrace.first
       end
 
-      it 'backtrace starts from the origin exception backtrace' do
-        expect(substituted_exception.backtrace.first).to eq origin_exception.backtrace.first
+      it 'includes backtrace of origin exception' do
+        expect(substituted_exception.backtrace.map { |p| p.split(':').last }).to include 'in `raise_origin_exception\''
       end
 
-      it 'includes backtrace of the substitutive exception' do
-        expect(substituted_exception.backtrace.map { |p| p.split(':').last }).to include 'in `substituted_exception\''
+      it 'includes backtrace of new exception' do
+        expect(substituted_exception.backtrace.map { |p| p.split(':').last }).to include 'in `raise_substitutive_exception\''
       end
 
-      it 'contains the origin exception object' do
+      it 'contains origin exception object' do
         expect(substituted_exception.origin).to be origin_exception
       end
     end
 
-    context 'when substituted with new message,' do
-      let(:substituted_exception) do
-        begin
-          raise StandardError, 'OriginMsg'
-        rescue StandardError => e
-          raise SPEC::SubstitutiveError.substitute(e, 'NewMsg')
-        end
-      rescue SPEC::SubstitutiveError => e
-        e
-      end
-
-      it 'has added message' do
-        expect(substituted_exception.message).to eq 'NewMsg'
+    describe 'replaced exception' do
+      it 'not includes backtrace of origin exception' do
+        expect(replaced_exception.backtrace).not_to include origin_exception.backtrace.first
       end
     end
 
-    context 'when substituted with additional args,' do
-      let(:substituted_exception) do
+    describe '#cover_up_backtrace' do
+      it 'should get original backtrace' do
         begin
-          raise StandardError, 'OriginMsg'
+          original_error = ExtensionsExceptionsSubstitutiveSpec::SubstitutiveError.new('Something went wrong')
+          raise original_error
         rescue StandardError => e
-          raise SPEC::SubstitutiveWithArgs.substitute(e, 'NewMsg', 'Oh no!')
+          raise e.cover_up_backtrace
         end
-      rescue SPEC::SubstitutiveWithArgs => e
-        e
-      end
-
-      it 'has added message' do
-        expect(substituted_exception.message).to eq 'NewMsg'
-      end
-
-      it 'additional named args was performed' do
-        expect(substituted_exception.comment).to eq 'Oh no!'
+      rescue StandardError => e
+        expect(e.backtrace).to eq original_error.backtrace
       end
     end
 
-    context 'when substituted with additional named args AND built message,' do
-      let(:substituted_exception) do
-        begin
-          raise StandardError, 'OriginMsg'
-        rescue StandardError => e
-          raise SPEC::SubstitutiveWithOptsAndBuiltMessage.substitute(e, comment: 'Oh no!')
-        end
-      rescue SPEC::SubstitutiveWithOptsAndBuiltMessage => e
-        e
-      end
-
-      it 'has built message' do
-        expect(substituted_exception.message).to eq 'Comment: "Oh no!"'
-      end
-
-      it 'additional named args was performed' do
-        expect(substituted_exception.comment).to eq 'Oh no!'
-      end
-    end
-
-    context 'when substitutes substitutive exception,' do
-      let(:original_substitutive) do
-        raise SPEC::SubstitutiveError, 'OriginMsg'
-      rescue SPEC::SubstitutiveError => e
-        e
-      end
-
-      let(:substituted_exception) do
-        raise original_substitutive
-      rescue SPEC::SubstitutiveError => e
-        e
-      end
-
-      it 'new exception has original backtrace' do
-        expect(substituted_exception.backtrace).to be original_substitutive.backtrace
-      end
-
-      it 'origin backtrace is not nil' do
-        expect(original_substitutive.backtrace).not_to be_nil
-      end
-
-      it 'substituted backtrace is not nil' do
-        expect(substituted_exception.backtrace).not_to be_nil
-      end
+    def catch
+      yield
+    rescue => e # rubocop:disable Style/RescueStandardError:
+      e
     end
   end
 end
