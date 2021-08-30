@@ -92,7 +92,7 @@ module LunaPark
         begin
           raise StandardError, 'OriginMsg'
         rescue StandardError => e
-          raise SPEC::SubstitutiveWithArgs.substitute(e, 'NewMsg', 'Oy vey!')
+          raise SPEC::SubstitutiveWithArgs.substitute(e, 'NewMsg', 'Oh no!')
         end
       rescue SPEC::SubstitutiveWithArgs => e
         e
@@ -103,7 +103,7 @@ module LunaPark
       end
 
       it 'additional named args was performed' do
-        expect(substituted_exception.comment).to eq 'Oy vey!'
+        expect(substituted_exception.comment).to eq 'Oh no!'
       end
     end
 
@@ -112,18 +112,18 @@ module LunaPark
         begin
           raise StandardError, 'OriginMsg'
         rescue StandardError => e
-          raise SPEC::SubstitutiveWithOptsAndBuiltMessage.substitute(e, comment: 'Oy vey!')
+          raise SPEC::SubstitutiveWithOptsAndBuiltMessage.substitute(e, comment: 'Oh no!')
         end
       rescue SPEC::SubstitutiveWithOptsAndBuiltMessage => e
         e
       end
 
       it 'has built message' do
-        expect(substituted_exception.message).to eq 'Comment: "Oy vey!"'
+        expect(substituted_exception.message).to eq 'Comment: "Oh no!"'
       end
 
       it 'additional named args was performed' do
-        expect(substituted_exception.comment).to eq 'Oy vey!'
+        expect(substituted_exception.comment).to eq 'Oh no!'
       end
     end
 

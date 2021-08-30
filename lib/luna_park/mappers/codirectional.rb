@@ -77,7 +77,7 @@ module LunaPark
             if path.is_a?(Array)
               nested_copyists << Copyists::Nested.new(attrs_path: path, row_path: path)
             else
-              plain_copyist.add_key(path)
+              slice_copyist.add_key(path)
             end
           end
         end
@@ -85,7 +85,7 @@ module LunaPark
         def from_row(input)
           row = input.to_h
           {}.tap do |attrs|
-            plain_copyist.from_row(row: row, attrs: attrs)
+            slice_copyist.from_row(row: row, attrs: attrs)
             nested_copyists.each { |copyist| copyist.from_row(row: row, attrs: attrs) }
           end
         end
@@ -93,7 +93,7 @@ module LunaPark
         def to_row(input)
           attrs = input.to_h
           {}.tap do |row|
-            plain_copyist.to_row(row: row, attrs: attrs)
+            slice_copyist.to_row(row: row, attrs: attrs)
             nested_copyists.each { |copyist| copyist.to_row(row: row, attrs: attrs) }
           end
         end
@@ -117,8 +117,8 @@ module LunaPark
           end
         end
 
-        def plain_copyist
-          @plain_copyist ||= Copyists::Slice.new
+        def slice_copyist
+          @slice_copyist ||= Copyists::Slice.new
         end
 
         def nested_copyists
