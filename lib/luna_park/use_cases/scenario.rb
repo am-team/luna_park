@@ -252,6 +252,7 @@ module LunaPark
       end
 
       alias failure? fail?
+      alias failed? fail?
 
       # @return [Boolean] true if the scenario runs successfully
       def success?

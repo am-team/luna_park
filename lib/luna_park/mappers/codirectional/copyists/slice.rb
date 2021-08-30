@@ -5,7 +5,7 @@ module LunaPark
     class Codirectional < Simple
       module Copyists
         # Copyist for copiyng value between two schemas with SAME and PLAIN paths
-        class Plain
+        class Slice
           def initialize
             @keys = []
           end

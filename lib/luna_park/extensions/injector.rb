@@ -126,7 +126,7 @@ module LunaPark
         def dependency(name, &block)
           raise ArgumentError, 'no block given' unless block_given?
 
-          self.dependencies[name] = block
+          dependencies[name] = block
 
           define_method(name) do
             dependencies.call_with_cache(name)

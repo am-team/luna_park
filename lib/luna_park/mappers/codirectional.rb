@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'luna_park/mappers/simple'
-require 'luna_park/mappers/codirectional/copiysts/plain'
-require 'luna_park/mappers/codirectional/copiysts/nested'
+require 'luna_park/mappers/codirectional/copyists/slice'
+require 'luna_park/mappers/codirectional/copyists/nested'
 
 module LunaPark
   module Mappers
@@ -51,8 +51,8 @@ module LunaPark
 
         # @example
         #   class Mappers::Transaction < LunaPark::Mappers::Codirectional
-        #     attr :uid,               row: :id
-        #     attr [:charge, :amount], row: :charge_amount
+        #     attr :uid,              row: :id
+        #     attr %i[charge amount], row: :charge_amount
         #   end
         def attr(attr, row: nil)
           return attrs(attr) if row.nil?
@@ -69,7 +69,7 @@ module LunaPark
 
         # @example
         #   class Mappers::Transaction < LunaPark::Mappers::Codirectional
-        #     attrs :comment, [:adresses, :home]
+        #     attrs :comment, :uid, %i[addresses home], :created_at
         #   end
         def attrs(*common_keys)
           common_keys.each do |common_key|
@@ -118,7 +118,7 @@ module LunaPark
         end
 
         def plain_copyist
-          @plain_copyist ||= Copyists::Plain.new
+          @plain_copyist ||= Copyists::Slice.new
         end
 
         def nested_copyists

@@ -15,10 +15,6 @@ module LunaPark
             raise ArgumentError, 'store path can not be nil' if row_path.nil?
           end
 
-          def path?(*paths)
-            paths.any? { |path| [@attrs_path, @row_path].include? path }
-          end
-
           def from_row(row:, attrs:)
             copy_nested(from: row, to: attrs, from_path: @row_path, to_path: @attrs_path)
           end
