@@ -252,6 +252,7 @@ module LunaPark
       end
 
       alias failure? fail?
+      alias failed? fail?
 
       # @return [Boolean] true if the scenario runs successfully
       def success?
@@ -318,7 +319,7 @@ module LunaPark
       end
 
       def on_raise(error)
-        raise error.cover_up_backtrace
+        raise error
       end
     end
   end

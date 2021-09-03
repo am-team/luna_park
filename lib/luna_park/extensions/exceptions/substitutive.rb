@@ -4,7 +4,6 @@ module LunaPark
   module Extensions
     module Exceptions
       # class-level mixin
-
       module Substitutive
         def self.extended(base)
           base.extend  ClassMethods

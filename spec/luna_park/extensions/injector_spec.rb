@@ -46,7 +46,7 @@ module LunaPark
         subject(:dependencies) { Rotor.dependencies }
 
         it { is_expected.to be_an_instance_of Hash }
-        
+
         it 'should be eq defined dependencies' do
           is_expected.to have_key :fuel
           is_expected.to have_key :oil
