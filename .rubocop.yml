@@ -14,6 +14,8 @@ AllCops:
     - Rakefile
     - 'bin/*'
   UseCache: true
+  NewCops: enable
+  SuggestExtensions: false
 
 Metrics/LineLength:
   Max: 120
@@ -45,6 +47,10 @@ Lint/AmbiguousBlockAssociation:
 Style/Attr:
   Enabled: false
 
+Lint/EmptyClass:
+  Exclude:
+    - 'spec/**/*'
+
 # TODO: убрать/изменить правило
 Style/Documentation:
   Enabled: false
@@ -56,51 +62,6 @@ Naming/MethodParameterName:
 Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: false
 
-Layout/SpaceAroundMethodCallOperator:
-  Enabled: true
-
-Lint/DeprecatedOpenSSLConstant:
-  Enabled: true
-
-Lint/MixedRegexpCaptureTypes:
-  Enabled: true
-
-Lint/RaiseException:
-  Enabled: true
-
-Lint/StructNewOverride:
-  Enabled: true
-
 # TODO: поговорить с Филиппом про attr
 Style/AccessorGrouping:
   Enabled: false
-
-Style/BisectedAttrAccessor:
-  Enabled: true
-
-Style/ExponentialNotation:
-  Enabled: true
-
-Style/HashEachMethods:
-  Enabled: true
-
-Style/HashTransformKeys:
-  Enabled: true
-
-Style/HashTransformValues:
-  Enabled: true
-
-Style/RedundantAssignment:
-  Enabled: true
-
-Style/RedundantFetchBlock:
-  Enabled: true
-
-Style/RedundantRegexpCharacterClass:
-  Enabled: true
-
-Style/RedundantRegexpEscape:
-  Enabled: true
-
-Style/SlicingWithRange:
-  Enabled: true

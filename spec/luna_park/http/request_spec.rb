@@ -3,6 +3,11 @@
 require 'luna_park/http/request'
 require 'timecop'
 
+module HttpRequestSpec
+  class FakeDriver
+  end
+end
+
 module LunaPark
   RSpec.describe Http::Request do
     let(:response) { double }
@@ -12,7 +17,7 @@ module LunaPark
       described_class.new(
         title: 'Get users',
         method: :get,
-        url: 'http://example.com',
+        url: 'https://example.com',
         body: JSON.generate(message: 'ping'),
         headers: { 'Content-Type': 'application/json' },
         driver: driver
@@ -40,7 +45,7 @@ module LunaPark
 
     describe '#title' do
       it 'should be defined in new request instance' do
-        expect { described_class.new(method: :get, url: 'http://example.com') }.to raise_error ArgumentError
+        expect { described_class.new(method: :get, url: 'https://example.com') }.to raise_error ArgumentError
       end
 
       it_behaves_like 'mutable argument before request send', :title
@@ -48,7 +53,7 @@ module LunaPark
 
     describe '#method' do
       it 'should be defined in new request instance' do
-        expect { described_class.new(title: 'Get users', url: 'http://example.com') }.to raise_error ArgumentError
+        expect { described_class.new(title: 'Get users', url: 'https://example.com') }.to raise_error ArgumentError
       end
 
       it_behaves_like 'mutable argument before request send', :method
@@ -150,11 +155,12 @@ module LunaPark
     describe '#driver' do
       subject { request.driver }
 
-      class Driver; end
-      let(:request) { Http::Request.new(title: 'Example', method: :get, url: 'http://yandex.ru', driver: Driver) }
+      let(:request) do
+        Http::Request.new(title: 'Example', method: :get, url: 'https://yandex.ru', driver: HttpRequestSpec::FakeDriver)
+      end
 
       it 'should be expected driver' do
-        is_expected.to eq Driver
+        is_expected.to eq HttpRequestSpec::FakeDriver
       end
     end
 
@@ -185,7 +191,7 @@ module LunaPark
         is_expected.to eq(
           title: 'Get users',
           method: :get,
-          url: 'http://example.com',
+          url: 'https://example.com',
           body: '{"message":"ping"}',
           headers: { 'Content-Type': 'application/json' },
           open_timeout: nil,

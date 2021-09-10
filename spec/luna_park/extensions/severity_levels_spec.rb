@@ -2,17 +2,19 @@
 
 require 'luna_park/extensions/severity_levels'
 
+module ExtensionsSeverityLevelsSpec
+  class Notifier
+    include LunaPark::Extensions::SeverityLevels
+
+    def post(msg = '', lvl:, **details)
+      { msg: msg, lvl: lvl, details: details }
+    end
+  end
+end
+
 module LunaPark
   RSpec.describe Extensions::SeverityLevels do
-    class FakeNotifier
-      include Extensions::SeverityLevels
-
-      def post(msg = '', lvl:, **details)
-        { msg: msg, lvl: lvl, details: details }
-      end
-    end
-
-    let(:notifier) { FakeNotifier.new }
+    let(:notifier) { ExtensionsSeverityLevelsSpec::Notifier.new }
 
     describe '#min_lvl' do
       subject { notifier.min_lvl }

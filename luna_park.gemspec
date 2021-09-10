@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
     # spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com'"
   else
     raise 'RubyGems 2.0 or newer is required to protect against ' \
-      'public gem pushes.'
+          'public gem pushes.'
   end
   spec.metadata['yard.run'] = 'yri'
 
@@ -44,11 +44,13 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pry', '~> 0.13'
   spec.add_development_dependency 'pry-byebug', '~> 3.9'
   spec.add_development_dependency 'rake', '~> 13.0'
+  spec.add_development_dependency 'rbs', '~> 1.6'
   spec.add_development_dependency 'rest-client', '~> 2.1'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rubocop', '~> 0.87'
+  spec.add_development_dependency 'rubocop', '~> 1.20'
   spec.add_development_dependency 'sentry-ruby', '~> 4.2'
-  spec.add_development_dependency 'simplecov', '~> 0.18'
+  spec.add_development_dependency 'simplecov', '~> 0.21.2'
+  spec.add_development_dependency 'steep', '~> 0.46'
   spec.add_development_dependency 'timecop', '~> 0.9'
   spec.add_development_dependency 'webmock', '~> 3.7.0'
   spec.add_development_dependency 'yard', '~> 0.9'

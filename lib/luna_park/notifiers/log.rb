@@ -115,7 +115,7 @@ module LunaPark
       # @param [Hash] details - Any another details for current message
       def post(msg, lvl: :error, **details)
         severity = severity(lvl)
-        message  = serialize(msg, details)
+        message  = serialize(msg, **details)
         logger.add severity, message
       end
 
@@ -125,7 +125,7 @@ module LunaPark
         end
 
         def default_logger
-          @default_logger ||= Logger.new(STDOUT)
+          @default_logger ||= Logger.new($stdout)
         end
       end
 

@@ -18,7 +18,7 @@ module MappersCodirectionalSpec
 
     def initialize(**opts)
       @uid = opts[:uid]
-      @funds = Funds.new(opts[:funds])
+      @funds = Funds.new(**opts[:funds])
       @comment = opts[:comment]
       @sizes = opts[:sizes]
     end
@@ -32,7 +32,7 @@ module MappersCodirectionalSpec
     attr_reader :charge, :usd
 
     def initialize(charge:, usd: nil)
-      @charge = Money.new(charge)
+      @charge = Money.new(**charge)
       @usd = usd
     end
 

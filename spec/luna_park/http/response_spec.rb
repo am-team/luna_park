@@ -10,7 +10,7 @@ module LunaPark
         body: '{"message":"pong"}',
         code: 200,
         headers: { 'Content-Type': 'application/json' },
-        cookies: { 'Secret': 'dkmvc9saudj3cndsaosp' },
+        cookies: { Secret: 'dkmvc9saudj3cndsaosp' },
         request: request
       }
     end
@@ -75,10 +75,10 @@ module LunaPark
       subject { response.cookies }
 
       context 'when defined in initialize method' do
-        before { params[:cookies] = { 'SSID': 'r2t5uvjq435r4q7ib3vtdjq120' } }
+        before { params[:cookies] = { SSID: 'r2t5uvjq435r4q7ib3vtdjq120' } }
 
         it 'should eq defined value' do
-          is_expected.to eq('SSID': 'r2t5uvjq435r4q7ib3vtdjq120')
+          is_expected.to eq(SSID: 'r2t5uvjq435r4q7ib3vtdjq120')
         end
       end
 
@@ -359,7 +359,7 @@ module LunaPark
           body: '{"message":"pong"}',
           code: 200,
           headers: { 'Content-Type': 'application/json' },
-          cookies: { 'Secret': 'dkmvc9saudj3cndsaosp' },
+          cookies: { Secret: 'dkmvc9saudj3cndsaosp' },
           request: request_hash
         )
       end

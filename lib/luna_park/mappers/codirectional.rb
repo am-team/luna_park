@@ -16,7 +16,7 @@ module LunaPark
     #     map attr: [:charge, :currency], row: :charge_currency # using aliased args
     #     map :comment
     #   end
-    # 
+    #
     #   mapper = Mappers::Transaction
     #
     #   attrs = { charge: { amount: 10, currency: 'USD' }, comment: 'Foobar' }

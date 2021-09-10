@@ -82,7 +82,7 @@ module LunaPark
             path.inject(nested_hash) { |output, key| output[key] ||= {} }
           end
 
-          class Undefined; end
+          class Undefined; end # rubocop:disable Lint/EmptyClass
 
           private_constant :Undefined
         end

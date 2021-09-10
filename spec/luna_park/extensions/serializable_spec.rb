@@ -3,6 +3,10 @@
 require 'luna_park/extensions/serializable'
 
 module ExtensionsSerializableSpec
+  NotRegistered = Struct.new(:title, :author, :weight) do
+    include LunaPark::Extensions::Serializable
+  end
+
   class Book
     include LunaPark::Extensions::Serializable
 
@@ -88,18 +92,12 @@ module LunaPark
       end
 
       context 'when serializable_attributes is not registered' do
-        # rubocop:disable Style/ClassAndModuleChildren, Style/StructInheritance
-        let(:klass) do
-          class ExtensionsSerializableSpec::ClassName < Struct.new(:title, :author, :weight)
-            include LunaPark::Extensions::Serializable
-          end
-        end
-        # rubocop:enable Style/ClassAndModuleChildren, Style/StructInheritance
+        let(:klass) { ExtensionsSerializableSpec::NotRegistered }
 
         it 'raises meaningfull exception' do
           expect { to_h }.to raise_error Errors::NotConfigured,
                                          'You must set at least one serializable attribute ' \
-                                         'using ExtensionsSerializableSpec::ClassName.serializable_attributes(*names)'
+                                         'using ExtensionsSerializableSpec::NotRegistered.serializable_attributes(*names)'
         end
       end
     end
