@@ -28,7 +28,7 @@ module LunaPark
     #   class CreateUser < Scenario
     #     attr_accessor :email, :password
     #
-    #     def call!
+    #     def perform
     #       user          = Entities::User.new
     #       user.email    = email
     #       user.password = Service::Encode.call(password)
@@ -80,7 +80,7 @@ module LunaPark
       # @example on fail
       #   class Fail < Errors::Business; end
       #   class FailScenario < Scenario
-      #     def call!
+      #     def perform
       #       raise Fail
       #       :result
       #     end
@@ -108,7 +108,7 @@ module LunaPark
       #
       # @example on success
       #   class SuccessScenario < Scenario
-      #     def call!
+      #     def perform
       #       :result
       #     end
       #   end
@@ -131,7 +131,7 @@ module LunaPark
       #   class SayHello < Scenario
       #     attr_accessor :first_name, :last_name
       #
-      #     def call!
+      #     def perform
       #       t('hello_my_nme_is', first_name: first_name, last_name: last_name)
       #     end
       #   end
@@ -159,6 +159,10 @@ module LunaPark
         @state    = INIT
       end
 
+      def call!
+        perform
+      end
+      
       # You must define this action and describe all business logic here.
       # When you run this method - it run as is, and does not change scenario instance.
       #
@@ -168,7 +172,7 @@ module LunaPark
       #   class Shot < Scenario
       #     attr_accessor :lucky_mode
       #
-      #     def call!
+      #     def perform
       #       raise YouDied, 'Always something went wrong' unless lucky_mode
       #       'All good'
       #     end
@@ -186,13 +190,13 @@ module LunaPark
       # @example Russian roulette
       #   # `.call!` usually use for "scenario in scenario"
       #   class RussianRoulette < Scenario
-      #     def call!
+      #     def perform
       #       [true, true, true, true, true, false].shuffle do |bullet|
       #         Shot.call! lucky_mode: bullet
       #       end
       #     end
       #   end
-      def call!
+      def perform
         raise Errors::AbstractMethod
       end
 
@@ -207,7 +211,7 @@ module LunaPark
       #   class Shot < Scenario
       #     attr_accessor :lucky_mode
       #
-      #     def call!
+      #     def perform
       #       raise YouDied, 'Always something went wrong' unless lucky_mode
       #       'All good'
       #     end
@@ -266,6 +270,8 @@ module LunaPark
         failure&.message(locale: locale || self.locale)
       end
 
+      alias fail_message failure_message
+
       class << self
         # @return Default notifier
         def default_notifier
@@ -278,7 +284,7 @@ module LunaPark
         #   class Foobar < Scenario
         #     notify_with Notifier::Bugsnag
         #
-        #     def call!
+        #     def perform
         #       true
         #     end
         #   end

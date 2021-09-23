@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.6] - 2021-10-06
+Changed
+- in `UseCases::Scenario` now abstract method is `#perform` - not `call!`. It is backward-compatible change: `call!` still works as abstract, and public interface was not changed.
+
+Added
+- returned old aliases fail falure fail_message to scenarios
+- add short alias for exceptions (`i18n:` instead of `i18n_key:`)
+
 ## [0.11.5] - 2022-09-27
 Changed
 - Added `.custom_error` method to `Extensions::HasError` to define errors with a custom superclass

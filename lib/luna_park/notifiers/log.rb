@@ -153,7 +153,7 @@ module LunaPark
         message = with
         return details unless message.respond_to?(:details)
 
-        message.details.merge(details) do |_, object_value, message_value|
+        (message.details || {}).merge(details || {}) do |_, object_value, message_value|
           { message: message_value, object: object_value }
         end
       end

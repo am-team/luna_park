@@ -69,9 +69,9 @@ module LunaPark
         # @param txt [String] - text of message
         # @param i18n_key [String] - internationalization key
         # @return [NilClass]
-        def message(txt = nil, i18n_key: nil, &default_message_block)
+        def message(txt = nil, i18n_key: nil, i18n: nil, &default_message_block)
           @default_message_block = block_given? ? default_message_block : txt && ->(_) { txt }
-          @i18n_key = i18n_key
+          @i18n_key = i18n_key || i18n
           nil
         end
 
