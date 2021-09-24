@@ -371,6 +371,8 @@ module LunaPark
 
       # Two response should be equal, if their attributes (request, code, body, headers, cookies) match.
       def ==(other)
+        return false unless other.is_a? self.class
+
         code      == other.code    &&
           body    == other.body    &&
           headers == other.headers &&
