@@ -168,14 +168,14 @@ module LunaPark
 
       it 'returns expected string' do
         is_expected.to eq '#<Elephant ' \
-          'head=#<Namespace:head ' \
-          'eyes=#<struct Eyes left="Red", right=nil> ' \
-          'ears=#<OpenStruct left="Normal", right="Damaged"> ' \
-          'legs=#<OpenStruct lb=true, rb=true, lf=true, rf=true> ' \
-          'trunk_length=2.1> alive=true ' \
-          'weapon=#<struct Gun title="BFG"> height=4.2 ' \
-          'number_of_crushed_enemies=2328 ' \
-          'last_battle_time=#<Date: 2018-12-07 ((2458460j,0s,0n),+0s,2299161j)>>'
+                          'head=#<Namespace:head ' \
+                          'eyes=#<struct Eyes left="Red", right=nil> ' \
+                          'ears=#<OpenStruct left="Normal", right="Damaged"> ' \
+                          'legs=#<OpenStruct lb=true, rb=true, lf=true, rf=true> ' \
+                          'trunk_length=2.1> alive=true ' \
+                          'weapon=#<struct Gun title="BFG"> height=4.2 ' \
+                          'number_of_crushed_enemies=2328 ' \
+                          'last_battle_time=#<Date: 2018-12-07 ((2458460j,0s,0n),+0s,2299161j)>>'
       end
     end
   end

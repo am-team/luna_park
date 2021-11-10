@@ -52,7 +52,7 @@ module LunaPark
 
     describe '#[]=' do
       let(:result)         { double }
-      let(:dependencies)   { described_class.try_convert(foo: -> { nil }) }
+      let(:dependencies)   { described_class.try_convert(foo: -> {}) }
       let(:run_dependency) { dependencies.call_with_cache(:foo) }
 
       it 'should reset memorization' do

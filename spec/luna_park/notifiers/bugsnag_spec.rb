@@ -3,6 +3,11 @@
 require 'webmock/rspec'
 require 'luna_park/notifiers/bugsnag'
 
+module BugsnagSpec
+  class CustomError < RuntimeError
+  end
+end
+
 module LunaPark
   RSpec.describe Notifiers::Bugsnag do
     before(:each) do
@@ -36,14 +41,12 @@ module LunaPark
       end
 
       context 'when message is custom error' do
-        class CustomError < RuntimeError; end
-
-        subject(:post_message) { notifier.post CustomError.new('Something went wrong. Again.') }
+        subject(:post_message) { notifier.post BugsnagSpec::CustomError.new('Something went wrong. Again.') }
 
         it 'should notify bugsnag with CustomError' do
           post_message
           expect(notifier).to have_sent_bugsnag_notification { |error, message|
-            expect(error).to   eq 'LunaPark::CustomError'
+            expect(error).to   eq 'BugsnagSpec::CustomError'
             expect(message).to eq 'Something went wrong. Again.'
           }
         end
@@ -195,7 +198,7 @@ module LunaPark
           event = JSON.parse(request.body).dig('events', 0)
           error_class = event.dig('exceptions', 0, 'errorClass')
           message     = event.dig('exceptions', 0, 'message')
-          severity    = event.dig('severity')
+          severity    = event['severity']
           details     = event.dig('metaData', 'details')
           custom      = event.dig('metaData', 'custom')
 

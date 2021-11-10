@@ -3,17 +3,29 @@
 # add description
 module LunaPark
   module Entities;   end
+
   module Errors;     end
+
   module Extensions; end
+
   module Forms; end
+
   module Handlers; end
+
   module Http; end
+
   module UseCases; end
+
   module Notifiers; end
+
   module Serializers; end
+
   module Tools; end
+
   module UseCases; end
+
   module Validators; end
+
   module Values; end
 end
 

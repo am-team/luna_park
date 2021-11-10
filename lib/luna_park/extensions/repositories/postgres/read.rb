@@ -37,7 +37,7 @@ module LunaPark
 
           private
 
-          def read_one!(dataset, for_update: false, not_found_meta:)
+          def read_one!(dataset, not_found_meta:, for_update: false)
             read_one(dataset, for_update: for_update).tap do |entity|
               raise Errors::NotFound, "#{short_class_name} (#{not_found_meta})" if entity.nil?
             end

@@ -10,6 +10,10 @@ module ExtensionsComparableSpec
   end
 
   class ElectronicBook < Book; end
+
+  NotRegistered = Struct.new(:title, :author, :weight) do
+    include LunaPark::Extensions::Comparable
+  end
 end
 
 module LunaPark
@@ -54,18 +58,12 @@ module LunaPark
       end
 
       context 'when comparable_attributes is not registered' do
-        # rubocop:disable Style/ClassAndModuleChildren, Style/StructInheritance
-        let(:klass) do
-          class ExtensionsComparableSpec::ClassName < Struct.new(:title, :author, :weight)
-            include LunaPark::Extensions::Comparable
-          end
-        end
-        # rubocop:enable Style/ClassAndModuleChildren, Style/StructInheritance
+        let(:klass) { ExtensionsComparableSpec::NotRegistered }
 
-        it 'raises meaningfull exception' do
+        it 'raises meaningful exception' do
           expect { eq }.to raise_error Errors::NotConfigured,
                                        'You must set at least one comparable attribute ' \
-                                       'using ExtensionsComparableSpec::ClassName.comparable_attributes(*names)'
+                                       'using ExtensionsComparableSpec::NotRegistered.comparable_attributes(*names)'
         end
       end
     end

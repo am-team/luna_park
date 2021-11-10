@@ -7,12 +7,17 @@ require 'luna_park/errors/system'
 require 'luna_park/errors/business'
 require 'luna_park/use_cases/scenario'
 
-class YouDied < LunaPark::Errors::Business
-  message 'Always something went wrong', i18n_key: 'errors.you_die'
-end
+module ScenarioSpec
+  class YouDied < LunaPark::Errors::Business
+    message 'Always something went wrong', i18n_key: 'errors.you_die'
+  end
 
-class ShootInFoot < LunaPark::Errors::System
-  message 'Dont use ruby', i18n_key: 'errors.shoot_in_the_foot'
+  class ShootInFoot < LunaPark::Errors::System
+    message 'Dont use ruby', i18n_key: 'errors.shoot_in_the_foot'
+  end
+
+  class Notifier
+  end
 end
 
 module LunaPark
@@ -29,7 +34,7 @@ module LunaPark
       end
     end
 
-    let(:scenario) { gunshot.new lucky_mode: true, error: YouDied.new(notify: :info) }
+    let(:scenario) { gunshot.new lucky_mode: true, error: ScenarioSpec::YouDied.new(notify: :info) }
 
     it 'should has errors' do
       expect(scenario).to be_a Extensions::HasErrors
@@ -52,7 +57,7 @@ module LunaPark
         end
 
         context 'when scenario has business error' do
-          let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
+          let(:scenario) { gunshot.new lucky_mode: false, error: ScenarioSpec::YouDied.new }
           it { expect { scenario.call }.to change { scenario.state }.from(:initialized).to(:fail) }
         end
       end
@@ -71,8 +76,8 @@ module LunaPark
         end
 
         context 'when scenario has business error' do
-          let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
-          it { is_expected.to be_an_instance_of YouDied }
+          let(:scenario) { gunshot.new lucky_mode: false, error: ScenarioSpec::YouDied.new }
+          it { is_expected.to be_an_instance_of ScenarioSpec::YouDied }
         end
       end
     end
@@ -93,12 +98,12 @@ module LunaPark
         before { scenario.call }
 
         context 'when scenario succeed' do
-          let(:scenario) { gunshot.new lucky_mode: true, error: YouDied.new }
+          let(:scenario) { gunshot.new lucky_mode: true, error: ScenarioSpec::YouDied.new }
           it { is_expected.to eq 'Good day for you' }
         end
 
         context 'when scenario has business error' do
-          let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
+          let(:scenario) { gunshot.new lucky_mode: false, error: ScenarioSpec::YouDied.new }
           it { is_expected.to be_nil }
         end
       end
@@ -132,9 +137,9 @@ module LunaPark
       end
 
       context 'when scenario failed' do
-        let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
+        let(:scenario) { gunshot.new lucky_mode: false, error: ScenarioSpec::YouDied.new }
 
-        it { expect { call! }.to raise_error YouDied }
+        it { expect { call! }.to raise_error ScenarioSpec::YouDied }
       end
     end
 
@@ -151,7 +156,7 @@ module LunaPark
 
       context 'when scenario failed' do
         context 'as business error' do
-          let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
+          let(:scenario) { gunshot.new lucky_mode: false, error: ScenarioSpec::YouDied.new }
 
           it 'return the same scenario' do
             is_expected.to eq scenario
@@ -159,17 +164,17 @@ module LunaPark
         end
 
         context 'is system error' do
-          let(:scenario) { gunshot.new lucky_mode: false, error: ShootInFoot.new }
+          let(:scenario) { gunshot.new lucky_mode: false, error: ScenarioSpec::ShootInFoot.new }
 
           it 'is expected to raise defined error' do
-            expect { call }.to raise_error ShootInFoot
+            expect { call }.to raise_error ScenarioSpec::ShootInFoot
           end
         end
       end
 
       describe 'notify parameter' do
         let(:notifier) { double('Notifier', error: nil, warning: nil, info: nil) }
-        let(:scenario) { gunshot.new lucky_mode: false, notifier: notifier, error: YouDied.new(notify: notify) }
+        let(:scenario) { gunshot.new lucky_mode: false, notifier: notifier, error: ScenarioSpec::YouDied.new(notify: notify) }
 
         context 'when it undefined' do
           let(:notify) { nil }
@@ -193,7 +198,7 @@ module LunaPark
           let(:notify) { true }
 
           it 'should notify error lvl message' do
-            expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :error)
+            expect(notifier).to receive(:post).with(instance_of(ScenarioSpec::YouDied), lvl: :error)
             call
           end
         end
@@ -202,7 +207,7 @@ module LunaPark
           let(:notify) { :unknown }
 
           it 'should notify error lvl message' do
-            expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :unknown)
+            expect(notifier).to receive(:post).with(instance_of(ScenarioSpec::YouDied), lvl: :unknown)
             call
           end
         end
@@ -211,7 +216,7 @@ module LunaPark
           let(:notify) { :fatal }
 
           it 'should notify error lvl message' do
-            expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :fatal)
+            expect(notifier).to receive(:post).with(instance_of(ScenarioSpec::YouDied), lvl: :fatal)
             call
           end
         end
@@ -220,7 +225,7 @@ module LunaPark
           let(:notify) { :error }
 
           it 'should notify error lvl message' do
-            expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :error)
+            expect(notifier).to receive(:post).with(instance_of(ScenarioSpec::YouDied), lvl: :error)
             call
           end
         end
@@ -229,7 +234,7 @@ module LunaPark
           let(:notify) { :warning }
 
           it 'should notify error lvl message' do
-            expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :warning)
+            expect(notifier).to receive(:post).with(instance_of(ScenarioSpec::YouDied), lvl: :warning)
             call
           end
         end
@@ -238,7 +243,7 @@ module LunaPark
           let(:notify) { :info }
 
           it 'should notify info lvl message' do
-            expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :info)
+            expect(notifier).to receive(:post).with(instance_of(ScenarioSpec::YouDied), lvl: :info)
             call
           end
         end
@@ -247,7 +252,7 @@ module LunaPark
           let(:notify) { :debug }
 
           it 'should notify debug lvl message' do
-            expect(notifier).to receive(:post).with(instance_of(YouDied), lvl: :debug)
+            expect(notifier).to receive(:post).with(instance_of(ScenarioSpec::YouDied), lvl: :debug)
             call
           end
         end
@@ -264,18 +269,16 @@ module LunaPark
       end
 
       context 'when notifier defined in class' do
-        class Notifier; end
-
         let(:gunshot) do
           Class.new(described_class) do
             attr_accessor :notify, :lucky_mode, :error
 
-            notify_with Notifier
+            notify_with ScenarioSpec::Notifier
           end
         end
 
         it 'should eq class defined notifier' do
-          is_expected.to eq Notifier
+          is_expected.to eq ScenarioSpec::Notifier
         end
       end
 
@@ -306,7 +309,7 @@ module LunaPark
         end
 
         context 'when scenario failed' do
-          let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
+          let(:scenario) { gunshot.new lucky_mode: false, error: ScenarioSpec::YouDied.new }
           it { expect { scenario.call }.to change { scenario.fail? }.from(false).to(true) }
         end
       end
@@ -329,7 +332,7 @@ module LunaPark
         end
 
         context 'when scenario failed' do
-          let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
+          let(:scenario) { gunshot.new lucky_mode: false, error: ScenarioSpec::YouDied.new }
           it { expect { scenario.call }.not_to change { scenario.success? } }
         end
       end
@@ -350,7 +353,7 @@ module LunaPark
         context 'when scenario failed' do
           context 'as business error' do
             context 'on default locale' do
-              let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new }
+              let(:scenario) { gunshot.new lucky_mode: false, error: ScenarioSpec::YouDied.new }
 
               it 'should use default locale' do
                 is_expected.to eq 'You die'
@@ -358,14 +361,14 @@ module LunaPark
             end
 
             context 'on defined locale in object' do
-              let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new, locale: :ru }
+              let(:scenario) { gunshot.new lucky_mode: false, error: ScenarioSpec::YouDied.new, locale: :ru }
               it 'should use object locale' do
                 is_expected.to eq 'Всего лишь царапина'
               end
             end
 
             context 'on defined locale in object and defined locale in method' do
-              let(:scenario) { gunshot.new lucky_mode: false, error: YouDied.new, locale: :ru }
+              let(:scenario) { gunshot.new lucky_mode: false, error: ScenarioSpec::YouDied.new, locale: :ru }
               subject(:failure_message) { scenario.failure_message locale: :fr }
 
               it 'should use method locale' do
@@ -385,18 +388,16 @@ module LunaPark
       end
 
       context 'when notifier defined in class' do
-        class Notifier; end
-
         let(:gunshot) do
           Class.new(described_class) do
             attr_accessor :notify
 
-            notify_with Notifier
+            notify_with ScenarioSpec::Notifier
           end
         end
 
         it 'should eq class defined notifier' do
-          is_expected.to eq Notifier
+          is_expected.to eq ScenarioSpec::Notifier
         end
       end
     end

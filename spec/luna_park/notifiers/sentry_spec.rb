@@ -3,6 +3,11 @@
 require 'spec_helper'
 require 'luna_park/notifiers/sentry'
 
+module NotifiersSentrySpec
+  class CustomError < RuntimeError
+  end
+end
+
 module LunaPark
   RSpec.describe Notifiers::Sentry do
     let(:notifier) { described_class.new }
@@ -40,8 +45,7 @@ module LunaPark
       end
 
       context 'when message is custom error' do
-        class CustomError < RuntimeError; end
-        let(:error) { CustomError.new('Something went wrong. Again.') }
+        let(:error) { NotifiersSentrySpec::CustomError.new('Something went wrong. Again.') }
 
         subject(:post_message) { notifier.post error }
 

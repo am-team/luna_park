@@ -96,7 +96,7 @@ module LunaPark
       # @param open_timeout (see #open_timeout)
       # @param driver is HTTP driver which use to send this request
       # rubocop:disable Metrics/ParameterLists, Layout/LineLength
-      def initialize(title:, method: nil, url: nil, body: nil, headers: nil, open_timeout: nil, read_timeout: nil, driver:)
+      def initialize(title:, driver:, method: nil, url: nil, body: nil, headers: nil, open_timeout: nil, read_timeout: nil)
         @title        = title
         @method       = method
         @url          = url
