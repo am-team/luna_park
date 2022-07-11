@@ -86,7 +86,7 @@ module LunaPark
       #
       #   stderr = Stderr.new
       #   stderr.logger # => #<Logger:0x000056445e1e2118 ... @filename="example.log"...
-      # Or in the initaialize of the instance
+      # Or in the initialize of the instance
       #
       # - On instance
       #   stderr = LunaPark::Notifier::Log.new(logger: Logger.new(STDERR))

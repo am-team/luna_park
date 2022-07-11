@@ -9,6 +9,7 @@
 /tmp/
 /.tmp/
 .byebug_history
+.tool-versions
 
 # rspec failure tracking
 .rspec_status
