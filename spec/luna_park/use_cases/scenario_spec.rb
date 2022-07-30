@@ -169,7 +169,7 @@ module LunaPark
 
       describe 'notify parameter' do
         let(:notifier) { double('Notifier', error: nil, warning: nil, info: nil) }
-        let(:scenario) { gunshot.new lucky_mode: false, notifier: notifier, error: YouDied.new(notify: notify) }
+        let(:scenario) { gunshot.new lucky_mode: false, notifier:, error: YouDied.new(notify:) }
 
         context 'when it undefined' do
           let(:notify) { nil }
@@ -264,24 +264,24 @@ module LunaPark
       end
 
       context 'when notifier defined in class' do
-        class Notifier; end
+        let!(:notifier) { stub_const('Notifier', Class.new) }
 
         let(:gunshot) do
           Class.new(described_class) do
             attr_accessor :notify, :lucky_mode, :error
 
-            notify_with Notifier
+            notify_with notifier
           end
         end
 
         it 'should eq class defined notifier' do
-          is_expected.to eq Notifier
+          is_expected.to eq notifier
         end
       end
 
       context 'when notifier does not set in instance' do
         let(:notifier) { double 'Notifier' }
-        let(:scenario) { gunshot.new notifier: notifier }
+        let(:scenario) { gunshot.new notifier: }
 
         it 'should eq defined notifier' do
           is_expected.to eq notifier
@@ -385,7 +385,7 @@ module LunaPark
       end
 
       context 'when notifier defined in class' do
-        class Notifier; end
+        let!(:notifier) { stub_const('Notifier', Class.new) }
 
         let(:gunshot) do
           Class.new(described_class) do

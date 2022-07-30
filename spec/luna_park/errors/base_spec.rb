@@ -284,7 +284,7 @@ module LunaPark
         end
 
         it 'builds expected message' do
-          expect(error_class.new({ foo: 'Foo' }).message).to eq 'Dynamic message Foo'
+          expect(error_class.new(**{ foo: 'Foo' }).message).to eq 'Dynamic message Foo'
         end
       end
 

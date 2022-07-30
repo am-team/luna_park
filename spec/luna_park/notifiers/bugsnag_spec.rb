@@ -36,9 +36,8 @@ module LunaPark
       end
 
       context 'when message is custom error' do
-        class CustomError < RuntimeError; end
-
-        subject(:post_message) { notifier.post CustomError.new('Something went wrong. Again.') }
+        let(:custom_error_class) { Class.new(RuntimeError) }
+        subject(:post_message) { notifier.post custom_error_class.new('Something went wrong. Again.') }
 
         it 'should notify bugsnag with CustomError' do
           post_message
@@ -195,7 +194,7 @@ module LunaPark
           event = JSON.parse(request.body).dig('events', 0)
           error_class = event.dig('exceptions', 0, 'errorClass')
           message     = event.dig('exceptions', 0, 'message')
-          severity    = event.dig('severity')
+          severity    = event['severity']
           details     = event.dig('metaData', 'details')
           custom      = event.dig('metaData', 'custom')
 

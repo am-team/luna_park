@@ -63,7 +63,7 @@ module LunaPark
           if attr_path == row_path
             attrs(attr_path)
           else
-            nested_copyists << Copyists::Nested.new(attrs_path: attr_path, row_path: row_path)
+            nested_copyists << Copyists::Nested.new(attrs_path: attr_path, row_path:)
           end
         end
 
@@ -85,16 +85,16 @@ module LunaPark
         def from_row(input)
           row = input.to_h
           {}.tap do |attrs|
-            slice_copyist.from_row(row: row, attrs: attrs)
-            nested_copyists.each { |copyist| copyist.from_row(row: row, attrs: attrs) }
+            slice_copyist.from_row(row:, attrs:)
+            nested_copyists.each { |copyist| copyist.from_row(row:, attrs:) }
           end
         end
 
         def to_row(input)
           attrs = input.to_h
           {}.tap do |row|
-            slice_copyist.to_row(row: row, attrs: attrs)
-            nested_copyists.each { |copyist| copyist.to_row(row: row, attrs: attrs) }
+            slice_copyist.to_row(row:, attrs:)
+            nested_copyists.each { |copyist| copyist.to_row(row:, attrs:) }
           end
         end
 
@@ -109,9 +109,9 @@ module LunaPark
           when Symbol then input
           when String then input.to_sym
           when Array
-            return to_path(input.first, full: full) if input.size <= 1
+            return to_path(input.first, full:) if input.size <= 1
 
-            input.flat_map { |elem| to_path(elem, full: full) }
+            input.flat_map { |elem| to_path(elem, full:) }
           else raise ArgumentError, "Unexpected path part `#{input.inspect}` in `#{full.inspect}`. " \
                                     'Expected Symbol, String or Array'
           end

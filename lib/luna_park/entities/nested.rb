@@ -6,13 +6,13 @@ module LunaPark
   module Entities
     # add description
     class Nested < Attributable
-      def self.namespace(name, &block) # rubocop:disable Metrics/MethodLength
+      def self.namespace(name, &) # rubocop:disable Metrics/MethodLength
         serializable_attributes(name)
         comparable_attributes(name)
 
         namespace_class = Class.new(Nested)
         namespace_class.define_singleton_method(:name) { "Namespace:#{name}" }
-        namespace_class.class_eval(&block)
+        namespace_class.class_eval(&)
 
         anonym_mixin = Module.new do
           attr_reader(name)

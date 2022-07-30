@@ -53,7 +53,7 @@ module LunaPark
               set_cookie: ['theme=light']
             },
             cookies: { 'theme' => 'light' },
-            request: request
+            request:
           )
         end
       end
@@ -78,7 +78,7 @@ module LunaPark
               content_type: 'application/json'
             },
             cookies: {},
-            request: request
+            request:
           )
         end
       end
@@ -89,7 +89,7 @@ module LunaPark
         end
 
         it 'should get response with 503' do
-          is_expected.to eq Http::Response.new(code: 503, request: request)
+          is_expected.to eq Http::Response.new(code: 503, request:)
         end
       end
 
@@ -97,7 +97,7 @@ module LunaPark
         before { stub_request(:any, 'http://example.com').to_raise(Net::OpenTimeout) }
 
         it 'should get response with 408' do
-          is_expected.to eq Http::Response.new(code: 408, request: request)
+          is_expected.to eq Http::Response.new(code: 408, request:)
         end
       end
 
@@ -105,7 +105,7 @@ module LunaPark
         before { stub_request(:any, 'http://example.com').to_raise(Net::ReadTimeout) }
 
         it 'should get response with 408' do
-          is_expected.to eq Http::Response.new(code: 408, request: request)
+          is_expected.to eq Http::Response.new(code: 408, request:)
         end
       end
     end
@@ -146,7 +146,7 @@ module LunaPark
               set_cookie: ['theme=light']
             },
             cookies: { 'theme' => 'light' },
-            request: request
+            request:
           )
         end
       end
@@ -168,7 +168,7 @@ module LunaPark
             headers: {
               content_type: 'application/json'
             },
-            request: request
+            request:
           )
 
           expect { send! }.to raise_error(
@@ -186,7 +186,7 @@ module LunaPark
         end
 
         it 'should raise http exception with 503 error code response' do
-          expected_response = Http::Response.new(code: 503, request: request)
+          expected_response = Http::Response.new(code: 503, request:)
 
           expect { send! }.to raise_error(
             an_instance_of(Errors::Http).and(having_attributes(
@@ -201,7 +201,7 @@ module LunaPark
         before { stub_request(:any, 'http://example.com').to_raise(Net::OpenTimeout) }
 
         it 'should raise http exception with 408 error code response' do
-          expected_response = Http::Response.new(code: 408, request: request)
+          expected_response = Http::Response.new(code: 408, request:)
 
           expect { send! }.to raise_error(
             an_instance_of(Errors::Http).and(having_attributes(
@@ -216,7 +216,7 @@ module LunaPark
         before { stub_request(:any, 'http://example.com').to_raise(Net::ReadTimeout) }
 
         it 'should raise http exception with 408 error code response' do
-          expected_response = Http::Response.new(code: 408, request: request)
+          expected_response = Http::Response.new(code: 408, request:)
 
           expect { send! }.to raise_error(
             an_instance_of(Errors::Http).and(having_attributes(

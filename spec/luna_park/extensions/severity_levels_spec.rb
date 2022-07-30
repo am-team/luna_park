@@ -4,15 +4,17 @@ require 'luna_park/extensions/severity_levels'
 
 module LunaPark
   RSpec.describe Extensions::SeverityLevels do
-    class FakeNotifier
-      include Extensions::SeverityLevels
+    let(:fake_notifier) do
+      Class.new do
+        include Extensions::SeverityLevels
 
-      def post(msg = '', lvl:, **details)
-        { msg: msg, lvl: lvl, details: details }
+        def post(msg = '', lvl:, **details)
+          { msg:, lvl:, details: }
+        end
       end
     end
 
-    let(:notifier) { FakeNotifier.new }
+    let(:notifier) { fake_notifier.new }
 
     describe '#min_lvl' do
       subject { notifier.min_lvl }
@@ -47,14 +49,14 @@ module LunaPark
         subject { notifier.send(lvl, 'Message text', foo: 1) }
 
         it 'should send expected message' do
-          is_expected.to eq(msg: 'Message text', lvl: lvl, details: { foo: 1 })
+          is_expected.to eq(msg: 'Message text', lvl:, details: { foo: 1 })
         end
       end
 
       context 'when message is block' do
         subject { notifier.send(lvl, foo: 1) { 'Message text' } }
         it 'should send expected message' do
-          is_expected.to eq(msg: 'Message text', lvl: lvl, details: { foo: 1 })
+          is_expected.to eq(msg: 'Message text', lvl:, details: { foo: 1 })
         end
 
         it 'should change run code in block' do

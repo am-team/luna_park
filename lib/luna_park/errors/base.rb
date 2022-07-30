@@ -77,9 +77,9 @@ module LunaPark
 
         def inherited(inheritor)
           if __default_message_block__
-            inheritor.message(i18n_key: i18n_key, &__default_message_block__)
+            inheritor.message(i18n_key:, &__default_message_block__)
           elsif i18n_key
-            inheritor.message(i18n_key: i18n_key)
+            inheritor.message(i18n_key:)
           end
 
           inheritor.default_notify = default_notify
@@ -232,7 +232,7 @@ module LunaPark
         return unless self.class.i18n_key
         return unless show_error || I18n.exists?(self.class.i18n_key)
 
-        I18n.t(self.class.i18n_key, locale: locale, **details)
+        I18n.t(self.class.i18n_key, locale:, **details)
       end
 
       # @return [String] - Default message

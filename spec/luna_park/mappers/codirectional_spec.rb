@@ -18,13 +18,13 @@ module MappersCodirectionalSpec
 
     def initialize(**opts)
       @uid = opts[:uid]
-      @funds = Funds.new(opts[:funds])
+      @funds = Funds.new(**opts[:funds])
       @comment = opts[:comment]
       @sizes = opts[:sizes]
     end
 
     def to_h
-      { uid: uid, funds: funds.to_h, comment: comment, sizes: @sizes.to_h }
+      { uid:, funds: funds.to_h, comment:, sizes: @sizes.to_h }
     end
   end
 
@@ -32,7 +32,7 @@ module MappersCodirectionalSpec
     attr_reader :charge, :usd
 
     def initialize(charge:, usd: nil)
-      @charge = Money.new(charge)
+      @charge = Money.new(**charge)
       @usd = usd
     end
 
@@ -50,7 +50,7 @@ module MappersCodirectionalSpec
     end
 
     def to_h
-      { amount: amount, currency: currency }
+      { amount:, currency: }
     end
   end
 end
@@ -61,8 +61,8 @@ module LunaPark
 
     let(:sizes) { { waist: 42, length: 176 } }
 
-    let(:attrs) { { uid: 42, funds: { charge: { amount: 10, currency: 'USD' } }, sizes: sizes, comment: 'Foobar' } }
-    let(:row)   { { id: 42, funds_charge_amount: 10, funds_charge_currency: 'USD', sizes: sizes, comment: 'Foobar' } }
+    let(:attrs) { { uid: 42, funds: { charge: { amount: 10, currency: 'USD' } }, sizes:, comment: 'Foobar' } }
+    let(:row)   { { id: 42, funds_charge_amount: 10, funds_charge_currency: 'USD', sizes:, comment: 'Foobar' } }
 
     describe '.to_row' do
       subject(:to_row) { mapper.to_row(input) }

@@ -15,7 +15,7 @@ module LunaPark
         url: 'http://example.com',
         body: JSON.generate(message: 'ping'),
         headers: { 'Content-Type': 'application/json' },
-        driver: driver
+        driver:
       )
     end
 
@@ -150,11 +150,11 @@ module LunaPark
     describe '#driver' do
       subject { request.driver }
 
-      class Driver; end
-      let(:request) { Http::Request.new(title: 'Example', method: :get, url: 'http://yandex.ru', driver: Driver) }
+      let(:driver_class) { Class.new }
+      let(:request) { Http::Request.new(title: 'Example', method: :get, url: 'http://yandex.ru', driver: driver_class) }
 
       it 'should be expected driver' do
-        is_expected.to eq Driver
+        is_expected.to eq driver_class
       end
     end
 

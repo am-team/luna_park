@@ -96,7 +96,7 @@ module LunaPark
       # @param open_timeout (see #open_timeout)
       # @param driver is HTTP driver which use to send this request
       # rubocop:disable Metrics/ParameterLists, Layout/LineLength
-      def initialize(title:, method: nil, url: nil, body: nil, headers: nil, open_timeout: nil, read_timeout: nil, driver:)
+      def initialize(title:, driver:, method: nil, url: nil, body: nil, headers: nil, open_timeout: nil, read_timeout: nil)
         @title        = title
         @method       = method
         @url          = url
@@ -191,12 +191,12 @@ module LunaPark
       #                   #  @url=\"http://localhost:8080/get_200\" @method=\"get\"
       #                   #  @headers=\"{}\" @body=\"\" @sent_at=\"\">"
       def inspect
-        "<#{self.class.name} "           \
-          "@title=#{title.inspect} "     \
-          "@url=#{url.inspect} "         \
-          "@method=#{method.inspect} "   \
+        "<#{self.class.name} " \
+          "@title=#{title.inspect} " \
+          "@url=#{url.inspect} " \
+          "@method=#{method.inspect} " \
           "@headers=#{headers.inspect} " \
-          "@body=#{body.inspect} "       \
+          "@body=#{body.inspect} " \
           "@sent_at=#{sent_at.inspect}>"
       end
 
@@ -210,14 +210,14 @@ module LunaPark
       #                      :open_timeout=>10}
       def to_h
         {
-          title: title,
-          method: method,
-          url: url,
-          body: body,
-          headers: headers,
-          read_timeout: read_timeout,
-          open_timeout: open_timeout,
-          sent_at: sent_at
+          title:,
+          method:,
+          url:,
+          body:,
+          headers:,
+          read_timeout:,
+          open_timeout:,
+          sent_at:
         }
       end
     end

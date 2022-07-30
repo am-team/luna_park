@@ -32,7 +32,7 @@ module LunaPark
         raise ArgumentError, 'Response should be Http::Response' unless response.is_a? LunaPark::Http::Response
 
         @response = response
-        super msg, notify: notify, **details
+        super msg, notify:, **details
       end
 
       # Return request which call this is error.

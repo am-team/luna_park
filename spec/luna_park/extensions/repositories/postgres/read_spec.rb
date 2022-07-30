@@ -44,15 +44,15 @@ RSpec.describe LunaPark::Extensions::Repositories::Postgres::Read do
     let(:uid) { 42 }
 
     context 'when exist' do
-      let(:fake_row) { { uid: uid, foo: 'FOO' } }
+      let(:fake_row) { { uid:, foo: 'FOO' } }
 
-      before { allow(fake_dataset).to receive(:where).with(uid: uid).and_return([fake_row]) }
+      before { allow(fake_dataset).to receive(:where).with(uid:).and_return([fake_row]) }
 
       it { is_expected.to eq fake_entity_klass.new(fake_row) }
     end
 
     context 'when not exist' do
-      before { allow(fake_dataset).to receive(:where).with(uid: uid).and_return([]) }
+      before { allow(fake_dataset).to receive(:where).with(uid:).and_return([]) }
 
       it { is_expected.to be_nil }
     end
@@ -63,15 +63,15 @@ RSpec.describe LunaPark::Extensions::Repositories::Postgres::Read do
     let(:uid) { 42 }
 
     context 'when exist' do
-      let(:fake_row) { { uid: uid, foo: 'FOO' } }
+      let(:fake_row) { { uid:, foo: 'FOO' } }
 
-      before { allow(fake_dataset).to receive(:where).with(uid: uid).and_return([fake_row]) }
+      before { allow(fake_dataset).to receive(:where).with(uid:).and_return([fake_row]) }
 
       it { is_expected.to eq fake_entity_klass.new(fake_row) }
     end
 
     context 'when not exist' do
-      before { allow(fake_dataset).to receive(:where).with(uid: uid).and_return([]) }
+      before { allow(fake_dataset).to receive(:where).with(uid:).and_return([]) }
 
       it { expect { find! }.to raise_error LunaPark::Errors::NotFound, 'FakeEntity (42)' }
     end
