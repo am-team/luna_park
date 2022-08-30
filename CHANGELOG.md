@@ -4,12 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.4] - 2022-07-11
+Changed
+- allow require Notifiers::Sentry when sentry-ruby version >= 4
+
 ## [0.11.3] - 2021-09-02
-Added 
+Added
 - new mapper `Mappers::Codirectionsl` with DSL
 
 ## [0.11.2] - 2021-09-01
-Added 
+Added
 - Github CI
 
 ## [0.11.1] - 2021-05-24
@@ -24,7 +28,7 @@ Changed
 ## [0.11.0] - 2021-03-18
 Changed
 - Rename Interactors to UseCases
-- Rename Errors::Adaptive to Errors:Base 
+- Rename Errors::Adaptive to Errors:Base
 - Rename Errors::Processing to Errors::Business
 Added
 - Add class Errors::System
