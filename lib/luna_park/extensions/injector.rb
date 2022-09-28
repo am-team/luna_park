@@ -191,6 +191,19 @@ module LunaPark
         def dependencies=(value)
           @dependencies = Dependencies.wrap(value)
         end
+
+        ##
+        # Set dependencies, returns `self` to allow chaining
+        # Don't forget to override <b>all</b> dependencies.
+        #
+        #   use_case
+        #     .inject({ repo: -> { Fake::Repo.new }})
+        #     .call
+        #
+        def inject(value)
+          self.dependencies = value
+          self
+        end
       end
     end
   end

@@ -22,7 +22,7 @@ module LunaPark
         expect(Service::BusinessError < Errors::Business).to eq true
       end
 
-      context 'when params are passed' do
+      context 'with params' do
         before do
           Service.business_error(:business_error_example, 'Business error', i18n_key: 'errors.business_error', notify: :info)
         end
@@ -59,7 +59,7 @@ module LunaPark
         expect(Service::SystemError < Errors::System).to eq true
       end
 
-      context 'when params are passed' do
+      context 'with params' do
         before do
           Service.business_error(:system_error_example, 'System error', i18n_key: 'errors.system_error', notify: :info)
         end
@@ -96,7 +96,7 @@ module LunaPark
         expect(Service::CustomError < CustomErrorBase).to eq true
       end
 
-      context 'when params are passed' do
+      context 'with params' do
         before do
           Service.custom_error(:custom_error_example, CustomErrorBase, 'Custom error', i18n_key: 'errors.custom_error', notify: :info)
         end
@@ -110,7 +110,7 @@ module LunaPark
         end
       end
 
-      context 'when params are not passed' do
+      context 'without params' do
         before do
           Service.custom_error(:custom_error_example, CustomErrorBase)
         end

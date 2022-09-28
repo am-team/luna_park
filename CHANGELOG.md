@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.11.5] - 2022-09-27
 Changed
-- added custom_error to Extensions::HasError
+- Added `.custom_error` method to `Extensions::HasError` to define errors with a custom superclass
+- Added `#inject` method to `Extensions::Injector` - dependencies setter that allows you to create method chains
 
 ## [0.11.4] - 2022-07-11
 Changed
