@@ -12,6 +12,9 @@ Added
 - returned old aliases fail falure to scenarios
 - add short alias for exceptions (`i18n:` instead of `i18n_key:`)
 
+Removed
+- make default_message_block private (using name format `__...__`)
+
 ## [0.11.5] - 2022-09-27
 Changed
 - Added `.custom_error` method to `Extensions::HasError` to define errors with a custom superclass
