@@ -118,6 +118,23 @@ module LunaPark
         let(:error) { error_class.new(foo: 'FOO') }
         let(:error_class) do
           Class.new(described_class) do
+            message 'Static default message', i18n: 'errors.example'
+          end
+        end
+
+        it 'is equal to expected message at default locale' do
+          expect(error.message).to eq 'Example'
+        end
+
+        it 'is equal to expected message at given locale' do
+          expect(error.message(locale: :fr)).to eq 'Exemple'
+        end
+      end
+
+      context 'message is defined with i18n_key' do
+        let(:error) { error_class.new(foo: 'FOO') }
+        let(:error_class) do
+          Class.new(described_class) do
             message 'Static default message', i18n_key: 'errors.example'
           end
         end
@@ -135,7 +152,7 @@ module LunaPark
     context 'message is defined with i18n, but has no default translation' do
       let(:error_class) do
         Class.new(described_class) do
-          message 'Default message', i18n_key: 'foo'
+          message 'Default message', i18n: 'foo'
         end
       end
 
@@ -147,7 +164,7 @@ module LunaPark
     context 'message is defined only with i18n, but has no default translation' do
       let(:error_class) do
         Class.new(described_class) do
-          message i18n_key: 'errors.foo'
+          message i18n: 'errors.foo'
         end
       end
 
@@ -161,7 +178,7 @@ module LunaPark
 
       let(:error_class) do
         Class.new(described_class) do
-          message 'Static default message', i18n_key: 'errors.variable'
+          message 'Static default message', i18n: 'errors.variable'
         end
       end
 
@@ -222,7 +239,7 @@ module LunaPark
       context 'when i18n key is defined' do
         let(:error_class) do
           Class.new(described_class) do
-            message i18n_key: 'errors.example'
+            message i18n: 'errors.example'
           end
         end
 
@@ -247,16 +264,12 @@ module LunaPark
     describe '.message' do
       let(:error_class) do
         Class.new(described_class) do
-          message 'Static default message', i18n_key: 'errors.example_key'
+          message 'Static default message', i18n: 'errors.example_key'
         end
       end
 
-      it 'defines default_message_block' do
-        expect(error_class.default_message_block).to be_a Proc
-      end
-
-      it 'defines default_message_block that builds expected message' do
-        expect(error_class.default_message_block.call({})).to eq 'Static default message'
+      it 'builds expected message' do
+        expect(error_class.new.message).to eq 'Static default message'
       end
 
       it 'defines 118n_key' do
@@ -266,25 +279,25 @@ module LunaPark
       context 'when use default message block' do
         let(:error_class) do
           Class.new(described_class) do
-            message(i18n_key: 'errors.example_key') { |d| "Dynamic message #{d[:foo]}" }
+            message(i18n: 'errors.example_key') { |d| "Dynamic message #{d[:foo]}" }
           end
         end
 
-        it 'defines default_message_block that builds expected message' do
-          expect(error_class.default_message_block.call({ foo: 'Foo' })).to eq 'Dynamic message Foo'
+        it 'builds expected message' do
+          expect(error_class.new({ foo: 'Foo' }).message).to eq 'Dynamic message Foo'
         end
       end
 
       context 'when inherited' do
         let(:error_superclass) do
           Class.new(described_class) do
-            message(i18n_key: 'errors.example_key') { 'Default message' }
+            message(i18n: 'errors.example_key') { 'Default message' }
           end
         end
         let(:error_class) { Class.new(error_superclass) }
 
-        it 'child has same default_message_block' do
-          expect(error_class.default_message_block).to eq error_superclass.default_message_block
+        it 'child builds same message' do
+          expect(error_class.new.message).to eq error_superclass.new.message
         end
 
         it 'child has same i18n_key' do
@@ -305,50 +318,6 @@ module LunaPark
 
         it 'child has same default_notify' do
           expect(error_class.default_notify).to eq :info
-        end
-      end
-    end
-
-    describe '.default_message_block' do
-      subject(:default_message_block) { error_class.default_message_block }
-
-      context 'when default message is not defined' do
-        let(:error_class) { described_class }
-
-        it 'is nil' do
-          is_expected.to be_nil
-        end
-      end
-
-      context 'when default message is defined' do
-        let(:error_class) do
-          Class.new(described_class) do
-            message 'Static default message'
-          end
-        end
-
-        it 'is a Proc' do
-          is_expected.to be_a Proc
-        end
-
-        it 'can build defined message' do
-          expect(default_message_block.call({})).to eq 'Static default message'
-        end
-      end
-
-      context 'when default message is defined with block' do
-        let(:error_class) do
-          Class.new(described_class) do
-            message { |d| "Message with detail '#{d[:detail]}'" }
-          end
-        end
-
-        it 'is a Proc' do
-          is_expected.to be_a Proc
-        end
-
-        it 'can build expected message' do
-          expect(default_message_block.call({ detail: 'DETAIL' })).to eq "Message with detail 'DETAIL'"
         end
       end
     end

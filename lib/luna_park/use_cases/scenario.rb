@@ -162,7 +162,7 @@ module LunaPark
       def call!
         perform
       end
-      
+
       # You must define this action and describe all business logic here.
       # When you run this method - it run as is, and does not change scenario instance.
       #

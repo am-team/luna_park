@@ -8,11 +8,11 @@ require 'luna_park/errors/business'
 require 'luna_park/use_cases/scenario'
 
 class YouDied < LunaPark::Errors::Business
-  message 'Always something went wrong', i18n_key: 'errors.you_die'
+  message 'Always something went wrong', i18n: 'errors.you_die'
 end
 
 class ShootInFoot < LunaPark::Errors::System
-  message 'Dont use ruby', i18n_key: 'errors.shoot_in_the_foot'
+  message 'Dont use ruby', i18n: 'errors.shoot_in_the_foot'
 end
 
 module LunaPark
