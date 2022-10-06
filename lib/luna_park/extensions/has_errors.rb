@@ -43,10 +43,10 @@ module LunaPark
         #   class Service
         #     include LunaPark::Extensions::HasErrors
         #
-        #     class CustomError < LunaPark::Errors::Business; end
+        #     class LogicError < LunaPark::Errors::Business; end
         #   end
         #
-        #   Service.new.error :custom_error # => raise CustomError
+        #   Service.new.error :logic_error # => raise LogicError
         #
         # @param title [Symbol|String] - Title of error
         # @param msg [String] - Message of error
@@ -89,18 +89,53 @@ module LunaPark
         #   class Service
         #     include LunaPark::Extensions::HasErrors
         #
-        #     system_error :tech_error, 'Custom message'
+        #     system_error :tech_error, 'Error message'
         #   end
         #
         #   tech_error = Service::TechError.new
         #   tech_error.is_a? LunaPark::Errors::System # => true
-        #   tech_error.message # => 'Custom message'
+        #   tech_error.message # => 'Error message'
         def system_error(title, txt = nil, i18n_key: nil, notify: nil, &default_message_block)
           error_class = Class.new(Errors::System)
           error_class.message(txt, i18n_key: i18n_key, &default_message_block)
           error_class.notify(notify)
           const_set(error_class_name(title), error_class)
         end
+
+        ##
+        # Define error with a custom superclass.
+        # The superclass must be inherited from LunaPark::Errors::Base.
+        #
+        # @example
+        #   class BaseError < LunaPark::Errors::Business
+        #     alias description message
+        #   end
+        #
+        #   class Service
+        #     include LunaPark::Extensions::HasErrors
+        #
+        #     custom_error :custom_error, BaseError, 'Error message'
+        #   end
+        #
+        #   custom_error = Service::CustomError.new
+        #   custom_error.is_a? BaseError # => true
+        #   custom_error.description # => 'Error message'
+        # rubocop:disable Metrics/ParameterLists
+        def custom_error(title, inherit_from, txt = nil, i18n_key: nil, notify: nil, &default_message_block)
+          unless inherit_from < Errors::Base
+            raise ArgumentError, 'inherit_from must be a superclass of LunaPark::Errors::Base'
+          end
+
+          error_class = Class.new(inherit_from)
+          error_class.inherited(inherit_from)
+          error_class.notify(notify) unless notify.nil?
+
+          message_present = ![txt, i18n_key, default_message_block].all?(&:nil?)
+          error_class.message(txt, i18n_key: i18n_key, &default_message_block) if message_present
+
+          const_set(error_class_name(title), error_class)
+        end
+        # rubocop:enable Metrics/ParameterLists
 
         ##
         # Get error class name
