@@ -270,8 +270,6 @@ module LunaPark
         failure&.message(locale: locale || self.locale)
       end
 
-      alias fail_message failure_message
-
       class << self
         # @return Default notifier
         def default_notifier

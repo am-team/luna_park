@@ -9,7 +9,7 @@ Changed
 - in `UseCases::Scenario` now abstract method is `#perform` - not `call!`. It is backward-compatible change: `call!` still works as abstract, and public interface was not changed.
 
 Added
-- returned old aliases fail falure fail_message to scenarios
+- returned old aliases fail falure to scenarios
 - add short alias for exceptions (`i18n:` instead of `i18n_key:`)
 
 ## [0.11.5] - 2022-09-27
