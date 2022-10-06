@@ -58,6 +58,50 @@ module LunaPark
       end
 
       module ClassMethods
+        def inherited(child)
+          child.default_error default_error
+        end
+
+        ##
+        # Define default error (by default - Business error)
+        #
+        # @example default error (business error)
+        #   class Service
+        #     include LunaPark::Extensions::HasErrors
+        #
+        #     error :logic_error
+        #   end
+        #
+        #   Service::LogicError.new.is_a? LunaPark::Errors::Business # => true
+        #
+        # @example custom error
+        #   class Service
+        #     include LunaPark::Extensions::HasErrors
+        #
+        #     default_error MyCustomError
+        #
+        #     error :logic_error
+        #   end
+        #
+        #   Service::LogicError.new.is_a? MyCustomError # => true
+        def error(title, txt = nil, i18n_key: nil, i18n: nil, notify: nil, &default_message_block) # rubocop:disable Metrics/ParameterLists
+          custom_error title, default_error, txt, i18n: i18n || i18n_key, notify: notify, &default_message_block
+        end
+
+        # @example define custom default error for `.error`
+        #   class Service
+        #     include LunaPark::Extensions::HasErrors
+        #
+        #     default_error MyCustomError
+        #
+        #     error :logic_error
+        #   end
+        #
+        #   Service::LogicError.new.is_a? MyCustomError # => true
+        def default_error(error = nil)
+          error.nil? ? (@default_error ||= Errors::Business) : (@default_error = error)
+        end
+
         ##
         # Define business error
         #
@@ -65,7 +109,7 @@ module LunaPark
         #   class Service
         #     include LunaPark::Extensions::HasErrors
         #
-        #     business_error(:logic_error) { (1 + 1).to_s }
+        #     business_error(:logic_error) { 1 + 1 }
         #   end
         #
         #   logic_error = Service::LogicError.new
@@ -74,10 +118,6 @@ module LunaPark
         def business_error(title, txt = nil, i18n_key: nil, i18n: nil, notify: nil, &default_message_block) # rubocop:disable Metrics/ParameterLists
           custom_error title, Errors::Business, txt, i18n: i18n || i18n_key, notify: notify, &default_message_block
         end
-
-        ##
-        # Alias for business error
-        alias error business_error
 
         ##
         # Define business error
