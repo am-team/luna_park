@@ -4,7 +4,7 @@ require 'luna_park/extensions/has_errors'
 
 class CustomErrorBase < LunaPark::Errors::Business
   notify :debug
-  message 'Default message', i18n_key: 'errors.default_key'
+  message 'Default message', i18n: 'errors.default_key'
 end
 
 class Service
@@ -24,15 +24,34 @@ module LunaPark
 
       context 'with params' do
         before do
-          Service.business_error(:business_error_example, 'Business error', i18n_key: 'errors.business_error', notify: :info)
+          Service.business_error(:business_error_example, 'Business error', i18n: 'errors.business_error', notify: :info)
         end
 
         subject(:business_error) { Service::BusinessErrorExample }
 
         it 'assigns params to the error' do
-          expect(business_error.default_message_block.call({})).to eq 'Business error'
           expect(business_error.i18n_key).to eq 'errors.business_error'
           expect(business_error.default_notify).to eq :info
+        end
+
+        it 'error has expected message' do
+          expect(business_error.new.message).to eq 'Business error'
+        end
+      end
+
+      context 'with i18n_key' do
+        before do
+          Service.business_error(:business_error_example, 'Business error', i18n_key: 'errors.business_error')
+        end
+
+        subject(:business_error) { Service::BusinessErrorExample }
+
+        it 'assigns params to the error' do
+          expect(business_error.i18n_key).to eq 'errors.business_error'
+        end
+
+        it 'error has expected message' do
+          expect(business_error.new.message).to eq 'Business error'
         end
       end
     end
@@ -61,15 +80,18 @@ module LunaPark
 
       context 'with params' do
         before do
-          Service.business_error(:system_error_example, 'System error', i18n_key: 'errors.system_error', notify: :info)
+          Service.business_error(:system_error_example, 'System error', i18n: 'errors.system_error', notify: :info)
         end
 
         subject(:system_error) { Service::SystemErrorExample }
 
         it 'assigns params to the error' do
-          expect(system_error.default_message_block.call({})).to eq 'System error'
           expect(system_error.i18n_key).to eq 'errors.system_error'
           expect(system_error.default_notify).to eq :info
+        end
+
+        it 'error has expected message' do
+          expect(system_error.new.message).to eq 'System error'
         end
       end
     end
@@ -98,15 +120,18 @@ module LunaPark
 
       context 'with params' do
         before do
-          Service.custom_error(:custom_error_example, CustomErrorBase, 'Custom error', i18n_key: 'errors.custom_error', notify: :info)
+          Service.custom_error(:custom_error_example, CustomErrorBase, 'Custom error', i18n: 'errors.custom_error', notify: :info)
         end
 
         subject(:custom_error) { Service::CustomErrorExample }
 
         it 'assigns params to the error' do
-          expect(custom_error.default_message_block.call({})).to eq 'Custom error'
           expect(custom_error.i18n_key).to eq 'errors.custom_error'
           expect(custom_error.default_notify).to eq :info
+        end
+
+        it 'error has expected message' do
+          expect(custom_error.new.message).to eq 'Custom error'
         end
       end
 
@@ -118,9 +143,12 @@ module LunaPark
         subject(:custom_error) { Service::CustomError }
 
         it 'inherits params from the base error' do
-          expect(custom_error.default_message_block.call({})).to eq 'Default message'
           expect(custom_error.i18n_key).to eq 'errors.default_key'
           expect(custom_error.default_notify).to eq :debug
+        end
+
+        it 'error has expected message' do
+          expect(custom_error.new.message).to eq 'Default message'
         end
       end
 

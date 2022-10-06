@@ -17,7 +17,7 @@ module LunaPark
     # @example Fatalism class
     #   module Errors
     #     class Fatalism < LunaPark::Errors::Base
-    #       message  'You cannot change your destiny', i18n_key: 'errors.fatalism'
+    #       message  'You cannot change your destiny', i18n: 'errors.fatalism'
     #       notify: :info
     #     end
     #   end
@@ -50,7 +50,7 @@ module LunaPark
         # Proc, that receives details hash: { detail_key => detail_value }
         #
         # @private
-        attr_reader :default_message_block
+        attr_reader :__default_message_block__
 
         # Specifies the expected behavior of the error handler if an error
         # instance of this class is raised
@@ -67,17 +67,17 @@ module LunaPark
         # Specify default error message
         #
         # @param txt [String] - text of message
-        # @param i18n_key [String] - internationalization key
+        # @param i18n [String] - internationalization key
         # @return [NilClass]
-        def message(txt = nil, i18n_key: nil, &default_message_block)
-          @default_message_block = block_given? ? default_message_block : txt && ->(_) { txt }
-          @i18n_key = i18n_key
+        def message(txt = nil, i18n_key: nil, i18n: nil, &default_message_block)
+          @__default_message_block__ = block_given? ? default_message_block : txt && ->(_) { txt }
+          @i18n_key = i18n || i18n_key
           nil
         end
 
         def inherited(inheritor)
-          if default_message_block
-            inheritor.message(i18n_key: i18n_key, &default_message_block)
+          if __default_message_block__
+            inheritor.message(i18n_key: i18n_key, &__default_message_block__)
           elsif i18n_key
             inheritor.message(i18n_key: i18n_key)
           end
@@ -186,7 +186,7 @@ module LunaPark
       #   #     frost: Прости Кузьма, замерзли ноги!
       #
       #   class FrostError < LunaPark::Errors::Base
-      #     message 'Forgive Kuzma, my feet froze', i18n_key: 'errors.frost'
+      #     message 'Forgive Kuzma, my feet froze', i18n: 'errors.frost'
       #   end
       #
       #   error = FrostError.new
@@ -207,7 +207,7 @@ module LunaPark
       #   #     wrong_answer: Die richtige Antwort ist '%{correct}', nicht '%{wrong}'
       #
       #   class WrongAnswerError < LunaPark::Errors::Base
-      #     message i18n_key: 'errors.wrong_answer'
+      #     message i18n: 'errors.wrong_answer'
       #   end
       #
       #   error = WrongAnswerError.new(correct: 42, wrong: 420)
@@ -237,7 +237,7 @@ module LunaPark
 
       # @return [String] - Default message
       def build_default_message
-        self.class.default_message_block&.call(details)
+        self.class.__default_message_block__&.call(details)
       end
     end
   end
