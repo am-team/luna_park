@@ -241,7 +241,7 @@ module LunaPark
       #     end
       #   end
       def call
-        catch { @data = call! }
+        rescue_exception { @data = call! }
         self
       end
 
@@ -296,7 +296,7 @@ module LunaPark
 
       private
 
-      def catch
+      def rescue_exception
         yield
       rescue Errors::Base => e
         @state = FAIL
