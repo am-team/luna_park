@@ -72,10 +72,7 @@ module LunaPark
         #   logic_error.is_a? LunaPark::Errors::Business # => true
         #   logic_error.message # => '2'
         def business_error(title, txt = nil, i18n_key: nil, i18n: nil, notify: nil, &default_message_block) # rubocop:disable Metrics/ParameterLists
-          error_class = Class.new(Errors::Business)
-          error_class.message(txt, i18n: i18n || i18n_key, &default_message_block)
-          error_class.notify(notify)
-          const_set(error_class_name(title), error_class)
+          custom_error title, Errors::Business, txt, i18n: i18n || i18n_key, notify: notify, &default_message_block
         end
 
         ##
@@ -96,10 +93,7 @@ module LunaPark
         #   tech_error.is_a? LunaPark::Errors::System # => true
         #   tech_error.message # => 'Error message'
         def system_error(title, txt = nil, i18n_key: nil, i18n: nil, notify: nil, &default_message_block) # rubocop:disable Metrics/ParameterLists
-          error_class = Class.new(Errors::System)
-          error_class.message(txt, i18n: i18n || i18n_key, &default_message_block)
-          error_class.notify(notify)
-          const_set(error_class_name(title), error_class)
+          custom_error title, Errors::System, txt, i18n: i18n || i18n_key, notify: notify, &default_message_block
         end
 
         ##
