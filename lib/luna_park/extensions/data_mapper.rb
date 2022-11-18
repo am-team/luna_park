@@ -72,7 +72,7 @@ module LunaPark
             when nil    then default_entity_coercion
             when Symbol then entity_class.method(coercion)
             else
-              raise ArgumentError, "Unexpected coercion #{d[:coercion].inspect}" unless coercion.respond_to?(:call)
+              raise ArgumentError, "Unexpected coercion #{coercion.inspect}" unless coercion.respond_to?(:call)
 
               coercion
             end
