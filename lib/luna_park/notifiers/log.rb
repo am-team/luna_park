@@ -1,9 +1,8 @@
 # frozen_string_literal: false
 
-require 'json'
-require 'pp'
 require 'logger'
 require 'luna_park/extensions/severity_levels'
+require 'luna_park/notifiers/log/formatters'
 require 'luna_park/errors'
 
 module LunaPark
@@ -30,52 +29,14 @@ module LunaPark
     class Log
       include Extensions::SeverityLevels
 
-      ENABLED_FORMATS = %i[single string json multiline pretty_json].freeze
-
-      # Format of log output. Define output format of log message. It can be four types.
+      # Callable object to format log messages.
       #
-      # - :single or :string - Then you will get single line string message. This is default
-      #   format for the logger.
-      #     notifier = LunaPark::Notifiers::Log.new(format: :single)
-      #     notifier.message('You hear', dog: 'wow', cats: {chloe: 'mow', timmy: 'mow'})
+      # pretty_formatter = ->(klass, message, details) { "#{klass} - #{message} - #{details}" }
+      # notifier = LunaPark::Notifiers::Log.new(formatter: pretty_formatter)
+      # notifier.info('You hear', dog: 'wow', cats: {chloe: 'mow', timmy: 'mow'})
+      # => I, [2022-09-29T10:51:15.753646 #28763]  INFO -- : String - You hear - {:dog=>"wow", :cats=>{:chloe=>"mow", :timmy=>"mow"}}
       #
-      #     # E, [2020-06-13T14:50:22 #20538] ERROR -- : You hear {:dog=>"wow", :cats=>{:chloe=>"mow", :timmy=>"mow"}}
-      #
-      # - :multiline - this format may become more preferred for development mode.
-      #     notifier = LunaPark::Notifiers::Log.new(format: :multiline)
-      #     notifier.message('You hear', dog: 'wow', cat: {timmy:'purr'}, cow: 'moo', duck: 'quack', horse: 'yell' )
-      #
-      #     # E, [2020-06-13T18:24:37.592652 #22786] ERROR -- : {:message=>"You hear",
-      #     # :details=>
-      #     # {:dog=>"wow",
-      #     # :cat=>{:timmy=>"purr"},
-      #     # :cow=>"moo",
-      #     # :duck=>"quack",
-      #     # :horse=>"yell"}}
-      #
-      # - :json - this format should be good choose for logger which be processed by external logger system
-      #     notifier = LunaPark::Notifiers::Log.new(format: :json)
-      #     notifier.message('You hear', dog: 'wow', cats: {chloe: 'mow', timmy: 'mow'})
-      #
-      #     # E, [2020-06-13T18:28:07.567048 #22786] ERROR -- : {"message":"You hear","details":{"dog":"wow",
-      #     # "cats":{"chloe":"mow","timmy":"mow"}}}
-      #
-      # - :pretty_json - pretty json output
-      #     notifier = LunaPark::Notifiers::Log.new(format: :pretty_json)
-      #     notifier.message('You hear', dog: 'wow', cat: {timmy:'purr'}, cow: 'moo', duck: 'quack', horse: 'yell')
-      #
-      #     # E, [2020-06-13T18:30:26.856084 #22786] ERROR -- : {
-      #     #   "message": "You hear",
-      #     #   "details": {
-      #     #    "dog": "wow",
-      #     #    "cat": {
-      #     #      "timmy": "purr"
-      #     #    },
-      #     #    "cow": "moo",
-      #     #    "duck": "quack",
-      #     #    "horse": "yell"
-      #     # }
-      attr_reader :format
+      attr_reader :formatter
 
       # Logger which used for output all notify. Should be instance of Logger class.
       # You can define it in two ways.
@@ -97,14 +58,18 @@ module LunaPark
 
       # Create new log notifier
       #
-      # @param logger  - Logger which used for output all notify see #logger
-      # @param format  - Format of notify message see #format
-      # @param min_lvl - What level should a message be for it to be processed by a notifier
-      def initialize(logger: nil, format: :single, min_lvl: :debug)
-        raise ArgumentError, "Unknown format #{format}" unless ENABLED_FORMATS.include? format
-
+      # @param logger    - Logger which used for output all notify see #logger
+      # @param formatter - Log messages formatter see #formatter
+      # @param format    - Formatter name. Deprecated and will be removed in a future version
+      # @param min_lvl   - What level should a message be for it to be processed by a notifier
+      def initialize(logger: nil, format: nil, formatter: nil, min_lvl: :debug)
         @logger      = logger || self.class.default_logger
-        @format      = format
+        @formatter   = formatter || Formatters::SINGLE
+        # @todo Remove format param in the future version
+        unless format.nil?
+          @formatter = formatter_by_name(format)
+          warn 'warn [DEPRECATION] `format` parameter is deprecated, use `formatter` instead'
+        end
         self.min_lvl = min_lvl
       end
 
@@ -160,13 +125,15 @@ module LunaPark
 
       def serialize(obj, **details)
         details = extend(details, with: obj)
-        hash    = { message: String(obj), details: details }
+        formatter.call(obj.class, String(obj), details)
+      end
 
-        case format
-        when :json        then JSON.generate(hash)
-        when :multiline   then PP.pp(hash, '')
-        when :pretty_json then JSON.pretty_generate(hash)
-        else details.empty? ? String(obj) : "#{String(obj)} #{details}"
+      def formatter_by_name(name)
+        case name
+        when :json        then Formatters::JSON
+        when :multiline   then Formatters::MULTILINE
+        when :pretty_json then Formatters::PRETTY_JSON
+        else Formatters::SINGLE
         end
       end
     end
