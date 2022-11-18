@@ -39,11 +39,15 @@ module LunaPark
     #   end
     module DataMapper
       class << self
+        def extended(base)
+          base.include self
+        end
+
         def included(base)
           base.extend ClassMethods
           base.include InstanceMethods
 
-          base.__define_constants__(not_found: LunaPark::Extensions::DataMapper::NotFound)
+          base.__define_constants__
 
           defaults(base)
         end
@@ -107,9 +111,7 @@ module LunaPark
         #   Repository.new.example_to_row(foo: 'Foo') # => { foo: 'Foo' }
         #
         def mapper(mapper = Undefined, &block)
-          unless (mapper == Undefined) ^ block.nil?
-            raise ArgumentError, 'Expected mapper Class OR block with definition'
-          end
+          raise ArgumentError, 'Expected mapper xOR block' unless (mapper == Undefined) ^ block.nil?
 
           return @mapper_class = mapper if block.nil?
 
@@ -159,7 +161,7 @@ module LunaPark
           @primary_key_attr || DEFAULT_PRIMARY_KEY
         end
 
-        def __define_constants__(not_found:)
+        def __define_constants__(not_found: LunaPark::Extensions::DataMapper::NotFound)
           __define_class__ 'NotFound', not_found
         end
 
