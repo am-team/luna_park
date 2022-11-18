@@ -213,7 +213,7 @@ module LunaPark
       #   error = WrongAnswerError.new(correct: 42, wrong: 420)
       #   error.message(locale: :de) # => "Die richtige Antwort ist '42', nicht '420'"
       #
-      def message(locale: nil)
+      def message(locale: I18n.locale)
         return @message if @message
 
         default_message = build_default_message
@@ -228,7 +228,7 @@ module LunaPark
       #
       # @param locale [Symbol] - specified locale
       # @return [String] - Translated text
-      def localized_message(locale = nil, show_error:)
+      def localized_message(locale, show_error:)
         return unless self.class.i18n_key
         return unless show_error || I18n.exists?(self.class.i18n_key)
 
