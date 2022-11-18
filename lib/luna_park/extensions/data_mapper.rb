@@ -131,7 +131,10 @@ module LunaPark
         #     end
         #   end
         def default_entity_coercion
-          entity_class.method(:wrap)
+          return entity_class.method(:call) if entity_class.respond_to?(:call)
+          return entity_class.method(:wrap) if entity_class.respond_to?(:wrap)
+
+          ->(input) { entity_class.new(input.to_h) }
         end
 
         # @abstract

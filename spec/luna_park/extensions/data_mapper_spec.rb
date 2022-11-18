@@ -3,13 +3,7 @@
 require 'luna_park/extensions/data_mapper'
 
 module ExtensionsDataMapperSpec
-  Account = Struct.new(:uid, :type, keyword_init: true) do
-    def self.wrap(input)
-      return input if input.is_a?(self)
-
-      new(input)
-    end
-  end
+  Account = Struct.new(:uid, :type, keyword_init: true)
 
   class AccountMapper
     class << self
