@@ -19,10 +19,13 @@ RSpec.describe LunaPark::Extensions::Repositories::Postgres::Delete do
   describe '#delete' do
     subject(:delete) { fake_repo.delete(SecureRandom.uuid) }
 
-    before { fake_repo.dataset = double }
+    before do
+      fake_repo.dataset = double
+      allow(fake_repo.dataset).to receive_message_chain(:where, :delete).and_return 1
+    end
 
     it 'returns received entity object' do
-      expect(fake_repo.dataset).to receive_message_chain(:returning, :where, :delete)
+      expect(fake_repo.dataset).to receive_message_chain(:where, :delete)
       delete
     end
   end

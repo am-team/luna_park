@@ -5,56 +5,47 @@ module LunaPark
     module Repositories
       module Postgres
         module Read
-          def find!(pk_value, for_update: false)
-            ds = dataset.where(primary_key => pk_value)
-            read_one!(ds, for_update: for_update, not_found_meta: pk_value)
-          end
-
-          def find(pk_value, for_update: false)
-            ds = dataset.where(primary_key => pk_value)
-            read_one(ds, for_update: for_update)
-          end
-
           def lock!(pk_value)
-            lock(pk_value) || raise(Errors::NotFound, "#{short_class_name} (#{pk_value})")
+            transaction { yield find! pk_value, for_update: true }
           end
 
           def lock(pk_value)
-            dataset.for_update.select(primary_key).where(primary_key => pk_value).first ? true : false
+            transaction { yield find pk_value, for_update: true }
           end
 
-          def count
-            dataset.count
+          def transaction(&block)
+            dataset.transaction(&block)
           end
 
-          def all
-            read_all(dataset.order { created_at.desc })
+          def find!(pk_value, **scope)
+            found! find(pk_value, **scope), not_found_by: pk_value
           end
 
-          def last
-            to_entity from_row dataset.order(:created_at).last
+          def find(pk_value, **scope)
+            read_one scoped(**scope).where(primary_key => pk_value)
+          end
+
+          def count(**scope)
+            scoped(**scope).count
+          end
+
+          def all(**scope)
+            read_all(scoped(**scope).order { created_at.desc })
+          end
+
+          def first(**scope)
+            read_one scoped(**scope).order(:created_at).first
+          end
+
+          def last(**scope)
+            read_one scoped(**scope).order(:created_at).last
           end
 
           private
 
-          def read_one!(dataset, for_update: false, not_found_meta:)
-            read_one(dataset, for_update: for_update).tap do |entity|
-              raise Errors::NotFound, "#{short_class_name} (#{not_found_meta})" if entity.nil?
-            end
-          end
-
-          def read_one(dataset, for_update: false)
+          def scope(dataset, for_update: false, **_)
             dataset = dataset.for_update if for_update
-            row = dataset.first
-            to_entity from_row(row)
-          end
-
-          def read_all(dataset)
-            to_entities from_rows(dataset)
-          end
-
-          def short_class_name
-            @short_class_name ||= self.class.name[/::(\w+)\z/, 1]
+            dataset
           end
         end
       end

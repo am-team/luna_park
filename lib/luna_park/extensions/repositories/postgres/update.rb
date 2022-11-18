@@ -7,10 +7,13 @@ module LunaPark
         module Update
           def save(input)
             entity = wrap(input)
-            entity.updated_at = Time.now.utc
-            row = to_row(entity)
-            new_row = dataset.returning.where(primary_key => row[primary_key]).update(row).first
+
+            entity.updated_at = Time.now if entity.respond_to?(:updated_at)
+
+            row       = to_row(entity)
+            new_row   = dataset.where(primary_key => row[primary_key]).returning.update(row).first
             new_attrs = from_row(new_row)
+
             entity.set_attributes(new_attrs)
             entity
           end

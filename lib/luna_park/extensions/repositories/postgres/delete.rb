@@ -6,7 +6,7 @@ module LunaPark
       module Postgres
         module Delete
           def delete(uid)
-            dataset.returning.where(primary_key => uid).delete
+            dataset.where(primary_key => uid).delete.positive?
           end
         end
       end

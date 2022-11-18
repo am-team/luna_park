@@ -7,9 +7,15 @@ module LunaPark
         module Create
           def create(input)
             entity = wrap(input)
-            row    = to_row(entity)
-            new_row = dataset.returning.insert(row).first
+
+            time = Time.now
+            entity.created_at = time if entity.respond_to?(:created_at)
+            entity.updated_at = time if entity.respond_to?(:updated_at)
+
+            row       = to_row(entity)
+            new_row   = dataset.returning.insert(row).first
             new_attrs = from_row(new_row)
+
             entity.set_attributes(new_attrs)
             entity
           end

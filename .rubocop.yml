@@ -50,7 +50,7 @@ Style/Documentation:
   Enabled: false
 
 Naming/MethodParameterName:
-  AllowedNames: io, id, to, by, on, in, at, ip, db, pk, fk
+  AllowedNames: io, id, to, by, on, in, at, ip, db, pk, fk, ds
 
 # TODO: поговорить с Филиппом про attr
 Layout/EmptyLinesAroundAttributeAccessor:

@@ -68,7 +68,7 @@ module LunaPark
 
         # @example
         #   class Mappers::Transaction < LunaPark::Mappers::Codirectional
-        #     attrs :comment, :uid, %i[addresses home], :created_at
+        #     attrs :created_at, :updated_at, :deleted_at
         #   end
         def attrs(*common_keys)
           common_keys.each { |common_key| attr common_key }
