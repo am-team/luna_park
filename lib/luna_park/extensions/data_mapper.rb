@@ -69,7 +69,7 @@ module LunaPark
           @entity_class = entity
           @__entity_coercion__ =
             case coercion
-            when nil    then default_entity_coercion
+            when nil    then infer_entity_coercion(coercion)
             when Symbol then entity_class.method(coercion)
             else
               raise ArgumentError, "Unexpected coercion #{coercion.inspect}" unless coercion.respond_to?(:call)
@@ -126,11 +126,14 @@ module LunaPark
         #   class Transaction::Repository < LunaPark::Repository
         #     entity Transaction
         #
-        #     def self.default_entity_coercion
+        #     def self.infer_entity_coercion
         #       entity_class.method(:call)
         #     end
         #   end
-        def default_entity_coercion
+        def infer_entity_coercion(coercion) # rubocop:disable Metrics/AbcSize
+          return entity_class.method(coercion)                  if     coercion.is_a? Symbol
+          raise ArgumentError, 'coercion MUST be Symbol or nil' unless coercion.nil?
+
           return entity_class.method(:call) if entity_class.respond_to?(:call)
           return entity_class.method(:wrap) if entity_class.respond_to?(:wrap)
 
