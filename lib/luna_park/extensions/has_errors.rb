@@ -50,16 +50,22 @@ module LunaPark
         #
         # @param title [Symbol|String] - Title of error
         # @param msg [String] - Message of error
-        # @param **attrs - See @LunaPark::Errors::Base#new
-        def error(title, msg = nil, **attrs)
+        # @param **details - See @LunaPark::Errors::Base#new
+        def error(title, msg = nil, **details)
           class_name = self.class.error_class_name(title)
-          raise self.class.const_get(class_name).new msg, **attrs
+
+          self.class.__expose_error_details__&.each { |m| details[m] = send(m) if respond_to?(m, true) }
+
+          raise self.class.const_get(class_name).new msg, **details
         end
       end
 
       module ClassMethods
+        attr_reader :__expose_error_details__
+
         def inherited(child)
           child.default_error default_error
+          child.expose_to_error_details(*__expose_error_details__)
         end
 
         ##
@@ -138,7 +144,7 @@ module LunaPark
 
         ##
         # Define error with a custom superclass.
-        # The superclass must be inherited from LunaPark::Errors::Base.
+        # The superclass must be inherited from LunaPark::Errors::Base
         #
         # @example
         #   class BaseError < LunaPark::Errors::Business
@@ -157,19 +163,43 @@ module LunaPark
         # rubocop:disable Metrics/ParameterLists
         def custom_error(title, inherit_from, txt = nil, i18n_key: nil, i18n: nil, notify: nil, &default_message_block)
           unless inherit_from < Errors::Base
-            raise ArgumentError, 'inherit_from must be a superclass of LunaPark::Errors::Base'
+            raise ArgumentError, "inherit_from must be a superclass of #{LunaPark::Errors::Base}"
           end
 
           error_class = Class.new(inherit_from)
           error_class.inherited(inherit_from)
           error_class.notify(notify) unless notify.nil?
 
-          message_present = ![txt, i18n || i18n_key, default_message_block].all?(&:nil?)
+          message_present = [txt, i18n || i18n_key, default_message_block].any?
           error_class.message(txt, i18n: i18n || i18n_key, &default_message_block) if message_present
 
           const_set(error_class_name(title), error_class)
         end
         # rubocop:enable Metrics/ParameterLists
+
+        ##
+        # Describe methods to fill Errors details
+        #
+        # @example
+        #   class Service
+        #     error :cooldown
+        #
+        #     expose_to_error_details :username, :next_attempt_at
+        #
+        #     # ...
+        #   end
+        #
+        #   begin
+        #     Service.new(username: 'Username', next_attempt_at: '40_000').error :cooldown
+        #   rescue => e
+        #     error = e
+        #   end
+        #
+        #   error.details # => { username: 'Username', next_attempt_at: '40_000' }
+        def expose_to_error_details(*methods)
+          @__expose_error_details__ ||= []
+          @__expose_error_details__.concat methods
+        end
 
         ##
         # Get error class name
@@ -185,7 +215,7 @@ module LunaPark
           case title
           when String then title
           when Symbol then title.to_s.split('_').collect!(&:capitalize).join
-          else raise ArgumentError, "Unknown type `#{title}` for error title"
+          else raise ArgumentError, "Unexpected type `#{title}` for error title"
           end
         end
       end

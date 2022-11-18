@@ -15,7 +15,7 @@ AllCops:
     - 'bin/*'
   UseCache: true
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 120
   IgnoredPatterns: ['\s*\#\s.*$']
   Exclude:
