@@ -126,7 +126,7 @@ module LunaPark
         #   class Transaction::Repository < LunaPark::Repository
         #     entity Transaction
         #
-        #     def self.infer_entity_coercion
+        #     def self.infer_entity_coercion(_)
         #       entity_class.method(:call)
         #     end
         #   end
@@ -173,7 +173,6 @@ module LunaPark
 
         def __define_class__(name, parent)
           klass = Class.new(parent)
-          klass.inherited parent
           const_set name, klass
         end
 
@@ -229,10 +228,24 @@ module LunaPark
           found! read_one(row), not_found_by: not_found_by || not_found_meta
         end
 
+        # Check if record was found
+        # @example
+        #   class MyRepository < LunaPark::Repository
+        #     def find_by_x!(x)
+        #       found! nil, not_found_by: "x: #{x}"
+        #     end
+        #   end
+        #
+        #   begin
+        #     MyRepository.new.find_by_x 'X'
+        #   rescue MyRepository::NotFound => e
+        #     raise HTTP404, "Record #{e.details[:name]} not found by #{e.details[:by]}"
+        #   end
+        #
         def found!(value, not_found_by: nil)
           return value unless value.nil?
 
-          raise self.class::NotFound, "#{self.class.entity_class.name} (#{not_found_by})"
+          raise self.class::NotFound.new name: self.class.entity_class.name, by: not_found_by
         end
 
         # Mapper helpers
@@ -381,7 +394,9 @@ module LunaPark
         end
       end
 
-      class NotFound < LunaPark::Errors::NotFound; end
+      class NotFound < LunaPark::Errors::NotFound
+        message { |d| "#{d[:name]} (#{d[:by]})" }
+      end
 
       class MoreThanOneRecord < LunaPark::Errors::System
         message { |d| "Expected only one record, but there are #{d[:count]} records" }
