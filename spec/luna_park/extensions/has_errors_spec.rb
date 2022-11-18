@@ -15,6 +15,21 @@ class Service
   custom_error :custom_error, CustomErrorBase
 end
 
+class ServiceWithContext
+  include LunaPark::Extensions::HasErrors
+
+  attr_accessor :action, :user_id
+  attr_writer :next_in
+
+  error(:cooldown) { |d| "Cooldown. #{d[:action]} will be available in #{d[:next_in]} sec" }
+
+  expose_to_error_details :action, :next_in, :user_id, :not_existed_method
+
+  private
+
+  attr_reader :next_in
+end
+
 module LunaPark
   RSpec.describe LunaPark::Extensions::HasErrors do
     describe '.business_error' do
@@ -110,6 +125,29 @@ module LunaPark
               .and(having_attributes(message: 'Error message', details: { detail: :foo }, notify_lvl: :debug))
           )
         end
+      end
+    end
+
+    describe '.expose_to_error_details' do
+      let(:service) { ServiceWithContext.new }
+
+      it 'provides described method to details' do
+        service.action = 'Login'
+        service.next_in = 300
+        service.user_id = 1234
+
+        expect do
+          service.error :cooldown
+        end.to raise_error \
+          an_instance_of(ServiceWithContext::Cooldown).and \
+            having_attributes(
+              message: 'Cooldown. Login will be available in 300 sec',
+              details: {
+                action: 'Login',
+                next_in: 300,
+                user_id: 1234
+              }
+            )
       end
     end
 
