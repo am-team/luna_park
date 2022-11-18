@@ -55,14 +55,17 @@ module LunaPark
         #     attr %i[charge amount], row: :charge_amount
         #     attr :comment
         #   end
-        def attr(attr, row: attr)
+        def attr(attr, row: attr, mapper: nil, array: nil)
           attr_path = to_path(attr)
           row_path  = to_path(row)
 
           if attr_path == row_path && !attr_path.is_a?(Array)
             slice_copyist.add_key(attr_path)
           else
-            nested_copyists << Copyists::Nested.new(attrs_path: attr_path, row_path: row_path)
+            nested_copyists << Copyists::Nested.new(
+              attrs_path: attr_path, row_path: row_path,
+              mapper: mapper, map_array: array
+            )
           end
         end
 
