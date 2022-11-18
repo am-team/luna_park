@@ -53,15 +53,14 @@ module LunaPark
         #   class Mappers::Transaction < LunaPark::Mappers::Codirectional
         #     attr :uid,              row: :id
         #     attr %i[charge amount], row: :charge_amount
+        #     attr :comment
         #   end
-        def attr(attr, row: nil)
-          return attrs(attr) if row.nil?
-
+        def attr(attr, row: attr)
           attr_path = to_path(attr)
           row_path  = to_path(row)
 
-          if attr_path == row_path
-            attrs(attr_path)
+          if attr_path == row_path && !attr_path.is_a?(Array)
+            slice_copyist.add_key(attr_path)
           else
             nested_copyists << Copyists::Nested.new(attrs_path: attr_path, row_path: row_path)
           end
@@ -72,14 +71,7 @@ module LunaPark
         #     attrs :comment, :uid, %i[addresses home], :created_at
         #   end
         def attrs(*common_keys)
-          common_keys.each do |common_key|
-            path = to_path(common_key)
-            if path.is_a?(Array)
-              nested_copyists << Copyists::Nested.new(attrs_path: path, row_path: path)
-            else
-              slice_copyist.add_key(path)
-            end
-          end
+          common_keys.each { |common_key| attr common_key }
         end
 
         def from_row(input)
