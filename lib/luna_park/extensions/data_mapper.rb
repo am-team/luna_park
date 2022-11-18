@@ -91,7 +91,7 @@ module LunaPark
         #   Repository.mapper_class.to_row(foo: 'Foo') # => { fuu: 'Foo' }
         #
         # @example With mapper class
-        #   class Repository::Mapper < LunaPark::Repository::Mappers::Codirectional
+        #   class Repository::Mapper < LunaPark::Mapper
         #     attr :foo, row: :fuu
         #   end
         #
@@ -151,7 +151,7 @@ module LunaPark
         #     end
         #   end
         def base_anonymous_mapper
-          LunaPark::Repository::Mapper
+          LunaPark::Mappers::Codirectional
         end
 
         def primary_key(attr)
