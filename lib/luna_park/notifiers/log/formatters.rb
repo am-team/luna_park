@@ -1,6 +1,5 @@
 # frozen_string_literal: false
 
-require 'pp'
 require 'json'
 
 module LunaPark
@@ -32,7 +31,7 @@ module LunaPark
         #     # :duck=>"quack",
         #     # :horse=>"yell"}}
         MULTILINE = lambda do |klass, message, details = {}|
-          PP.pp({ class: klass, message: message, details: details }, '')
+          PP.pp({ class: klass, message:, details: }, '')
         end
 
         # - JSON - this format should be good choose for logger which be processed by external logger system
@@ -42,7 +41,7 @@ module LunaPark
         #     # I, [2022-09-29T12:00:47.600052 #90508]  INFO -- : {"class":"String", "message":"You hear",
         #     # "details":{"dog":"wow","cats":{"chloe":"mow","timmy":"mow"}}}
         JSON = lambda do |klass, message, details = {}|
-          ::JSON.generate(class: klass, message: message, details: details)
+          ::JSON.generate(class: klass, message:, details:)
         end
 
         # - PRETTY_JSON - pretty json output
@@ -62,7 +61,7 @@ module LunaPark
         #     #    "horse": "yell"
         #     # }
         PRETTY_JSON = lambda do |klass, message, details = {}|
-          ::JSON.pretty_generate(class: klass, message: message, details: details)
+          ::JSON.pretty_generate(class: klass, message:, details:)
         end
       end
     end

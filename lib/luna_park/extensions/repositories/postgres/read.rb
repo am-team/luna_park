@@ -7,12 +7,12 @@ module LunaPark
         module Read
           def find!(pk_value, for_update: false)
             ds = dataset.where(primary_key => pk_value)
-            read_one!(ds, for_update: for_update, not_found_meta: pk_value)
+            read_one!(ds, for_update:, not_found_meta: pk_value)
           end
 
           def find(pk_value, for_update: false)
             ds = dataset.where(primary_key => pk_value)
-            read_one(ds, for_update: for_update)
+            read_one(ds, for_update:)
           end
 
           def lock!(pk_value)
@@ -37,8 +37,8 @@ module LunaPark
 
           private
 
-          def read_one!(dataset, for_update: false, not_found_meta:)
-            read_one(dataset, for_update: for_update).tap do |entity|
+          def read_one!(dataset, not_found_meta:, for_update: false)
+            read_one(dataset, for_update:).tap do |entity|
               raise Errors::NotFound, "#{short_class_name} (#{not_found_meta})" if entity.nil?
             end
           end

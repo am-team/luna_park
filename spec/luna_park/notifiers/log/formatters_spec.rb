@@ -40,7 +40,7 @@ module LunaPark
       it 'returns message with details in the form of a hash divided into several lines' do
         is_expected.to eq <<~MULTILINE.chomp # heredoc has newline symbol at the end, chomp it
           {:class=>String,
-           :message=>\"Task is finished\",
+           :message=>"Task is finished",
            :details=>{:duration=>0.67, :user=>{:uid=>"uid", :name=>"John"}}}\n
         MULTILINE
       end

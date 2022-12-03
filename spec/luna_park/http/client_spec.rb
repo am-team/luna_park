@@ -49,7 +49,7 @@ module LunaPark
     shared_examples 'send request' do |request_type|
       let(:response) { double }
       let(:driver)   { double(call: response, call!: response) }
-      let(:request)  { Http::Request.new(title: 'Test request', method: :get, url: 'example.com', driver: driver) }
+      let(:request)  { Http::Request.new(title: 'Test request', method: :get, url: 'example.com', driver:) }
 
       it 'should send request' do
         expect { subject }.to change(request, :sent?).from(false).to(true)
@@ -66,7 +66,7 @@ module LunaPark
 
     describe '#get' do
       it_behaves_like 'send request', :get do
-        let(:request)  { Http::Request.new(title: 'Test request', method: :post, url: 'example.com', driver: driver) }
+        let(:request)  { Http::Request.new(title: 'Test request', method: :post, url: 'example.com', driver:) }
         subject { client.get request }
       end
     end
@@ -97,7 +97,7 @@ module LunaPark
 
     describe '#get!' do
       it_behaves_like 'send request', :get do
-        let(:request) { Http::Request.new(title: 'Test request', method: :post, url: 'example.com', driver: driver) }
+        let(:request) { Http::Request.new(title: 'Test request', method: :post, url: 'example.com', driver:) }
         subject { client.get! request }
       end
     end

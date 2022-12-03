@@ -48,7 +48,7 @@ module LunaPark
 
         alias validate new
 
-        def validation_schema(&block)
+        def validation_schema(&)
           unless defined?(::Dry::Validation)
             raise NameError, "uninitialized constant ::Dry::Validation\n" \
                              'Perhaps you forgot to add gem "dry-validation"'
@@ -59,7 +59,7 @@ module LunaPark
                              'which appears in version 1.0 of gem "dry-validation"'
           end
 
-          @_schema = Class.new(::Dry::Validation::Contract, &block).new
+          @_schema = Class.new(::Dry::Validation::Contract, &).new
         end
       end
     end

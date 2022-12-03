@@ -40,8 +40,8 @@ module LunaPark
       end
 
       context 'when message is custom error' do
-        class CustomError < RuntimeError; end
-        let(:error) { CustomError.new('Something went wrong. Again.') }
+        let(:custom_error) { Class.new(RuntimeError) }
+        let(:error) { custom_error.new('Something went wrong. Again.') }
 
         subject(:post_message) { notifier.post error }
 

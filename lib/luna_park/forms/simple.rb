@@ -51,7 +51,8 @@ module LunaPark
         if valid?
           perform!
           true
-        else false
+        else
+          false
         end
       end
 

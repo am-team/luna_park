@@ -18,13 +18,13 @@ module LunaPark
 
     let(:object_abstract) { Entities::Simple.new }
 
-    let(:attributes) { { email: email, password: password } }
+    let(:attributes) { { email:, password: } }
     let(:email)    { 'john.doe@email.com' }
     let(:password) { 'qwerty' }
 
     describe '.new' do
       context 'when all attributes are passed through initializer' do
-        let(:attributes) { { email: email, password: password } }
+        let(:attributes) { { email:, password: } }
 
         it { is_expected.to be_an_instance_of EntitiesSimpleCpec::User }
 

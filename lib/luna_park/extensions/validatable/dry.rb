@@ -11,11 +11,11 @@ module LunaPark
           base.extend  self
         end
 
-        def validator(klass = nil, &block)
+        def validator(klass = nil, &)
           return super unless block_given?
 
           klass = Class.new(Validators::Dry)
-          klass.validation_schema(&block)
+          klass.validation_schema(&)
           super(klass)
         end
       end

@@ -44,7 +44,8 @@ module LunaPark
           fill!
           perform!
           true
-        else false
+        else
+          false
         end
       end
 

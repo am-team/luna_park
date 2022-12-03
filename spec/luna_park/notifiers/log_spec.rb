@@ -6,13 +6,13 @@ module LunaPark
   RSpec.describe Notifiers::Log do
     let(:logger)    { double }
     let(:formatter) { Notifiers::Log::Formatters::SINGLE }
-    let(:notifier)  { described_class.new(logger: logger, formatter: formatter) }
+    let(:notifier)  { described_class.new(logger:, formatter:) }
 
     describe '#formatter' do
       subject { notifier.formatter }
 
       context 'when defined in initialize method' do
-        let(:notifier) { described_class.new(logger: logger, formatter: Notifiers::Log::Formatters::JSON) }
+        let(:notifier) { described_class.new(logger:, formatter: Notifiers::Log::Formatters::JSON) }
 
         it 'should eq defined value' do
           is_expected.to eq Notifiers::Log::Formatters::JSON
@@ -20,13 +20,13 @@ module LunaPark
       end
 
       context 'when undefined in initialize method' do
-        let(:notifier) { described_class.new(logger: logger) }
+        let(:notifier) { described_class.new(logger:) }
 
         it { is_expected.to eq Notifiers::Log::Formatters::SINGLE }
       end
 
       context 'when format param used to set formatter' do
-        let(:notifier) { described_class.new(logger: logger, format: :json) }
+        let(:notifier) { described_class.new(logger:, format: :json) }
 
         it { is_expected.to eq Notifiers::Log::Formatters::JSON }
       end
@@ -42,49 +42,49 @@ module LunaPark
 
         # It's really dirty, like code of logger class
         it 'should output to stdout' do
-          expect(logger.instance_variable_get(:@logdev).instance_variable_get(:@dev)).to eq STDOUT
+          expect(logger.instance_variable_get(:@logdev).instance_variable_get(:@dev)).to eq $stdout
         end
       end
 
       context 'defined in class' do
-        class FakeLogger; end
+        let!(:fake_logger) { stub_const('FakeLogger', Class.new) }
 
         let(:log_class) do
-          Class.new(described_class) { logger FakeLogger }
+          Class.new(described_class) { logger(FakeLogger) }
         end
 
         let(:notifier) { log_class.new }
 
         it 'should be expected driver' do
-          is_expected.to eq FakeLogger
+          is_expected.to eq fake_logger
         end
       end
 
       context 'defined at initialize of instance' do
-        class FakeLogger; end
-        let(:notifier) { described_class.new logger: FakeLogger }
+        let(:fake_logger) { Class.new }
+        let(:notifier) { described_class.new logger: fake_logger }
 
         it 'should be expected driver' do
-          is_expected.to eq FakeLogger
+          is_expected.to eq fake_logger
         end
       end
     end
 
     describe '#message' do
-      class TestLogger
-        attr_reader :severity, :output
+      let(:logger) do
+        Class.new do
+          attr_reader :severity, :output
 
-        def initialize(severity, output)
-          @severity = severity
-          @output = output
-        end
+          def initialize(severity, output)
+            @severity = severity
+            @output = output
+          end
 
-        def self.add(severity, obj)
-          new(severity, obj)
+          def self.add(severity, obj)
+            new(severity, obj)
+          end
         end
       end
-
-      let(:logger) { TestLogger }
 
       context 'when message has not details' do
         subject(:posted_message) { notifier.post('Message example') }

@@ -47,8 +47,8 @@ module LunaPark
     end
 
     describe '#to_s' do
-      let(:value)    { 6 }
-      subject(:to_s) { rank.to_s }
+      let(:value)         { 6 }
+      subject(:to_string) { rank.to_s }
 
       it 'is equal value.to_s' do
         is_expected.to eq value.to_s

@@ -54,13 +54,13 @@ module LunaPark
       end
 
       context 'when comparable_attributes is not registered' do
-        # rubocop:disable Style/ClassAndModuleChildren, Style/StructInheritance
+        # rubocop:disable Lint/ConstantDefinitionInBlock, Style/ClassAndModuleChildren, Style/StructInheritance
         let(:klass) do
           class ExtensionsComparableSpec::ClassName < Struct.new(:title, :author, :weight)
             include LunaPark::Extensions::Comparable
           end
         end
-        # rubocop:enable Style/ClassAndModuleChildren, Style/StructInheritance
+        # rubocop:enable Lint/ConstantDefinitionInBlock, Style/ClassAndModuleChildren, Style/StructInheritance
 
         it 'raises meaningfull exception' do
           expect { eq }.to raise_error Errors::NotConfigured,

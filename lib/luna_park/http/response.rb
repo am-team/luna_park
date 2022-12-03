@@ -338,7 +338,7 @@ module LunaPark
       #
       # @return [Hash, String, nil]
       def json_parse(payload_key: nil, stringify_keys: false)
-        json_parse!(payload_key: payload_key, stringify_keys: stringify_keys)
+        json_parse!(payload_key:, stringify_keys:)
       rescue Errors::JsonParse
         nil
       end
@@ -361,10 +361,10 @@ module LunaPark
       # @return [Hash]
       def to_h
         {
-          code: code,
-          body: body,
-          headers: headers,
-          cookies: cookies,
+          code:,
+          body:,
+          headers:,
+          cookies:,
           request: request.to_h
         }
       end

@@ -89,7 +89,7 @@ module LunaPark
         #   attrs name1, name2, name3, Type, :type_method, **attr_options
         #
         # @return [Array of Hash(Symbol => Symbol)] Hash of defined methods
-        def attrs(*args, **options) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
+        def attrs(*args, **options) # rubocop:disable Metrics/PerceivedComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
           *names, type, type_meth = if args.all? { |arg| arg.is_a?(Symbol) }
                                       [*args, nil, nil]
                                     elsif args[0..-2].all? { |arg| arg.is_a?(Symbol) }
@@ -98,7 +98,7 @@ module LunaPark
                                       args
                                     else
                                       raise ArgumentError, 'must be (*names) | ' \
-                                        '(*names, type) | (*names, type, type_meth)'
+                                                           '(*names, type) | (*names, type, type_meth)'
                                     end
 
           names.map { |name| attr name, type, type_meth, **options }

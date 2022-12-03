@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.summary       = 'Domain driven oriented microservice framework.'
   spec.homepage      = 'https://github.com/am-team/luna_park'
   spec.license       = 'MIT'
-  spec.required_ruby_version = '>= 2.5.1'
+  spec.required_ruby_version = '>= 3.1.2'
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
     # spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com'"
   else
     raise 'RubyGems 2.0 or newer is required to protect against ' \
-      'public gem pushes.'
+          'public gem pushes.'
   end
   spec.metadata['yard.run'] = 'yri'
 
@@ -46,10 +46,11 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rest-client', '~> 2.1'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rubocop', '~> 0.87'
+  spec.add_development_dependency 'rubocop', '~> 1.39'
   spec.add_development_dependency 'sentry-ruby', '~> 4.2'
   spec.add_development_dependency 'simplecov', '~> 0.18'
   spec.add_development_dependency 'timecop', '~> 0.9'
   spec.add_development_dependency 'webmock', '~> 3.7.0'
   spec.add_development_dependency 'yard', '~> 0.9'
+  spec.metadata['rubygems_mfa_required'] = 'true'
 end

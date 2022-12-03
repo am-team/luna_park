@@ -3,35 +3,36 @@
 require 'luna_park/extensions/injector'
 require 'luna_park/errors'
 
-class Fuel; end
-class Oil; end
-
-class Engine
-  include LunaPark::Extensions::Injector
-
-  dependency(:fuel) { Fuel.new }
-  dependency(:oil)  { Oil.new }
-end
-
 module LunaPark
   RSpec.describe Extensions::Injector do
-    let(:engine) { Engine.new }
+    let!(:fuel_class) { stub_const('Fuel', Class.new) }
+    let!(:oil_class)  { stub_const('Oil',  Class.new) }
+
+    let(:engine_class) do
+      Class.new do
+        include LunaPark::Extensions::Injector
+
+        dependency(:fuel) { Fuel.new }
+        dependency(:oil)  { Oil.new }
+      end
+    end
+    let(:engine) { engine_class.new }
 
     describe '.dependency' do
       it 'sets dependency' do
-        expect { Engine.dependency(:foo) { 'Foo' } }.to change { Engine.dependencies[:foo] }.from(nil).to Proc
+        expect { engine_class.dependency(:foo) { 'Foo' } }.to change { engine_class.dependencies[:foo] }.from(nil).to Proc
       end
 
       context 'when no block given' do
         it 'raises ArgumentError' do
-          expect { Engine.dependency(:foo) }.to raise_error ArgumentError, 'no block given'
+          expect { engine_class.dependency(:foo) }.to raise_error ArgumentError, 'no block given'
         end
       end
     end
 
     describe '.dependencies' do
       context 'on defined class' do
-        subject(:dependencies) { Engine.dependencies }
+        subject(:dependencies) { engine_class.dependencies }
 
         it { is_expected.to be_an_instance_of Hash }
 
@@ -42,8 +43,8 @@ module LunaPark
       end
 
       context 'on child class' do
-        class Rotor < Engine; end
-        subject(:dependencies) { Rotor.dependencies }
+        let(:rotor_class) { Class.new(engine_class) }
+        subject(:dependencies) { rotor_class.dependencies }
 
         it { is_expected.to be_an_instance_of Hash }
 
@@ -53,8 +54,8 @@ module LunaPark
         end
 
         it 'Instance shoulde respond to dependencies method' do
-          expect(Rotor.new).to respond_to :fuel
-          expect(Rotor.new).to respond_to :oil
+          expect(rotor_class.new).to respond_to :fuel
+          expect(rotor_class.new).to respond_to :oil
         end
       end
     end
@@ -70,7 +71,7 @@ module LunaPark
     end
 
     describe '.dependencies' do
-      subject(:dependencies) { Engine.dependencies }
+      subject(:dependencies) { engine_class.dependencies }
 
       it { is_expected.to be_an_instance_of Hash }
 
@@ -85,7 +86,7 @@ module LunaPark
 
       context 'when dependencies is not defined in the instance' do
         it 'should be eq dependencies defined in class' do
-          is_expected.to eq Engine.dependencies
+          is_expected.to eq engine_class.dependencies
         end
       end
 

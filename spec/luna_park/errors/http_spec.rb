@@ -17,7 +17,7 @@ module LunaPark
 
     describe '#response' do
       let(:response) { double }
-      let(:error)    { described_class.new response: response }
+      let(:error)    { described_class.new response: }
       subject { error.response }
 
       before do
@@ -31,8 +31,8 @@ module LunaPark
 
     describe '#request' do
       let(:request) { double }
-      let(:response) { double request: request }
-      let(:error) { described_class.new response: response }
+      let(:response) { double request: }
+      let(:error) { described_class.new response: }
 
       subject { error.request }
 
@@ -63,11 +63,11 @@ module LunaPark
           code: 200,
           headers: { 'Content-Type' => 'application/json' },
           cookies: { 'Secret' => 'dkmvc9saudj3cndsaosp' },
-          request: request
+          request:
         )
       end
 
-      let(:error) { described_class.new 'Custom message', response: response, something: 'important' }
+      let(:error) { described_class.new 'Custom message', response:, something: 'important' }
 
       subject { error.details }
 

@@ -66,8 +66,8 @@ module LunaPark
       end
 
       module InstanceMethods
-        def transaction(&block)
-          dataset.transaction(&block)
+        def transaction(&)
+          dataset.transaction(&)
         end
 
         private

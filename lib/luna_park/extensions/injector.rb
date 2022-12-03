@@ -112,6 +112,8 @@ module LunaPark
           dependencies.each_pair do |key, block|
             inheritor.dependency(key, &block)
           end
+
+          super
         end
 
         ##

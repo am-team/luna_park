@@ -86,8 +86,8 @@ module LunaPark
           private
 
           def extract_pk_value_from_object__(object, pk_name)
-            object.respond_to?(:[]) && object[pk_name] ||
-              object.respond_to?(pk_name) && object.public_send(pk_name) ||
+            (object.respond_to?(:[]) && object[pk_name]) ||
+              (object.respond_to?(pk_name) && object.public_send(pk_name)) ||
               nil
           end
         end

@@ -5,7 +5,7 @@ module LunaPark
     module TypedAttrAccessor
       def typed_attr_accessor(*names, callable, is_array: false)
         attr_reader(*names)
-        typed_attr_writer(*names, callable, is_array: is_array)
+        typed_attr_writer(*names, callable, is_array:)
       end
 
       def typed_attr_writer(*names, callable, is_array: false)

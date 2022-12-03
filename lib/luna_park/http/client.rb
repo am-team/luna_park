@@ -122,11 +122,11 @@ module LunaPark
         form_body = body || data # * we have no a good generator for `x-www-form-urlencoded` type, but Driver has
 
         build_request(
-          title: title,
-          url: url,
-          method: method,
+          title:,
+          url:,
+          method:,
           body: form_body,
-          headers: headers,
+          headers:,
           content_type: 'application/x-www-form-urlencoded',
           **opts
         )
@@ -158,14 +158,14 @@ module LunaPark
       # @return [LunaPark::Http::Request]
       # rubocop:disable Metrics/ParameterLists
       def json_request(title:, url:, method: nil, body: nil, data: nil, headers: nil, **opts)
-        json_body = body || data && JSON.generate(data)
+        json_body = body || (data && JSON.generate(data))
 
         build_request(
-          title: title,
-          url: url,
-          method: method,
+          title:,
+          url:,
+          method:,
           body: json_body,
-          headers: headers,
+          headers:,
           content_type: 'application/json',
           **opts
         )
@@ -274,11 +274,11 @@ module LunaPark
 
         # rubocop:disable Layout/HashAlignment
         Request.new(
-          title:        title,
+          title:,
           url:          url.to_s, # TODO: Use {LunaPark::Tools::URI} with @query
           method:       method || DEFAULT_METHOD,
-          body:         body,
-          headers:      headers,
+          body:,
+          headers:,
           open_timeout: open_timeout || self.class.open_timeout,
           read_timeout: read_timeout || self.class.read_timeout,
           driver:       driver       || self.class.driver
