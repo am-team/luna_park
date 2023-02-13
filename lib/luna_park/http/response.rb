@@ -113,6 +113,13 @@ module LunaPark
       # @return Hash
       attr_reader :cookies
 
+      # Exception of failed request
+      # Can be raised after call (without bang)
+      # Will be raised after call! (with bang)
+      #
+      # @return LunaPark::Errors::Http
+      attr_reader :exception
+
       # The request that actually initializes the current response
       #
       # @example
@@ -344,7 +351,7 @@ module LunaPark
       end
 
       # @example
-      #   request.to_h # => {
+      #   response.to_h # => {
       #     :code=>200,
       #     :body=>"John Doe, Marry Ann",
       #     :headers=>{}, :cookies=>{},
