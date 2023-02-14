@@ -62,7 +62,7 @@ module LunaPark
       # @return [LunaPark::Http::Response]
       def call!
         call.tap do |response|
-          raise Errors::Http.new(response.status, response: response) unless response.success?
+          raise response.exception unless response.exception.nil?
         end
       end
 
@@ -82,7 +82,7 @@ module LunaPark
       end
 
       def build_original_response(rest_response)
-        Response.new(
+        build_response(
           body: rest_response&.body,
           code: rest_response&.code || 0,
           headers: rest_response&.headers,
@@ -92,11 +92,20 @@ module LunaPark
       end
 
       def build_timeout_response
-        Response.new(code: 408, request: original_request)
+        build_response code: 408, request: original_request
       end
 
+      # ! 503 != ECONNREFUSED (https://www.rfc-editor.org/rfc/rfc7231#section-6.6.4)
       def build_unavailable_response
-        Response.new(code: 503, request: original_request)
+        build_response code: 503, request: original_request
+      end
+
+      def build_response(code:, request:, **opts)
+        Response
+          .new(code: code, request: request, **opts)
+          .tap do |response|
+            response.exception = Errors::Http.new(response.status, response: response) unless response.success?
+          end
       end
     end
   end
