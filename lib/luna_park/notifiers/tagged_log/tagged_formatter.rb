@@ -10,7 +10,7 @@ module LunaPark
 
         def call(severity, timestamp, _, msg, tags = nil)
           payload = common_payload(severity, timestamp, tags)
-            .merge(msg_payload(msg[:original_msg]))
+                    .merge(msg_payload(msg[:original_msg]))
 
           deep_merge!(payload, details_payload(msg[:details]))
 

@@ -118,7 +118,7 @@ module LunaPark
       # Will be raised after call! (with bang)
       #
       # @return LunaPark::Errors::Http
-      attr_reader :exception
+      attr_accessor :exception
 
       # The request that actually initializes the current response
       #

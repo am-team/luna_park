@@ -180,7 +180,7 @@ module LunaPark
         let(:error) do
           class UniquenessError < LunaPark::Errors::Business; end
 
-          UniquenessError.new(message: 'error message', user: { xxx: 'yyyy' } )
+          UniquenessError.new(message: 'error message', user: { xxx: 'yyyy' })
         end
         let(:msg) do
           {

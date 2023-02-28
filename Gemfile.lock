@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    luna_park (0.12.0)
+    luna_park (0.12.1)
 
 GEM
   remote: https://rubygems.org/
