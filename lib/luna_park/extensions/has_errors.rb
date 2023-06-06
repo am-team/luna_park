@@ -59,25 +59,61 @@ module LunaPark
 
       module ClassMethods
         ##
+        # Define error (by default - Business error)
+        #
+        # @example default error (business error)
+        #   class Service
+        #     include LunaPark::Extensions::HasErrors
+        #
+        #     error :logic_error
+        #   end
+        #
+        #   Service::LogicError.new.is_a? LunaPark::Errors::Business # => true
+        #
+        # @example custom error
+        #   class Service
+        #     include LunaPark::Extensions::HasErrors
+        #
+        #     default_error MyCustomError
+        #
+        #     error :custom_error
+        #   end
+        #
+        #   Service::LogicError.new.is_a? MyCustomError # => true
+        def error(title, txt = nil, i18n: nil, i18n_key: nil, notify: nil, &default_message_block) # rubocop:disable Metrics/ParameterLists
+          custom_error title, default_error, txt, i18n: i18n || i18n_key, notify: notify, &default_message_block
+        end
+
+        # @example define custom default error for `.error`
+        #   class Service
+        #     include LunaPark::Extensions::HasErrors
+        #
+        #     default_error MyCustomError
+        #
+        #     error :custom_error
+        #   end
+        #
+        #   Service::CustomError.new.is_a? MyCustomError # => true
+        def default_error(error = nil)
+          error.nil? ? (@default_error ||= Errors::Business) : (@default_error = error)
+        end
+
+        ##
         # Define business error
         #
         # @example
         #   class Service
         #     include LunaPark::Extensions::HasErrors
         #
-        #     business_error(:logic_error) { (1 + 1).to_s }
+        #     business_error(:logic_error) { 1 + 1 }
         #   end
         #
         #   logic_error = Service::LogicError.new
         #   logic_error.is_a? LunaPark::Errors::Business # => true
         #   logic_error.message # => '2'
-        def business_error(title, txt = nil, i18n_key: nil, i18n: nil, notify: nil, &default_message_block) # rubocop:disable Metrics/ParameterLists
+        def business_error(title, txt = nil, i18n: nil, i18n_key: nil, notify: nil, &default_message_block) # rubocop:disable Metrics/ParameterLists
           custom_error title, Errors::Business, txt, i18n: i18n || i18n_key, notify: notify, &default_message_block
         end
-
-        ##
-        # Alias for business error
-        alias error business_error
 
         ##
         # Define business error
@@ -92,7 +128,7 @@ module LunaPark
         #   tech_error = Service::TechError.new
         #   tech_error.is_a? LunaPark::Errors::System # => true
         #   tech_error.message # => 'Error message'
-        def system_error(title, txt = nil, i18n_key: nil, i18n: nil, notify: nil, &default_message_block) # rubocop:disable Metrics/ParameterLists
+        def system_error(title, txt = nil, i18n: nil, i18n_key: nil, notify: nil, &default_message_block) # rubocop:disable Metrics/ParameterLists
           custom_error title, Errors::System, txt, i18n: i18n || i18n_key, notify: notify, &default_message_block
         end
 
@@ -115,7 +151,7 @@ module LunaPark
         #   custom_error.is_a? BaseError # => true
         #   custom_error.description # => 'Error message'
         # rubocop:disable Metrics/ParameterLists
-        def custom_error(title, inherit_from, txt = nil, i18n_key: nil, i18n: nil, notify: nil, &default_message_block)
+        def custom_error(title, inherit_from, txt = nil, i18n: nil, i18n_key: nil, notify: nil, &default_message_block)
           unless inherit_from < Errors::Base
             raise ArgumentError, 'inherit_from must be a superclass of LunaPark::Errors::Base'
           end
@@ -124,8 +160,9 @@ module LunaPark
           error_class.inherited(inherit_from)
           error_class.notify(notify) unless notify.nil?
 
-          message_present = ![txt, i18n || i18n_key, default_message_block].all?(&:nil?)
-          error_class.message(txt, i18n: i18n || i18n_key, &default_message_block) if message_present
+          i18n ||= i18n_key
+          message_present = ![txt, i18n, default_message_block].all?(&:nil?)
+          error_class.message(txt, i18n: i18n, &default_message_block) if message_present
 
           const_set(error_class_name(title), error_class)
         end
@@ -147,6 +184,10 @@ module LunaPark
           when Symbol then title.to_s.split('_').collect!(&:capitalize).join
           else raise ArgumentError, "Unknown type `#{title}` for error title"
           end
+        end
+
+        def inherited(child)
+          child.default_error default_error
         end
       end
     end

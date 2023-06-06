@@ -288,6 +288,18 @@ module LunaPark
         end
       end
 
+      context 'when use default message block with not string' do
+        let(:error_class) do
+          Class.new(described_class) do
+            message(i18n: 'errors.example_key') { 1 + 1 }
+          end
+        end
+
+        it 'builds expected message' do
+          expect(error_class.new.message).to eq '2'
+        end
+      end
+
       context 'when inherited' do
         let(:error_superclass) do
           Class.new(described_class) do
