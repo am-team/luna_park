@@ -65,17 +65,42 @@ module LunaPark
 
         # Configure repository
 
+        # Configure tagret entity class and coercion for it
+        #
+        # @example default coercion for entity type than responds to .call
+        #   class MyRepository
+        #     entity MyEntity
+        #   end
+        #
+        #   input = { foo: 'FOO', bar: 'BAR' }
+        #   MyRepository.new.send(:wrap, input) == MyEntity.call(input)
+        #
+        # @example default coercion for entity type than responds to .wrap
+        #   class MyRepository
+        #     entity MyEntity
+        #   end
+        #
+        #   input = { foo: 'FOO', bar: 'BAR' }
+        #   MyRepository.new.send(:wrap, input) == MyEntity.wrap(input)
+        #
+        # @example custom coercion by symbol, for entity type than responds to described_method
+        #   class MyRepository
+        #     entity MyEntity, :build
+        #   end
+        #
+        #   input = { foo: 'FOO', bar: 'BAR' }
+        #   MyRepository.new.send(:wrap, input) == MyEntity.build(input)
+        #
+        # @example custom coercion by callable object
+        #   class MyRepository
+        #     entity MyEntity, BUILD_ENTITY
+        #   end
+        #
+        #   input = { foo: 'FOO', bar: 'BAR' }
+        #   MyRepository.new.send(:wrap, input) == BUILD_ENTITY(input)
         def entity(entity, coercion = nil)
           @entity_class = entity
-          @__entity_coercion__ =
-            case coercion
-            when nil    then infer_entity_coercion(coercion)
-            when Symbol then entity_class.method(coercion)
-            else
-              raise ArgumentError, "Unexpected coercion #{coercion.inspect}" unless coercion.respond_to?(:call)
-
-              coercion
-            end
+          @__entity_coercion__ = __build_entity_coercion__(coercion)
           @entity_class
         end
 
@@ -120,20 +145,16 @@ module LunaPark
           @mapper_class
         end
 
-        # @abstract
-        #
-        # @example
-        #   class Transaction::Repository < LunaPark::Repository
-        #     entity Transaction
-        #
-        #     def self.infer_entity_coercion(_)
-        #       entity_class.method(:call)
-        #     end
-        #   end
-        def infer_entity_coercion(coercion) # rubocop:disable Metrics/AbcSize
-          return entity_class.method(coercion)                  if     coercion.is_a? Symbol
-          raise ArgumentError, 'coercion MUST be Symbol or nil' unless coercion.nil?
+        def __build_entity_coercion__(coercion) # rubocop:disable Metrics/AbcSize
+          return entity_class.method(coercion) if coercion.is_a? Symbol
+          return coercion                      if coercion.respond_to?(:call)
 
+          raise ArgumentError, 'coercion MUST be call\'able, Symbol or nil' unless coercion.nil?
+
+          infer_entity_coercion
+        end
+
+        def infer_entity_coercion # rubocop:disable Metrics/AbcSize
           return entity_class.method(:call) if entity_class.respond_to?(:call)
           return entity_class.method(:wrap) if entity_class.respond_to?(:wrap)
 
@@ -214,7 +235,7 @@ module LunaPark
         #     read_one dataset.where(id: id).limit(2)
         #   end
         def read_one(rows)
-          to_entity from_row __one_from_array__(rows)
+          to_entity from_row __one_from__(rows)
         end
 
         # Get one entity from row
@@ -309,9 +330,9 @@ module LunaPark
         # Entity wrapping helpers
 
         # @example
-        #   to_entities(attributes_hashes) # => Array of Entity
-        #   to_entities(entities)          # => Array of Entity
-        #   to_entities(entity)            # => Array of Entity
+        #   wrap_all(attributes_hashes) # => Array of Entity
+        #   wrap_all(entities)          # => Array of Entity
+        #   wrap_all(entity)            # => Array of Entity
         def wrap_all(input_array)
           __to_array__(input_array).map { |input| wrap(input) }
         end
@@ -382,7 +403,7 @@ module LunaPark
         end
 
         # checks if there are only one item in the given array
-        def __one_from_array__(input)
+        def __one_from__(input)
           case input
           when Hash then input
           else

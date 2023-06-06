@@ -10,7 +10,7 @@ module MappersCodirectionalSpec
     attr %i[funds charge currency], row: :funds_charge_currency
     attr %i[values left]
     attr %i[values right]
-    attr :entries, row: :transaction_entries, mapper: 'MappersCodirectionalSpec::EntryMapper'
+    attr :entries, row: :transaction_entries, mapper: 'MappersCodirectionalSpec::EntryMapper', array: true
     attr :comment
   end
 

@@ -16,7 +16,7 @@ module LunaPark
 
             raise ArgumentError, 'attr path can not be nil'  if attrs_path.nil?
             raise ArgumentError, 'store path can not be nil' if row_path.nil?
-            raise ArgumentError, 'array predicate MUST be nil when no Mapper given' if map_array && mapper.nil?
+            raise ArgumentError, 'array option MUST be nil when no Mapper given' if map_array && mapper.nil?
           end
 
           def from_row(row:, attrs:)
@@ -40,12 +40,10 @@ module LunaPark
           end
 
           def apply_mapper(value, direction)
-            case @map_array
-            when true  then value.map { |v| mapper.public_send direction, v }
-            when false then mapper.public_send direction, value
+            if @map_array
+              value.map { |v| mapper.public_send direction, v }
             else
-              @map_array = value.respond_to?(:to_a)
-              apply_mapper(@map_array ? value.to_a : value, direction)
+              mapper.public_send direction, value
             end
           end
 

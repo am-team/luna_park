@@ -24,7 +24,11 @@ RSpec.describe LunaPark::Extensions::Repositories::Postgres::Delete do
       allow(fake_repo.dataset).to receive_message_chain(:where, :delete).and_return 1
     end
 
-    it 'returns received entity object' do
+    it 'returns boolean' do
+      expect(delete).to be true
+    end
+
+    it 'sends delete to db' do
       expect(fake_repo.dataset).to receive_message_chain(:where, :delete)
       delete
     end
