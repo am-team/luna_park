@@ -50,7 +50,7 @@ module LunaPark
             MULTILINE
           end
 
-          def log
+          def log # rubocop:disable Metrics/AbcSize
             logger.info(message)
             logger.tagged('xxx_receiver', 'method_x').info(message)
             logger.info(message)
@@ -82,7 +82,7 @@ module LunaPark
             MULTILINE
           end
 
-          def log
+          def log # rubocop:disable Metrics/AbcSize
             logger.info(message)
             logger.tagged('xxx_receiver', 'method_x') { |l| l.info(message) }
             logger.info(message)

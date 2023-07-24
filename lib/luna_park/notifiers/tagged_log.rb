@@ -40,7 +40,7 @@ module LunaPark
 
         def push_tags(*tags)
           tags.flatten!
-          tags.reject! { |t| t.respond_to?(:empty?) ? !!t.empty? : !t }
+          tags.reject! { |tag| tag.respond_to?(:empty?) ? tag.empty? : !tag }
           current_tags.concat tags
           tags
         end

@@ -48,17 +48,17 @@ module LunaPark
           end
         end
 
-        def error_payload(e)
+        def error_payload(err) # rubocop:disable Metrics/MethodLength
           error_hash = {
-            class: e.class,
-            message: e.message
+            class: err.class,
+            message: err.message
           }
-          error_hash.merge!(backtrace: "\n" + e.backtrace.join("\n") + "\n") if e.backtrace
+          error_hash.merge!(backtrace: "\n" + err.backtrace.join("\n") + "\n") if err.backtrace
           payload = {
             error: error_hash,
             ok: false
           }
-          payload.merge!(details: e.details) if e.respond_to?(:details)
+          payload.merge!(details: err.details) if err.respond_to?(:details)
           payload
         end
 
