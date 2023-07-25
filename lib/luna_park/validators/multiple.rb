@@ -18,8 +18,8 @@ module LunaPark
           child.__validators__ = __validators__.dup
         end
 
-        def add_validator(validator_class, root: nil)
-          __validators__ << [root, validator_class]
+        def add_validator(validator_class, path: nil)
+          __validators__ << [path || [], validator_class]
         end
 
         def self.+(other)
@@ -48,37 +48,31 @@ module LunaPark
         return {} unless success?
 
         output = {}
-        succeeded_validations.each_with_object({}) do |(root, validator), result|
-          build_nested_hash root, output: output
-
-          if root.nil?
-            output.merge! validator.valid_params
-          else
-            *path_keys, head_key = root
-            tail = path_keys.any? ? output.dig(*path_keys) : output
-            tail[head_key] ||= {}
-            tail[head_key].merge! validator.valid_params
-          end
+        succeeded_validations.each do |(path, validation)|
+          build_nested_hash(path, output: output)
+            .merge!(validation.valid_params)
         end
-
         output
       end
 
       def errors_array
-        root, validator = failed_validation
+        return [] if failed_validation.nil?
 
-        validator&.errors_array&.map { |item| item.merge({ source: root }.compact) } || []
+        path, validation = failed_validation
+        validation&.errors_array&.map { |item| item.merge({ source: path }.compact) } || []
       end
 
-      def errors_tree(nested_by_validator: false)
-        root, validator = failed_validation
+      def errors_tree
+        return {} if failed_validation.nil?
 
-        return validator&.errors_tree || {} unless nested_by_validator
+        path, validation = failed_validation
+        return validation.errors_tree || {} if path.empty?
 
-        *path_keys, head_key = root
+        *path_keys, head_key = path
 
-        output = build_nested_hash(path_keys)
-        output[head_key] = validator.errors_tree
+        output = {}
+        build_nested_hash(path_keys, output: output)
+        output[head_key] = validation.errors_tree
         output
       end
 
@@ -99,32 +93,27 @@ module LunaPark
       def validate_all # rubocop:disable Metrics/MethodLength
         return if @validated
 
-        @validated = true
-
         succeeded_validations = []
 
-        self.class.__validators__.each do |(root, validator_class)|
-          nested_params = root&.any? ? params&.dig(*root) : params
-
+        self.class.__validators__.each do |(path, validator_class)|
+          nested_params = path.any? ? params.dig(*path) : params
           validation = validator_class.validate(nested_params)
 
           if validation.success?
-            succeeded_validations << [root, validation]
+            succeeded_validations << [path, validation]
           else
-            @failed_validation = [root, validation]
+            @failed_validation = [path, validation]
 
             break
           end
         end
 
+        @validated = true
         @succeeded_validations = succeeded_validations if @failed_validation.nil?
       end
 
-      def build_nested_hash(path, output: {})
-
-        path&.reduce(output) { |nested, key| nested[key] ||= {} }
-
-        output
+      def build_nested_hash(path, output:)
+        path.reduce(output) { |nested, key| nested[key] ||= {} }
       end
     end
   end

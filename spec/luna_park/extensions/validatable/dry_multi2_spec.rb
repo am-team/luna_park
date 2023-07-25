@@ -23,11 +23,9 @@ module ExtensionsValidatableDryMulti2Spec
   class MyMultiForm
     include LunaPark::Extensions::Validatable::Dry
 
-    validators do
-      dry_validator :body do
-        params do
-          required(:foo) { filled? & str? & eql?('Foo') }
-        end
+    validator :body do
+      params do
+        required(:foo) { filled? & str? & eql?('Foo') }
       end
     end
 
@@ -46,9 +44,7 @@ module ExtensionsValidatableDryMulti2Spec
   end
 
   class MyMultiForm2 < MyMultiForm
-    validators do
-      validator :query, HumanTypeValidator + NameValidator
-    end
+    validator :query, HumanTypeValidator + NameValidator
   end
 end
 
@@ -71,19 +67,11 @@ module LunaPark
         end
       end
 
-      describe '#validation_errors_tree(nested_by_validator)' do
-        subject(:validation_errors_tree_nested) { form.validation_errors_tree(nested_by_validator: true) }
+      describe '#validation_errors_tree' do
+        subject(:validation_errors_tree_nested) { form.validation_errors_tree }
 
         it 'contains expected errors' do
           is_expected.to eq query: { type: ['is missing'] }
-        end
-      end
-
-      describe '#validation_errors_tree' do
-        subject(:validation_errors_tree) { form.validation_errors_tree }
-
-        it 'contains expected errors' do
-          is_expected.to eq type: ['is missing']
         end
       end
 

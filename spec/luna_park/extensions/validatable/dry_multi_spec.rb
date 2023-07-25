@@ -23,12 +23,15 @@ module ExtensionsValidatableDryMultiSpec
   class MyMultiForm
     include LunaPark::Extensions::Validatable::Dry
 
-    validators do
-      dry_validator :body do
-        params do
-          required(:foo) { filled? & str? & eql?('Foo') }
-          required(:bar) { filled? & str? & eql?('Bar') }
-        end
+    validator :body do
+      params do
+        required(:foo) { filled? & str? & eql?('Foo') }
+      end
+    end
+
+    validator :body do
+      params do
+        required(:bar) { filled? & str? & eql?('Bar') }
       end
     end
 
@@ -47,9 +50,7 @@ module ExtensionsValidatableDryMultiSpec
   end
 
   class MyMultiForm2 < MyMultiForm
-    validators do
-      validator :path, HumanTypeValidator + NameValidator
-    end
+    validator :path, HumanTypeValidator + NameValidator
   end
 end
 
@@ -68,23 +69,15 @@ module LunaPark
         subject(:validation_errors_array) { form.validation_errors_array }
 
         it 'contains expected errors' do
-          is_expected.to eq [input: { foo: 'Foo' }, path: [:bar], source: [:body], text: 'is missing']
-        end
-      end
-
-      describe '#validation_errors_tree(nested_by_validator)' do
-        subject(:validation_errors_tree_nested) { form.validation_errors_tree(nested_by_validator: true) }
-
-        it 'contains expected errors' do
-          is_expected.to eq body: { bar: ['is missing'] }
+          is_expected.to eq [input: {}, path: [:bar], source: [:body], text: 'is missing']
         end
       end
 
       describe '#validation_errors_tree' do
-        subject(:validation_errors_tree) { form.validation_errors_tree }
+        subject(:validation_errors_tree_nested) { form.validation_errors_tree }
 
         it 'contains expected errors' do
-          is_expected.to eq bar: ['is missing']
+          is_expected.to eq body: { bar: ['is missing'] }
         end
       end
 

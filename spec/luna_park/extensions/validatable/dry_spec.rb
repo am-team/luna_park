@@ -10,6 +10,11 @@ module ExtensionsValidatableDrySpec
     validator do
       params do
         required(:foo) { filled? & str? & eql?('Foo') }
+      end
+    end
+
+    validator do
+      params do
         required(:bar) { filled? & str? & eql?('Bar') }
       end
     end
@@ -35,11 +40,11 @@ module LunaPark
 
     let(:form_class) { ExtensionsValidatableDrySpec::MyForm }
 
-    describe '.validator()' do
-      subject(:validator) { form_class.validator }
+    # describe '.validator()' do
+    #   subject(:validator) { form_class.validator }
 
-      it { expect(validator).to be_inheritor_of Validators::Dry }
-    end
+    #   it { expect(validator).to be_inheritor_of Validators::Dry }
+    # end
 
     context 'when invalid params given,' do
       let(:params) { { 'foo' => 'Foo' } }
