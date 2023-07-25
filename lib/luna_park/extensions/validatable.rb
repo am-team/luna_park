@@ -41,12 +41,12 @@ module LunaPark
           validation ? validation.errors_array : {}
         end
 
-        def validation_errors_tree
-          validation ? validation.errors_tree : []
+        def validation_errors_tree(**opts)
+          validation ? validation.errors_tree(**opts) : []
         end
 
         def validation_errors
-          validation ? validation.errors : {}
+          validation ? validation.errors_tree : {}
         end
 
         def valid?
@@ -73,6 +73,46 @@ module LunaPark
       module ClassMethods
         def validator(klass = nil)
           klass.nil? ? @validator : @validator = klass
+        end
+
+        # validators do
+        #   validator :headers, HeadersValidator
+        #   validator :uri, :path, Validators::Uid + Validators::UserUid
+        #   validator :uri, :query do
+        #     required(:from).filled(:string)
+        #     required(:to).filled(:string)
+        #   end
+        #   validator :body, BodyValidator
+        # end
+        def validators(&block)
+          require 'luna_park/validators/multiple'
+
+          raise "Not Multiple validator is already defined: #{validator}" unless validator.nil? || validator < LunaPark::Validators::Multiple
+
+          validator(validator || Class.new(LunaPark::Validators::Multiple))
+          MultipleValidatorsBuilder.new(validator).instance_eval(&block)
+        end
+
+        def inherited(child)
+          child.validator Class.new(validator) if validator
+          super
+        end
+      end
+
+      class MultipleValidatorsBuilder
+        def initialize(multi_validator)
+          @multi_validator = multi_validator
+        end
+
+        def validator(*args)
+          *path, object = args
+          @multi_validator.add_validator object, root: path
+        end
+
+        def dry_validator(*args, &block)
+          validator_class = Class.new(Validators::Dry)
+          validator_class.validation_schema(&block)
+          @multi_validator.add_validator validator_class, root: args
         end
       end
     end

@@ -31,6 +31,14 @@ module LunaPark
         result.errors.to_h || {}
       end
 
+      def self.+(other)
+        multiple = Class.new(Multiple)
+        multiple.add_validator(self)
+        multiple.add_validator(other)
+        multiple
+      end
+
+      # @deprecated
       alias errors errors_tree
 
       private
