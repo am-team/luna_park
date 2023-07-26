@@ -27,10 +27,20 @@ module LunaPark
         result.errors.map { |error| { path: error.path, text: error.text, input: error.input } }
       end
 
-      def errors_tree
+      def errors_tree(**_)
         result.errors.to_h || {}
       end
 
+      def self.+(other)
+        require 'luna_park/validators/multiple'
+
+        multiple = Class.new(Multiple)
+        multiple.add_validator(self)
+        multiple.add_validator(other)
+        multiple
+      end
+
+      # @deprecated
       alias errors errors_tree
 
       private
@@ -44,6 +54,10 @@ module LunaPark
       class << self
         def schema
           @_schema
+        end
+
+        def inherited(child)
+          child.instance_variable_set(:@_schema, @_schema.dup)
         end
 
         alias validate new

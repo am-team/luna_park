@@ -82,9 +82,7 @@ module LunaPark
     end
 
     RSpec::Matchers.define :be_inheritor_of do |parent|
-      match do |child|
-        child.ancestors.include? parent
-      end
+      match { |child| child < parent }
     end
   end
 end
