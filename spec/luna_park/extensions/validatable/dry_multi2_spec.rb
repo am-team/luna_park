@@ -107,11 +107,5 @@ module LunaPark
         end
       end
     end
-
-    RSpec::Matchers.define :be_inheritor_of do |parent|
-      match do |child|
-        child.ancestors.include? parent
-      end
-    end
   end
 end
