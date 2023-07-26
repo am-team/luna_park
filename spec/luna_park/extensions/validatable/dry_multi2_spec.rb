@@ -44,7 +44,7 @@ module ExtensionsValidatableDryMulti2Spec
   end
 
   class MyMultiForm2 < MyMultiForm
-    validator :query, HumanTypeValidator + NameValidator
+    validator :uri, :query, HumanTypeValidator + NameValidator
   end
 end
 
@@ -63,7 +63,15 @@ module LunaPark
         subject(:validation_errors_array) { form.validation_errors_array }
 
         it 'contains expected errors' do
-          is_expected.to eq [input: {}, path: [:type], source: [:query], text: 'is missing']
+          is_expected.to eq [input: {}, path: [:type], source: %i[uri query], text: 'is missing']
+        end
+      end
+
+      describe '#validation_error_arrays' do
+        subject(:error_arrays) { form.validation_error_arrays }
+
+        it 'contains expected errors' do
+          is_expected.to eq uri: { query: [input: {}, path: [:type], source: %i[uri query], text: 'is missing'] }
         end
       end
 
@@ -71,7 +79,7 @@ module LunaPark
         subject(:validation_errors_tree_nested) { form.validation_errors_tree }
 
         it 'contains expected errors' do
-          is_expected.to eq query: { type: ['is missing'] }
+          is_expected.to eq uri: { query: { type: ['is missing'] } }
         end
       end
 
@@ -83,12 +91,18 @@ module LunaPark
     end
 
     context 'when valid params given,' do
-      let(:params) { { body: { 'foo' => 'Foo' }, query: { 'type' => 'human', 'name' => 'John' } } }
+      let(:params) { { body: { 'foo' => 'Foo' }, uri: { query: { 'type' => 'human', 'name' => 'John' } } } }
 
       it { is_expected.to be_valid }
 
       describe '#validation_errors_array' do
         subject(:validation_errors_array) { form.validation_errors_array }
+
+        it { is_expected.to be_empty }
+      end
+
+      describe '#validation_error_arrays' do
+        subject(:error_arrays) { form.validation_error_arrays }
 
         it { is_expected.to be_empty }
       end
@@ -103,7 +117,7 @@ module LunaPark
         subject(:valid_params) { form._valid_params }
 
         it 'contains output params' do
-          is_expected.to eq body: { foo: 'Foo' }, query: { type: 'human', name: 'John' }
+          is_expected.to eq body: { foo: 'Foo' }, uri: { query: { type: 'human', name: 'John' } }
         end
       end
     end

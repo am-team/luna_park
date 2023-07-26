@@ -65,7 +65,22 @@ module LunaPark
         return [] if failed_validation.nil?
 
         path, validation = failed_validation
-        validation&.errors_array&.map { |item| item.merge({ source: path }.compact) } || []
+        validation.errors_array.map { |item| item.merge(source: path) } || []
+      end
+
+      def error_arrays
+        return [] if failed_validation.nil?
+
+        path, validation = failed_validation
+        *tail_keys, head_key = path
+
+        output = {}
+        validation.errors_array.each do |item|
+          tail = build_nested_hash(tail_keys, output: output)
+          tail[head_key] ||= []
+          tail[head_key] << item.merge(source: path)
+        end
+        output
       end
 
       def errors_tree
@@ -74,11 +89,11 @@ module LunaPark
         path, validation = failed_validation
         return validation.errors_tree || {} if path.empty?
 
-        *path_keys, head_key = path
+        *tail_keys, head_key = path
 
         output = {}
-        build_nested_hash(path_keys, output: output)
-        output[head_key] = validation.errors_tree
+        tail = build_nested_hash(tail_keys, output: output)
+        tail[head_key] = validation.errors_tree
         output
       end
 
