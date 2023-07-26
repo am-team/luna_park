@@ -22,10 +22,22 @@ module LunaPark
           __validators__ << [path || [], validator_class]
         end
 
-        def self.+(other)
-          multiple = Class.new(self)
-          multiple.add_validator(other)
-          multiple
+        def validators_with_path(path)
+          __validators__.each_with_object([]) do |(validator_path, validator), output|
+            output << validator if validator_path == path
+          end
+        end
+
+        def +(other)
+          new_multi_validator = Class.new(self)
+
+          if other.is_a?(Class) && other < Multiple
+            new_multi_validator.__validators__.concat other.__validators__
+          else
+            new_multi_validator.add_validator(other)
+          end
+
+          new_multi_validator
         end
 
         attr_writer :__validators__
