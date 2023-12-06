@@ -4,9 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.12.0] - 2023-02-23
-Changed
-- Added `TaggedLog`
+## [0.13.1] - 2023-12-23
+Added
+- Added `HasErrors.expose_to_error_details` to expose errors to error details
+- Added `Scenarion.attr(name, sensitive: true)` to define attr_accessor and expose it to error details
 
 ## [0.11.7] - 2022-10-07
 Changed
