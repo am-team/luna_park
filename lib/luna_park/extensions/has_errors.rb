@@ -43,29 +43,46 @@ module LunaPark
         #   class Service
         #     include LunaPark::Extensions::HasErrors
         #
+        #     attr_reader :foo
+        #
         #     class LogicError < LunaPark::Errors::Business; end
         #   end
         #
-        #   Service.new.error :logic_error # => raise LogicError
+        #   Service.new.error :logic_error, expose: :foo # => raise LogicError details: { foo: nil }
         #
         # @param title [Symbol|String] - Title of error
         # @param msg [String] - Message of error
         # @param **details - See @LunaPark::Errors::Base#new
-        def error(title, msg = nil, **details)
+        def error(title, msg = nil, expose: nil, **extra_details)
           class_name = self.class.error_class_name(title)
 
-          self.class.__expose_error_details__&.each { |m| details[m] = send(m) if respond_to?(m, true) }
+          if expose
+            error_details = {}
+            Array(expose).each { |m| error_details[m] = send(m) if respond_to?(m, true) }
+          else
+            error_details = details.dup
+          end
 
-          raise self.class.const_get(class_name).new msg, **details
+          error_details.merge!(extra_details)
+
+          raise self.class.const_get(class_name).new msg, **error_details
+        end
+
+        def details
+          return @details if @details
+
+          details = {}
+          self.class.__expose_to_details__&.each { |m| details[m] = send(m) if respond_to?(m, true) }
+          @details = details
         end
       end
 
       module ClassMethods
-        attr_reader :__expose_error_details__
+        attr_reader :__expose_to_details__
 
         def inherited(child)
           child.default_error default_error
-          child.expose_to_error_details(*__expose_error_details__)
+          child.expose_to_details(*__expose_to_details__)
         end
 
         ##
@@ -184,7 +201,7 @@ module LunaPark
         #   class Service
         #     error :cooldown
         #
-        #     expose_to_error_details :username, :next_attempt_at
+        #     expose_to_details :username, :next_attempt_at
         #
         #     # ...
         #   end
@@ -196,9 +213,9 @@ module LunaPark
         #   end
         #
         #   error.details # => { username: 'Username', next_attempt_at: '40_000' }
-        def expose_to_error_details(*methods)
-          @__expose_error_details__ ||= []
-          @__expose_error_details__.concat methods
+        def expose_to_details(*methods)
+          @__expose_to_details__ ||= []
+          @__expose_to_details__.concat methods
         end
 
         ##

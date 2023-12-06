@@ -293,14 +293,14 @@ module LunaPark
           @default_notifier = notifier
         end
 
-        def attrs(*names)
-          names.each { |name| attr name }
+        def attrs(*names, expose: false)
+          names.each { |name| attr name, expose: expose }
         end
 
-        def attr(name, sensitive: false)
+        def attr(name, expose: false)
           attr_accessor name.to_sym
 
-          expose_to_error_details name unless sensitive
+          expose_to_details name if expose
         end
       end
 

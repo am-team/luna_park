@@ -19,7 +19,8 @@ module LunaPark
   RSpec.describe UseCases::Scenario do
     let(:gunshot) do
       Class.new(described_class) do
-        attr_accessor :lucky_mode, :error
+        attr :lucky_mode, :error
+        attr :code, sensitive: true
 
         def call!
           raise error unless lucky_mode

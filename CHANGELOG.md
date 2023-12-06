@@ -6,8 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.13.1] - 2023-12-23
 Added
-- Added `HasErrors.expose_to_error_details` to expose errors to error details
-- Added `Scenarion.attr(name, sensitive: true)` to define attr_accessor and expose it to error details
+- Added `HasErrors.expose_to_details` to expose errors to error details
+- Added `Scenarion.attr(name, sensitive: false)` to define attr_accessor and expose it to error details
 
 ## [0.11.7] - 2022-10-07
 Changed

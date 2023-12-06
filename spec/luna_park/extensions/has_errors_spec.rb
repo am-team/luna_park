@@ -23,7 +23,7 @@ class ServiceWithContext
 
   error(:cooldown) { |d| "Cooldown. #{d[:action]} will be available in #{d[:next_in]} sec" }
 
-  expose_to_error_details :action, :next_in, :user_id, :not_existed_method
+  expose_to_details :action, :next_in, :user_id, :not_existed_method
 
   private
 
@@ -128,7 +128,7 @@ module LunaPark
       end
     end
 
-    describe '.expose_to_error_details' do
+    describe '.expose_to_details' do
       let(:service) { ServiceWithContext.new }
 
       it 'provides described method to details' do
