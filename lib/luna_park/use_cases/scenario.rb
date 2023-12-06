@@ -292,6 +292,16 @@ module LunaPark
         def notify_with(notifier)
           @default_notifier = notifier
         end
+
+        def attrs(*names)
+          names.each { |name| attr name }
+        end
+
+        def attr(name, sensitive: false)
+          attr_accessor name.to_sym
+
+          expose_to_error_details name unless sensitive
+        end
       end
 
       private
