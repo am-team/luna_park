@@ -7,30 +7,44 @@ module LunaPark
         # Copyist for copiyng value between two schemas with DIFFERENT or NESTED paths
         #   (Works with only one described attribute)
         class Nested
-          def initialize(attrs_path:, row_path:)
+          def initialize(attrs_path:, row_path:, mapper:, map_array:)
             @attrs_path = attrs_path
             @row_path   = row_path
 
+            @mapper_config = mapper
+            @map_array     = map_array
+
             raise ArgumentError, 'attr path can not be nil'  if attrs_path.nil?
             raise ArgumentError, 'store path can not be nil' if row_path.nil?
+            raise ArgumentError, 'array option MUST be nil when no Mapper given' if map_array && mapper.nil?
           end
 
           def from_row(row:, attrs:)
-            copy_nested(from: row, to: attrs, from_path: @row_path, to_path: @attrs_path)
+            copy_nested(from: row, to: attrs, from_path: @row_path, to_path: @attrs_path, direction: :from_row)
           end
 
           def to_row(row:, attrs:)
-            copy_nested(from: attrs, to: row, from_path: @attrs_path, to_path: @row_path)
+            copy_nested(from: attrs, to: row, from_path: @attrs_path, to_path: @row_path, direction: :to_row)
           end
 
           private
 
-          def copy_nested(from:, to:, from_path:, to_path:)
+          def copy_nested(from:, to:, from_path:, to_path:, direction:)
             value = read(from, from_path)
 
             return if value == Undefined # omit undefined keys
 
+            value = apply_mapper(value, direction) unless mapper.nil?
+
             write(to, to_path, value)
+          end
+
+          def apply_mapper(value, direction)
+            if @map_array
+              value.map { |v| mapper.public_send direction, v }
+            else
+              mapper.public_send direction, value
+            end
           end
 
           def read(from, from_path)
@@ -80,6 +94,13 @@ module LunaPark
           #   hash # => { a: { b: { c: { d: 'value' } }, x: 'x' } }
           def build_nested_hash(nested_hash, path)
             path.inject(nested_hash) { |output, key| output[key] ||= {} }
+          end
+
+          def mapper
+            return @mapper if instance_variable_defined?(:@mapper)
+            return @mapper = Object.const_get(@mapper_config) if @mapper_config.is_a? String
+
+            @mapper = @mapper_config
           end
 
           class Undefined; end

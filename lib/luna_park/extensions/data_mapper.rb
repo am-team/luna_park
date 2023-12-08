@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'luna_park/mappers/simple'
+
 module LunaPark
   module Extensions
     # @example
@@ -20,7 +22,7 @@ module LunaPark
     #     def save(input)
     #       entity = wrap(input)
     #       row    = to_row(entity)
-    #       new_row   = products.where(id: entity.id).update(row)
+    #       new_row   = products.where(id: entity.id).returning.update(row)
     #       new_attrs = from_row(new_row)
     #       entity.set_attributes(new_attrs)
     #       entity
@@ -36,33 +38,174 @@ module LunaPark
     #     alias products dataset
     #   end
     module DataMapper
-      def self.included(base)
-        base.extend ClassMethods
-        base.include InstanceMethods
+      class << self
+        def extended(base)
+          base.include self
+        end
+
+        def included(base)
+          base.extend ClassMethods
+          base.include InstanceMethods
+
+          base.__define_constants__
+
+          defaults(base)
+        end
+
+        private
+
+        def defaults(base)
+          base.entity OpenStruct, :new
+          base.mapper LunaPark::Mappers::Simple
+        end
       end
 
       module ClassMethods
-        attr_reader :entity_class, :mapper_class
+        attr_reader :entity_class, :mapper_class, :__entity_coercion__
 
         # Configure repository
 
-        def entity(entity_class = nil)
-          @entity_class = entity_class
+        # Configure tagret entity class and coercion for it
+        #
+        # @example default coercion for entity type than responds to .call
+        #   class MyRepository
+        #     entity MyEntity
+        #   end
+        #
+        #   input = { foo: 'FOO', bar: 'BAR' }
+        #   MyRepository.new.send(:wrap, input) == MyEntity.call(input)
+        #
+        # @example default coercion for entity type than responds to .wrap
+        #   class MyRepository
+        #     entity MyEntity
+        #   end
+        #
+        #   input = { foo: 'FOO', bar: 'BAR' }
+        #   MyRepository.new.send(:wrap, input) == MyEntity.wrap(input)
+        #
+        # @example custom coercion by symbol, for entity type than responds to described_method
+        #   class MyRepository
+        #     entity MyEntity, :build
+        #   end
+        #
+        #   input = { foo: 'FOO', bar: 'BAR' }
+        #   MyRepository.new.send(:wrap, input) == MyEntity.build(input)
+        #
+        # @example custom coercion by callable object
+        #   class MyRepository
+        #     entity MyEntity, BUILD_ENTITY
+        #   end
+        #
+        #   input = { foo: 'FOO', bar: 'BAR' }
+        #   MyRepository.new.send(:wrap, input) == BUILD_ENTITY(input)
+        def entity(entity, coercion = nil)
+          @entity_class = entity
+          @__entity_coercion__ = __build_entity_coercion__(coercion)
+          @entity_class
         end
 
-        def mapper(mapper_class = nil)
-          @mapper_class = mapper_class
+        # Configure Mapper
+        #
+        # @example With anonymous mapper
+        #   class Repository < LunaPark::Repository
+        #     mapper do
+        #       attr :foo, row: :fuu
+        #     end
+        #   end
+        #
+        #   Repository.mapper_class.to_row(foo: 'Foo') # => { fuu: 'Foo' }
+        #
+        # @example With mapper class
+        #   class Repository::Mapper < LunaPark::Mapper
+        #     attr :foo, row: :fuu
+        #   end
+        #
+        #   class Repository < LunaPark::Repository
+        #     mapper Mapper
+        #   end
+        #
+        #   Repository.new.mapper_class.to_row(foo: 'Foo') # => { fuu: 'Foo' }
+        #
+        # @example Without mapper
+        #   class Repository < LunaPark::Repository
+        #     def example_to_row(attrs)
+        #       to_row attrs
+        #     end
+        #   end
+        #
+        #   Repository.new.example_to_row(foo: 'Foo') # => { foo: 'Foo' }
+        #
+        def mapper(mapper = Undefined, &block)
+          raise ArgumentError, 'Expected mapper xOR block' unless (mapper == Undefined) ^ block.nil?
+
+          return @mapper_class = mapper if block.nil?
+
+          @mapper_class = Class.new(base_anonymous_mapper)
+          @mapper_class.class_eval(&block)
+          @mapper_class
+        end
+
+        def __build_entity_coercion__(coercion) # rubocop:disable Metrics/AbcSize
+          return entity_class.method(coercion) if coercion.is_a? Symbol
+          return coercion                      if coercion.respond_to?(:call)
+
+          raise ArgumentError, 'coercion MUST be call\'able, Symbol or nil' unless coercion.nil?
+
+          infer_entity_coercion
+        end
+
+        def infer_entity_coercion # rubocop:disable Metrics/AbcSize
+          return entity_class.method(:call) if entity_class.respond_to?(:call)
+          return entity_class.method(:wrap) if entity_class.respond_to?(:wrap)
+
+          ->(input) { entity_class.new(input.to_h) }
+        end
+
+        # @abstract
+        #
+        # @example
+        #   class Transaction::Repository < LunaPark::Repository
+        #     # Parent of this mapper will be changed
+        #     mapper do
+        #       attr :foo
+        #     end
+        #
+        #     def self.base_anonymous_mapper
+        #       MyBaseMapper
+        #     end
+        #   end
+        def base_anonymous_mapper
+          LunaPark::Mappers::Codirectional
+        end
+
+        def primary_key(attr)
+          @primary_key_attr = attr
         end
 
         DEFAULT_PRIMARY_KEY = :id
 
-        def primary_key(pk = nil)
-          @db_primary_key = pk
+        def primary_key_attr
+          @primary_key_attr || DEFAULT_PRIMARY_KEY
         end
 
-        def db_primary_key
-          @db_primary_key || DEFAULT_PRIMARY_KEY
+        def __define_constants__(not_found: LunaPark::Extensions::DataMapper::NotFound)
+          __define_class__ 'NotFound', not_found
         end
+
+        def __define_class__(name, parent)
+          klass = Class.new(parent)
+          const_set name, klass
+        end
+
+        def inherited(klass)
+          klass.__define_constants__(not_found: NotFound)
+          klass.entity entity_class, __entity_coercion__
+          klass.mapper mapper_class
+          super
+        end
+
+        class Undefined; end
+        private_constant :Undefined
       end
 
       module InstanceMethods
@@ -74,22 +217,56 @@ module LunaPark
 
         # Helpers
 
+        # Repository Helpers
+
         # Get collection of entities from row
         # @example
         #   def where_type(type)
-        #     read_all products.where(type: type)
+        #     read_all scoped dataset.where(type: type)
         #   end
         def read_all(rows)
-          to_entities from_rows rows.to_a
+          to_entities from_rows __to_array__(rows)
         end
 
         # Get one entity from row
         # @example
         #   def find(id)
-        #     read_all products.where(id: id)
+        #     # limit 2 allows to check if there are more than 1 record
+        #     read_one dataset.where(id: id).limit(2)
         #   end
-        def read_one(row)
-          to_entity from_row row
+        def read_one(rows)
+          to_entity from_row __one_from__(rows)
+        end
+
+        # Get one entity from row
+        # @example
+        #   def find!(id)
+        #     read_one! dataset.where(id: id).limit(1)
+        #   end
+        def read_one!(row, not_found_by: nil, not_found_meta: nil)
+          warn 'Deprecated option #not_found_meta used' unless not_found_meta.nil?
+
+          found! read_one(row), not_found_by: not_found_by || not_found_meta
+        end
+
+        # Check if record was found
+        # @example
+        #   class MyRepository < LunaPark::Repository
+        #     def find_by_x!(x)
+        #       found! nil, not_found_by: "x: #{x}"
+        #     end
+        #   end
+        #
+        #   begin
+        #     MyRepository.new.find_by_x 'X'
+        #   rescue MyRepository::NotFound => e
+        #     raise HTTP404, "Record #{e.details[:name]} not found by #{e.details[:by]}"
+        #   end
+        #
+        def found!(value, not_found_by: nil)
+          return value unless value.nil?
+
+          raise self.class::NotFound.new name: self.class.entity_class.name, by: not_found_by
         end
 
         # Mapper helpers
@@ -100,7 +277,7 @@ module LunaPark
         #     database.insert_many(rows)
         #   end
         def to_rows(input_array)
-          mapper_class ? mapper_class.to_rows(input_array) : input_array.map(&:to_h)
+          self.class.mapper_class.to_rows(input_array)
         end
 
         # @example
@@ -109,7 +286,7 @@ module LunaPark
         #     database.insert(row)
         #   end
         def to_row(input)
-          mapper_class ? mapper_class.to_row(input) : input.to_h
+          self.class.mapper_class.to_row(input)
         end
 
         # @example
@@ -118,7 +295,7 @@ module LunaPark
         #     entities_attrs.map { |entity_attrs| Entity.new(entity_attrs) }
         #   end
         def from_rows(rows_array)
-          mapper_class ? mapper_class.from_rows(rows_array) : rows_array
+          self.class.mapper_class.from_rows(rows_array)
         end
 
         # @example
@@ -130,7 +307,7 @@ module LunaPark
           return if input.nil?
           raise ArgumentError, 'Can not be an Array' if input.is_a?(Array)
 
-          mapper_class ? mapper_class.from_row(input.to_h) : input
+          self.class.mapper_class.from_row(input.to_h)
         end
 
         # Entity construction helpers
@@ -139,7 +316,7 @@ module LunaPark
         #   to_entities(attributes_hashes) # => Array of Entity
         #   to_entities(attributes_hash)   # => Array of Entity
         def to_entities(attrs_array)
-          Array(attrs_array).map { |attrs| to_entity(attrs) }
+          __to_array__(attrs_array).map { |attrs| to_entity(attrs) }
         end
 
         # @example
@@ -147,48 +324,103 @@ module LunaPark
         def to_entity(attrs)
           return if attrs.nil?
 
-          entity_class ? entity_class.new(attrs) : attrs
+          self.class.entity_class.new(attrs)
         end
 
         # Entity wrapping helpers
 
         # @example
-        #   to_entities(attributes_hashes) # => Array of Entity
-        #   to_entities(entities)          # => Array of Entity
-        #   to_entities(entity)            # => Array of Entity
+        #   wrap_all(attributes_hashes) # => Array of Entity
+        #   wrap_all(entities)          # => Array of Entity
+        #   wrap_all(entity)            # => Array of Entity
         def wrap_all(input_array)
-          Array(input_array).map { |input| wrap(input) }
+          __to_array__(input_array).map { |input| wrap(input) }
         end
 
         # @example
-        #   to_entity(attributes_hash) # => Entity
-        #   to_entity(entity)          # => Entity
+        #   wrap(id: 42) # => <#MyEntity @id=42>
+        #   wrap(entity) # => <#MyEntity @id=42>
         def wrap(input)
           return if input.nil?
 
-          entity_class ? entity_class.wrap(input) : input
+          self.class.__entity_coercion__.call(input)
+        end
+
+        # @example scope after query build
+        #   def all(**opts)
+        #     read_all scoped(**opts).order(:created_at)
+        #   end
+        #
+        # @example scope before query build
+        #   def all(**opts)
+        #     read_all scoped(dataset.order(:created_at), **opts)
+        #   end
+        #
+        def scoped(ds = dataset, **opts)
+          scope(ds, **opts)
+        end
+
+        # @abstract
+        #
+        # @example
+        #   def scope(dataset, deleted: nil, for_update: false, **scope)
+        #     ds = super(dataset, **scope)
+        #     ds = ds.for_update                  if for_update == true
+        #     ds = ds.where(deleted_at: nil)      if deleted == false
+        #     ds = ds.where.not(deleted_at: nil)  if deleted == true
+        #     ds
+        #   end
+        #
+        #   def all(**scope)
+        #     read_all scoped(**scope) # same as `scope(dataset, **scope)`
+        #   end
+        #
+        #   all                 # get all
+        #   all(deleted: false) # get not deleted
+        #   all(deleted: true)  # get deleted
+        def scope(dataset, **_scope)
+          dataset
         end
 
         # Read config
 
-        def mapper_class
-          self.class.mapper_class
-        end
-
-        def entity_class
-          self.class.entity_class
-        end
-
         def primary_key
-          self.class.db_primary_key
+          self.class.primary_key_attr
         end
 
         # Factory Methods
 
+        # @abstract
+        #
         # Usefull for extensions
         def dataset
           raise NotImplementedError
         end
+
+        # fixes problem: `Array({ a: 1 }) # => [[:a, 1]]`
+        def __to_array__(input)
+          input.is_a?(Hash) ? [input] : Array(input)
+        end
+
+        # checks if there are only one item in the given array
+        def __one_from__(input)
+          case input
+          when Hash then input
+          else
+            array = input.is_a?(Array) ? input : Array(input)
+            raise MoreThanOneRecord.new count: array.size if array.size > 1
+
+            array.first
+          end
+        end
+      end
+
+      class NotFound < LunaPark::Errors::NotFound
+        message { |d| "#{d[:name]} (#{d[:by]})" }
+      end
+
+      class MoreThanOneRecord < LunaPark::Errors::System
+        message { |d| "Expected only one record, but there are #{d[:count]} records" }
       end
     end
   end

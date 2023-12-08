@@ -31,11 +31,11 @@ module LunaPark
     let(:attrs) { { charge: { fractional: 100, currency: 'USD' } } }
 
     describe '.from_row' do
-      it { expect { abstract_mapper.from_row(row) }.to raise_error Errors::AbstractMethod }
+      it { expect(abstract_mapper.from_row(row)).to eq row }
     end
 
     describe '.to_row' do
-      it { expect { abstract_mapper.to_row(attrs) }.to raise_error Errors::AbstractMethod }
+      it { expect(abstract_mapper.to_row(attrs)).to eq attrs }
     end
 
     describe '.from_rows' do
@@ -53,7 +53,7 @@ module LunaPark
         end
 
         it 'raises meaningfull exception' do
-          expect { from_rows }.to raise_error 'input MUST be an Array, but given String `"Foo"`'
+          expect { from_rows }.to raise_error 'input MUST respond to #to_a, but given String `"Foo"`'
         end
       end
     end
@@ -73,7 +73,7 @@ module LunaPark
         end
 
         it 'raises meaningfull exception' do
-          expect { to_rows }.to raise_error 'input MUST be an Array, but given String `"Foo"`'
+          expect { to_rows }.to raise_error 'input MUST respond to #to_a, but given String `"Foo"`'
         end
       end
     end

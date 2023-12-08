@@ -41,7 +41,7 @@ RSpec.describe LunaPark::Extensions::Repositories::Postgres::Update do
     let(:fake_new_attrs) { { updated_at: time_now } }
 
     before do
-      allow(fake_dataset).to receive_message_chain(:returning, :where, :update, :first).and_return(fake_new_attrs)
+      allow(fake_dataset).to receive_message_chain(:where, :returning, :update, :first).and_return(fake_new_attrs)
     end
 
     it 'returns received entity object' do

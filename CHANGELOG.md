@@ -4,13 +4,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.12.0] - 2023-02-23
+## [0.13.0] - 2023-06-06
 Changed
+- `Extensions::Repositories::Postgres::Delete` returns boolean
+- DataMapper became more safe: it will raise `MoreThanOneRecord` if `#read_one` received array with multiple items,
+  so it will show you your critical logic mistake
+
+Added
+- `DataMapper.mapper` now can receive block instead of class, to describe anonymous mapper;
+  default parent can be customized by defining `base_anonymous_mapper` method
+- `DataMapper.entity` now have second argument to customize `coercion` - you can use your own Entity class (even Dry Struct)
+- DataMapper became more safe: it will not try to transform hash of attributes to array of pairs
+- Postgres extension `Create` now will set `updated_at` and `created_at` if exists
+- Postgres extension `Update` now will set `updated_at` if exists
+- Postgres extension `Read` now have default `#scope` abstract method to handle scoping options
+- Postgres extension `Read` now have `#transaction` method
+- Postgres extension `Read` now have `#lock(pk, &block)` method and `#lock!(pk, &block)`
+- each Repository NotFound exception now have its own exception class, inherited from common NotFound exception
+- `LunaPark::Mappers::Codirectional` now available as default mapper `LunaPark::Mapper`
+- `LunaPark::Mappers::Codirectional` now can have nested mappers, and can be configured for arrays
+
+Fixed
+- DataMapper configuration (entity, mapper) now can be inherited. NotFound error also will be inherited.
+
+## [0.12.0] - 2023-02-23
+Added
 - Added `TaggedLog`
 
 ## [0.11.7] - 2022-10-07
 Changed
-- Added `formatter` to `Notifiers::Log`. Using `format` in initializer is now deprecated.
+- Added `formatter` to `Notifiers::Log`. Usage of `format` in initializer is now deprecated.
 
 ## [0.11.6] - 2021-10-06
 Changed
@@ -21,7 +44,7 @@ Added
 - add short alias for exceptions (`i18n:` instead of `i18n_key:`)
 
 ## [0.11.5] - 2022-09-27
-Changed
+Added
 - Added `.custom_error` method to `Extensions::HasError` to define errors with a custom superclass
 - Added `#inject` method to `Extensions::Injector` - dependencies setter that allows you to create method chains
 

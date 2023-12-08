@@ -67,28 +67,30 @@ module LunaPark
         # Transforms array of rows to array of attribute hashes
         def from_rows(rows)
           return [] if rows.nil?
-          raise Errors::NotArray.new(input: rows) unless rows.is_a?(Array)
+          raise Errors::NotArray.new(input: rows) if     rows.is_a?(Hash)
+          raise Errors::NotArray.new(input: rows) unless rows.respond_to?(:to_a)
 
           rows.to_a.map { |hash| from_row(hash) }
         end
 
         ##
         # Transforms array of attribute hashes to array of rows
-        def to_rows(attr_hashes)
-          return [] if attr_hashes.nil?
-          raise Errors::NotArray.new(input: attr_hashes) unless attr_hashes.is_a?(Array)
+        def to_rows(attrs_array)
+          return [] if attrs_array.nil?
+          raise Errors::NotArray.new(input: rows)        if     attrs_array.is_a?(Hash)
+          raise Errors::NotArray.new(input: attrs_array) unless attrs_array.respond_to?(:to_a)
 
-          attr_hashes.to_a.map { |entity| to_row(entity) }
+          attrs_array.to_a.map { |entity| to_row(entity) }
         end
 
         # @abstract
-        def from_row(_row)
-          raise LunaPark::Errors::AbstractMethod
+        def from_row(row)
+          row.to_h
         end
 
         # @abstract
-        def to_row(_attrs)
-          raise LunaPark::Errors::AbstractMethod
+        def to_row(attrs)
+          attrs.to_h
         end
       end
     end
