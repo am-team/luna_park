@@ -145,7 +145,7 @@ module LunaPark
           @mapper_class
         end
 
-        def __build_entity_coercion__(coercion) # rubocop:disable Metrics/AbcSize
+        def __build_entity_coercion__(coercion)
           return entity_class.method(coercion) if coercion.is_a? Symbol
           return coercion                      if coercion.respond_to?(:call)
 
@@ -154,7 +154,7 @@ module LunaPark
           infer_entity_coercion
         end
 
-        def infer_entity_coercion # rubocop:disable Metrics/AbcSize
+        def infer_entity_coercion
           return entity_class.method(:call) if entity_class.respond_to?(:call)
           return entity_class.method(:wrap) if entity_class.respond_to?(:wrap)
 
@@ -179,13 +179,13 @@ module LunaPark
         end
 
         def primary_key(attr)
-          @primary_key_attr = attr
+          @row_primary_key = attr
         end
 
         DEFAULT_PRIMARY_KEY = :id
 
-        def primary_key_attr
-          @primary_key_attr || DEFAULT_PRIMARY_KEY
+        def row_primary_key
+          @row_primary_key || DEFAULT_PRIMARY_KEY
         end
 
         def __define_constants__(not_found: LunaPark::Extensions::DataMapper::NotFound)
@@ -201,6 +201,7 @@ module LunaPark
           klass.__define_constants__(not_found: NotFound)
           klass.entity entity_class, __entity_coercion__
           klass.mapper mapper_class
+          klass.primary_key row_primary_key
           super
         end
 
@@ -385,7 +386,7 @@ module LunaPark
         # Read config
 
         def primary_key
-          self.class.primary_key_attr
+          self.class.row_primary_key
         end
 
         # Factory Methods

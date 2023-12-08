@@ -5,8 +5,8 @@ module LunaPark
     module Repositories
       module Postgres
         module Delete
-          def delete(uid)
-            dataset.where(primary_key => uid).delete.positive?
+          def delete(pk_value, **scope_opts)
+            scoped(**scope_opts).where(primary_key => pk_value).delete.positive?
           end
         end
       end

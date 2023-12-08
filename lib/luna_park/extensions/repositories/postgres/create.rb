@@ -5,7 +5,7 @@ module LunaPark
     module Repositories
       module Postgres
         module Create
-          def create(input)
+          def create(input, **scope_opts)
             entity = wrap(input)
 
             time = Time.now
@@ -13,7 +13,7 @@ module LunaPark
             entity.updated_at = time if entity.respond_to?(:updated_at)
 
             row       = to_row(entity)
-            new_row   = dataset.returning.insert(row).first
+            new_row   = scoped(**scope_opts).returning.insert(row).first
             new_attrs = from_row(new_row)
 
             entity.set_attributes(new_attrs)

@@ -19,34 +19,37 @@ module ExtensionsDataMapperSpec
         return if input.nil?
 
         attrs = input.to_h
-        { id: attrs[:uid], account_type: attrs[:type] }
+        { uid: attrs[:uid], account_type: attrs[:type] }
       end
 
       def from_row(row)
         return if row.nil?
 
-        { uid: row[:id], type: row[:account_type] }
+        { uid: row[:uid], type: row[:account_type] }
       end
     end
   end
 
-  class AccountRepository
+  class BaseRepository
     include LunaPark::Extensions::DataMapper
 
-    mapper AccountMapper
+    primary_key :uid
     entity Account
+    mapper AccountMapper
+  end
 
+  class AccountRepository < BaseRepository
     # when read_all receives Array of rows
     def all
       read_all accounts.values
     end
 
     # when read_one receives row
-    def find(uid)
-      read_one accounts[uid]
+    def find(pk_value)
+      read_one accounts.values.find { |row| row[primary_key] == pk_value }
     end
 
-    # when read_one receives Array of rows
+    # when read_one receives Array of rows (bad case)
     def get_one(_uid)
       read_one accounts.values
     end
@@ -54,21 +57,21 @@ module ExtensionsDataMapperSpec
     def create_one(input)
       entity = wrap input
       row = to_row entity
-      accounts[entity.uid] ||= row
+      accounts[row[primary_key]] ||= row
       entity
     end
 
     def create_many(input)
       entities = wrap_all input
       rows     = to_rows entities
-      rows.each { |row| accounts[row[:id]] ||= row }
+      rows.each { |row| accounts[row[primary_key]] ||= row }
       entities
     end
 
     def seed!
       @dataset = {
-        42 => { id: 42, account_type: 'Foo' },
-        69 => { id: 69, account_type: 'Bar' }
+        42 => { uid: 42, account_type: 'Foo' },
+        69 => { uid: 69, account_type: 'Bar' }
       }
     end
 
