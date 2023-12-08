@@ -265,7 +265,7 @@ module LunaPark
         #   end
         #
         def found!(value, not_found_by: nil)
-          return value unless value.nil?
+          return value unless value.nil? || value.respond_to?(:empty?) && value.empty?
 
           raise self.class::NotFound.new name: self.class.entity_class.name, by: not_found_by
         end
