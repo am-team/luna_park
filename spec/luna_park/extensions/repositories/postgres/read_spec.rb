@@ -8,7 +8,7 @@ require 'luna_park/entities/attributable'
 RSpec.describe LunaPark::Extensions::Repositories::Postgres::Read do
   class MyEntity < LunaPark::Entities::Attributable
     attr :uid
-    attr :foo
+    attr :value
   end
 
   class MyRepository < LunaPark::Repository
@@ -32,7 +32,7 @@ RSpec.describe LunaPark::Extensions::Repositories::Postgres::Read do
     let(:uid) { 42 }
 
     context 'when exist' do
-      let(:fake_row) { { uid: uid, foo: 'FOO' } }
+      let(:fake_row) { { uid: uid, value: 'FOO' } }
 
       before { allow(fake_dataset).to receive(:where).with(uid: uid).and_return([fake_row]) }
 
@@ -46,12 +46,32 @@ RSpec.describe LunaPark::Extensions::Repositories::Postgres::Read do
     end
   end
 
+  describe '#reload!' do
+    subject(:reload) { repo.reload!(fake_entity) }
+
+    let(:uid) { 42 }
+    let(:fake_entity) { MyEntity.new(uid: uid, value: 'FOO') }
+
+    context 'when exist' do
+      before { allow(fake_dataset).to receive(:where).with(uid: uid).and_return([uid: uid, value: 'BAR']) }
+
+      it { is_expected.to be fake_entity }
+      it { expect { reload }.to change(fake_entity, :value).from('FOO').to('BAR') }
+    end
+
+    context 'when gone' do
+      before { allow(fake_dataset).to receive(:where).with(uid: uid).and_return([]) }
+
+      it { expect { reload }.to raise_error MyRepository::NotFound, 'MyEntity ({:uid=>42})' }
+    end
+  end
+
   describe '#find!' do
     subject(:find!) { repo.find!(uid) }
     let(:uid) { 42 }
 
     context 'when exist' do
-      let(:fake_row) { { uid: uid, foo: 'FOO' } }
+      let(:fake_row) { { uid: uid, value: 'FOO' } }
 
       before { allow(fake_dataset).to receive(:where).with(uid: uid).and_return([fake_row]) }
 
@@ -59,7 +79,7 @@ RSpec.describe LunaPark::Extensions::Repositories::Postgres::Read do
     end
 
     context 'when not exist' do
-      before { allow(fake_dataset).to receive(:where).with(uid: uid).and_return([]) }
+      before { allow(fake_dataset).to receive(:where).and_return([]) }
 
       it { expect { find! }.to raise_error MyRepository::NotFound, 'MyEntity (42)' }
     end
@@ -79,19 +99,19 @@ RSpec.describe LunaPark::Extensions::Repositories::Postgres::Read do
     subject(:all) { repo.all }
 
     before do
-      allow(fake_dataset).to receive(:order).and_return double(to_a: [{ uid: 42, foo: 'Foo' }, { uid: 777, foo: 'Bar' }])
+      allow(fake_dataset).to receive(:order).and_return double(to_a: [{ uid: 42, value: 'Foo' }, { uid: 777, value: 'Bar' }])
     end
 
-    it { is_expected.to eq [MyEntity.new(uid: 42, foo: 'Foo'), MyEntity.new(uid: 777, foo: 'Bar')] }
+    it { is_expected.to eq [MyEntity.new(uid: 42, value: 'Foo'), MyEntity.new(uid: 777, value: 'Bar')] }
   end
 
   describe '#last' do
     subject(:last) { repo.last }
 
     before do
-      allow(fake_dataset).to receive_message_chain(:order, :last).and_return(uid: 777, foo: 'Bar')
+      allow(fake_dataset).to receive_message_chain(:order, :last).and_return(uid: 777, value: 'Bar')
     end
 
-    it { is_expected.to eq MyEntity.new(uid: 777, foo: 'Bar') }
+    it { is_expected.to eq MyEntity.new(uid: 777, value: 'Bar') }
   end
 end

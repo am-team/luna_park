@@ -25,6 +25,15 @@ module LunaPark
             read_one scoped(**scope).where(primary_key => pk_value)
           end
 
+          def reload!(entity, **scope)
+            new_rows = scoped(**scope).where(primary_key => entity.public_send(primary_key))
+            found! new_rows, not_found_by: { primary_key => entity.public_send(primary_key)}
+
+            new_attrs = from_row __one_from__ new_rows
+            entity.set_attributes(new_attrs)
+            entity
+          end
+
           def count(**scope)
             scoped(**scope).count
           end

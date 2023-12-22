@@ -4,11 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.13.0] - 2023-06-06
+## [0.13.1] - 2023-12-06
 Changed
 - `Extensions::Repositories::Postgres::Delete` returns boolean
 - DataMapper became more safe: it will raise `MoreThanOneRecord` if `#read_one` received array with multiple items,
   so it will show you your critical logic mistake
+- `Extensions::Repositories::Postgres::Delete#delete` can receive entity, Hash, and can not accept nil pk
 
 Added
 - `DataMapper.mapper` now can receive block instead of class, to describe anonymous mapper;
