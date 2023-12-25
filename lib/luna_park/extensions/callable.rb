@@ -30,14 +30,14 @@ module LunaPark
     #  MyCallableObject.call!(params) # => 'call! used'
     module Callable
       # Preferred class method to run instance `call` method
-      def call(*args)
-        new(*args).call
+      def call(*args, **kwargs)
+        new(*args, **kwargs).call
       end
 
       ##
       # Preferred class method to run instance `call`! method
-      def call!(*args)
-        new(*args).call!
+      def call!(*args, **kwargs)
+        new(*args, **kwargs).call!
       end
     end
   end
