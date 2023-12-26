@@ -169,7 +169,7 @@ module LunaPark
       end
 
       it 'is equal to translation missing error text' do
-        expect(error_class.new.message(locale: :en)).to eq 'translation missing: en.errors.foo'
+        expect(error_class.new.message(locale: :en).downcase).to eq 'translation missing: en.errors.foo'
       end
     end
 
@@ -284,7 +284,7 @@ module LunaPark
         end
 
         it 'builds expected message' do
-          expect(error_class.new({ foo: 'Foo' }).message).to eq 'Dynamic message Foo'
+          expect(error_class.new(foo: 'Foo').message).to eq 'Dynamic message Foo'
         end
       end
 

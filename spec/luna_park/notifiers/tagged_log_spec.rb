@@ -6,7 +6,7 @@ require 'timecop'
 module LunaPark
   module Notifiers
     RSpec.describe TaggedLog do
-      let(:logger) { described_class.new(options) }
+      let(:logger) { described_class.new(**options) }
       let(:options) do
         {
           default_tag: 'shoryuken',

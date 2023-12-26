@@ -5,7 +5,7 @@ module LunaPark
     module Repositories
       module Postgres
         module Update
-          def save(input, **scope_opts)
+          def save(input, **scope_opts) # rubocop:disable Metrics/AbcSize
             entity = wrap(input)
 
             entity.updated_at = Time.now if entity.respond_to?(:updated_at)
