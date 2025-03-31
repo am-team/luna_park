@@ -77,6 +77,34 @@ module LunaPark
         alias == eql?
 
         ##
+        # Returns only different values, that causes missmatch
+        #
+        # @example
+        #   t1 = Funds.new(from: { charge: { currency: 'USD', amount: 42 } }, usd: { currency: 'USD', amount: 41 }, comment: 'Foo')
+        #   t2 = Funds.new(from: { charge: { currency: 'USD', amount: 43 } }, usd: { currency: 'USD', amount: 42 }, comment: 'Foo')
+        #
+        #   t1 == t2 # => false
+        #
+        #   t1.detailed_diff(t2) # =>
+        #    { from: { charge: { amount: [42, 43] } }, usd: { amount: [41, 42] } }
+        def detailed_differences(other)
+          self.class.comparable_attributes_list.each_with_object({}) do |field, output|
+            left  = send(field)
+            right = other&.send(field)
+
+            next if left == right
+
+            output[field] = if left.respond_to?(:detailed_differences)
+                              left.detailed_differences(right)
+                            else
+                              [left, right]
+                            end
+          end
+        end
+
+        alias detailed_diff detailed_differences
+
+        ##
         # Enable debug mode (just include debug methods)
         def enable_debug
           self.class.enable_debug
