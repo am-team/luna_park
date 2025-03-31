@@ -70,6 +70,17 @@ module LunaPark
       end
     end
 
+    describe '#detailed_differences' do
+      subject(:detailed_differences) { t1.detailed_differences(t2) }
+
+      let(:t1) { klass.new('the Martian Chronicles', 'Ray Douglas Bradbury') }
+      let(:t2) { klass.new('fahrenheit 451', 'Ray Douglas Bradbury') }
+
+      it 'returns full differencess structure' do
+        is_expected.to eq(title: ['the Martian Chronicles', 'fahrenheit 451'])
+      end
+    end
+
     describe '.debug' do
       subject(:debug) { klass.debug }
       let(:klass) { ExtensionsComparableSpec::Book.dup }
