@@ -217,7 +217,7 @@ module LunaPark
         return @message if @message
 
         default_message = build_default_message
-        localized_message(locale, show_error: default_message.nil?) || default_message || self.class.name
+        String(localized_message(locale, show_error: default_message.nil?) || default_message || self.class.name)
       end
 
       private
