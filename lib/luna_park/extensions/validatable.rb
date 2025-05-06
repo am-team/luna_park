@@ -37,16 +37,20 @@ module LunaPark
       end
 
       module InstanceMethods
-        def validation_errors_array
-          validation ? validation.errors_array : {}
+        def validation_error_arrays
+          validation ? validation.error_arrays : {}
         end
 
-        def validation_errors_tree
-          validation ? validation.errors_tree : []
+        def validation_errors_array
+          validation ? validation.errors_array : []
+        end
+
+        def validation_errors_tree(**opts)
+          validation ? validation.errors_tree(**opts) : {}
         end
 
         def validation_errors
-          validation ? validation.errors : {}
+          validation ? validation.errors_tree : {}
         end
 
         def valid?
@@ -71,8 +75,37 @@ module LunaPark
       end
 
       module ClassMethods
-        def validator(klass = nil)
-          klass.nil? ? @validator : @validator = klass
+        def validator(*args)
+          return @validator if args.empty?
+
+          raise ArgumentError, 'last argument must be a validator' if args.last.is_a? Symbol
+
+          *path, new_validator = args
+          return @validator = new_validator if @validator.nil? && path.empty?
+
+          require 'luna_park/validators/multiple'
+
+          nested_validator(path, new_validator)
+        end
+
+        private
+
+        def inherited(child)
+          child.validator Class.new(validator) if validator
+          super
+        end
+
+        def nested_validator(path, new_validator)
+          if @validator.nil?
+            @validator = Class.new(LunaPark::Validators::Multiple)
+          elsif !(@validator < LunaPark::Validators::Multiple)
+            multiple = Class.new(LunaPark::Validators::Multiple)
+            multiple.add_validator @validator
+            @validator = multiple
+          end
+
+          @validator.add_validator new_validator, path: path
+          @validator
         end
       end
     end

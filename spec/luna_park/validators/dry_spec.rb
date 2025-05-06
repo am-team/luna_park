@@ -64,24 +64,6 @@ RSpec.describe LunaPark::Validators::Dry do
     end
   end
 
-  describe '#errors' do
-    subject { validator.errors }
-
-    context 'when sent valid params' do
-      let(:params) { valid_params }
-
-      it { is_expected.to be_a Hash }
-      it { is_expected.to be_empty }
-    end
-
-    context 'when sent invalid params' do
-      let(:params) { invalid_params }
-
-      it { is_expected.to be_a Hash }
-      it { is_expected.to_not be_empty }
-    end
-  end
-
   describe '#errors_tree' do
     subject { validator.errors_tree }
 
